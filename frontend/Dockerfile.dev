@@ -1,0 +1,14 @@
+FROM node:16
+WORKDIR /frontend
+
+# ENV PATH /frontend/node_modules/.bin:$PATH
+
+COPY package.json .
+COPY package-lock.json .
+RUN npm ci
+RUN npm install -g react-scripts
+
+COPY . .
+
+EXPOSE 3000
+

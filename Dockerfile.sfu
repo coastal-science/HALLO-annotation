@@ -1,0 +1,32 @@
+# build environment
+FROM node:13.12.0-alpine as build
+WORKDIR /frontend
+ENV PATH /frontend/node_modules/.bin:$PATH
+COPY /frontend/package.json .
+COPY /frontend/package-lock.json .
+RUN npm ci --silent
+RUN npm install react-scripts -g --silent
+COPY /frontend .
+ENV REACT_APP_BASE_URL=https://orca.research.sfu.ca/annotation
+ENV REACT_APP_BACKEND=https://orca.research.sfu.ca/annotation
+ENV REACT_APP_BASENAME=/annotation
+ENV REACT_APP_ADMIN_LOGIN=https://orca.research.sfu.ca/annotation/admin/hallo-login/?next=/annotation/admin/
+ENV REACT_APP_WSS=wss://orca.research.sfu.ca/annotation/ws/file/scan/
+RUN npm run build
+
+
+FROM nginxinc/nginx-unprivileged:1-alpine
+
+COPY /nginx/default.conf /etc/nginx/conf.d/default.conf
+
+USER root
+
+RUN mkdir -p /media
+RUN chmod 755 /media
+RUN mkdir -p /staticfiles
+RUN chmod 755 /staticfiles
+
+COPY --from=build /frontend/build /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

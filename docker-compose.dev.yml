@@ -1,0 +1,79 @@
+version: "3.8"
+services:
+  # Database Postgres
+  db:
+    image: postgres:13
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    container_name: hallo_postgres_db
+  # Pgadmin server
+  pgadmin:
+    container_name: hallo_pgadmin
+    image: dpage/pgadmin4
+    restart: unless-stopped
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "5050:80"
+
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    links:
+      - "db:pgsql-server"
+
+  # Django backend server
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    volumes:
+      - ./backend:/backend
+      - ../audio:/backend/media/audio:ro
+      - ../spectrogram:/backend/media/spectrogram
+      - ../audio_clips:/backend/media/audio_clips
+    ports:
+      - "8000:8000"
+    container_name: hallo_backend
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost
+      - DJANGO_CORS_ORIGIN_WHITELIST=http://localhost:3000
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    command: >
+      bash -c "python manage.py makemigrations
+      && python manage.py migrate
+      && python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+  # React application frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend/src:/frontend/src
+
+    ports:
+      - "3000:3000"
+    container_name: hallo_frontend
+    command: npm start
+    depends_on:
+      - backend
+    links:
+      - "backend: backend-server"
+
+volumes:
+  db_data:
+  pgadmin_data:
