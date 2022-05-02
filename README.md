@@ -8,6 +8,8 @@
 
 [Deployment in the Cloud](#deployment-in-the-cloud)
 
+[Deleting Local Instance](#deleting-the-local-instance)
+
 ---
 
 ## Introduction
@@ -151,3 +153,44 @@ In the configuration of the front-end service, you need to add the corresponding
 In the Django settings of the backend service, you need to adjust the corresponding `MEDIA_URL`, `STATIC_URL` and `LOGIN_REDIRECT_URL` configurations.
 
 The basic setup for this deployment is already done in the code base, and a minimal `docker-compose.sfu.yml` file is provided to demonstrate how to run this configuration.
+
+---
+
+## Deleting the local instance
+
+If you need to remove the software completely, or want to reinstall a fresh version, consider the following steps:
+
+1. Stop the docker containers
+
+   ```
+   docker-compose -f docker-compose.dev.yml --env-file .env.dev down
+   ```
+
+2. List the images that were used by HALLO
+
+   ```
+   $docker image ls
+   REPOSITORY                  TAG       IMAGE ID       CREATED             SIZE
+   hallo-annotation_frontend   latest    900f03c5b6d1   About an hour ago   2.03GB
+   hallo-annotation_backend    latest    5b9eb01ed370   About an hour ago   3.26GB
+   postgres                    13        b67cf799bada   12 days ago         373MB
+   dpage/pgadmin4              latest    40a516ee7dea   3 weeks ago         341MB
+   ```
+
+3. Delete the images by copying the image ids after command `docker image rm`, for example:
+
+   ```
+   docker image rm 900f03c5b6d1 5b9eb01ed370
+   ```
+
+4. Remove the volume:
+
+   ```
+   docker volume rm hallo-annotation_db_data hallo-annotation_pgadmin_data
+   ```
+
+5. Use `system prune` to clean up the system (optional):
+
+   ```
+   docker system prune
+   ```
