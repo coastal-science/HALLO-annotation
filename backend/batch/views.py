@@ -8,6 +8,9 @@ class BatchList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Batch.objects.all().order_by('id')
     serializer_class = BatchSerializer
+    filterset_fields = {
+        'id': ["in", "exact"]
+    }
 
 
 class BatchDetail(generics.RetrieveUpdateDestroyAPIView):
