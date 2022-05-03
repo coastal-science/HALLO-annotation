@@ -107,7 +107,7 @@ In the example of a local installation, the HALLO annotation tool runs in a few 
 5. A **superuser** needs to be created at the backend to set up the groups. In the same folder, use this command to get in the backend container.
 
    ```
-   docker-compose -f docker-compose.dev.yml run backend dash
+   docker-compose -f docker-compose.dev.yml --env-file .env.dev run backend dash
    ```
 
    Then create the superuser for the Django Admin:
@@ -118,7 +118,7 @@ In the example of a local installation, the HALLO annotation tool runs in a few 
 
 6. The HALLO annotation tool uses Django's Admin panel to manage user permissions. For the first time, you need to log in and create groups and assign permissions for each group. The Django backend is at: http://localhost:8000/admin/, and you can use the superuser account you just created to log in.
 
-   After logging in, create three user groups in the Groups page in the **following order**.
+   After logging in, create three user groups in the Groups page (**Case sensitive**).
 
    ```
    1. Admin
@@ -126,7 +126,19 @@ In the example of a local installation, the HALLO annotation tool runs in a few 
    3. Annotator
    ```
 
-   You can control and modify the permissions for each group. New users will also need to be manually added to a group here after they have completed registration.
+   New users will need to be manually added to a group here after they have completed registration. Permission control here only affects the operation permissions of the **admin interface**, and does not affect the permissions when using the HALLO annotation software. After users are added to the appropriate group, they will enter the applicable user interface once logging into the software, and the group is only used here to differentiate user roles.
+
+   **Permissions for different user groups:**
+
+   - Admin: Has permission to manually create users in the admin interface.
+     <br />
+     <img src="project_plans/screenshots/admin-permissions.png" width=800 alt="Admin user permissions">
+
+     You aslo need to give a admin user permission to log in to the admin screen by setting this user to `is staff`.
+     <br />
+     <img src="project_plans/screenshots/set-user-staff.png" width=600 alt="Set user to staff">
+
+   - Model Developer and Annotators: Keep the permissions blank as they don't have access to the admin interface.
 
 7. The user interface is at: http://localhost:3000/
 
@@ -183,7 +195,7 @@ If you need to remove the software completely, or want to reinstall a fresh vers
    docker image rm 900f03c5b6d1 5b9eb01ed370
    ```
 
-4. Remove the volume:
+4. Remove the volum (**note that this will clear the database**):
 
    ```
    docker volume rm hallo-annotation_db_data hallo-annotation_pgadmin_data
