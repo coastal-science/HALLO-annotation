@@ -14,8 +14,6 @@ class Annotation(models.Model):
     end = models.DecimalField(max_digits=7, decimal_places=3, default=0)
     freq_min = models.DecimalField(max_digits=8, decimal_places=3, default=0)
     freq_max = models.DecimalField(max_digits=8, decimal_places=3, default=0)
-    offset = models.DecimalField(
-        max_digits=7, decimal_places=3, default=0)
     sound_id_species = models.CharField(max_length=128, blank=True)
     kw_ecotype = models.CharField(max_length=128, blank=True)
     pod = models.CharField(max_length=128, blank=True)

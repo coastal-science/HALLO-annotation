@@ -252,7 +252,7 @@ const Modeldeveloper = () => {
         <Typography paragraph>
           Imported csv needs to have columns in the following order:{" "}
           <b>
-            filename, start, end, freq_min, freq_max, offset, sound_id_species,
+            filename, start, end, freq_min, freq_max, sound_id_species,
             kw_ecotype, pod, call_type, and comments.
           </b>
         </Typography>
