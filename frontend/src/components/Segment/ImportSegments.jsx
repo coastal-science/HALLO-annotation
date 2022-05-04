@@ -46,8 +46,8 @@ const ImportSegments = ({ onClose, open }) => {
       const dataItem = data[i].data;
       const file = fileNames[dataItem[0]];
       const filename = dataItem[0];
-      const start = dataItem[1] * 1;
-      const end = dataItem[2] * 1;
+      const start = (dataItem[1] * 1).toFixed(3);
+      const end = (dataItem[2] * 1).toFixed(3);
       const label = dataItem[3];
       const duration = (dataItem[2] - dataItem[1]).toFixed(3);
 
@@ -77,9 +77,8 @@ const ImportSegments = ({ onClose, open }) => {
       openAlert({
         severity: "error",
         message:
-          "The following files are not in the database: " +
-          errorList.join(", ") +
-          ". The related segments will not be imported.",
+          "The entries that could not be imported are as follows: " +
+          `"${errorList.join(", ")}"`,
         timer: 30000,
       })
     );
@@ -119,14 +118,13 @@ const ImportSegments = ({ onClose, open }) => {
   };
 
   const handleSubmit = () => {
-    dispatch(addSegments({ durations: segments })).then(() =>
-      dispatch(fetchSegments())
-    );
-
-    setSegments([]);
-    onClose("import");
-    setErrorList([]);
-    setPadding(0);
+    dispatch(addSegments({ durations: segments })).then(() => {
+      dispatch(fetchSegments());
+      setSegments([]);
+      onClose("import");
+      setErrorList([]);
+      setPadding(0);
+    });
   };
 
   const handleCancel = () => {
