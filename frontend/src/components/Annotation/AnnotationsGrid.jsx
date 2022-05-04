@@ -128,6 +128,7 @@ const AnnotationsGrid = () => {
         );
         setSelectedRows(new Set());
         dispatch(fetchAnnotations());
+        setDeleteConfirmation(false);
       })
       .catch((error) => console.error(error));
   };
