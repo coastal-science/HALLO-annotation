@@ -13,7 +13,8 @@ class SegmentList(CreateListModelMixin, generics.ListCreateAPIView):
     serializer_class = SegmentSerializer
     #This would allow the filter to return multiple items like http://localhost:8000/api/segment/?id__in=2,3,4,5,6,7
     filterset_fields = {
-        'id': ["in", "exact"]
+        'id': ["in", "exact"],
+        'model_developer': ["exact"]
     }
 
 #This view would handle batch delete

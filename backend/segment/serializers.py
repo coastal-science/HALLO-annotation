@@ -18,6 +18,7 @@ class SegmentSerializer(serializers.ModelSerializer):
               'batches',
               'audio',
               'label',
+              'model_developer',
         )
 
     extra_kwargs = {'batches': {'required': False}}

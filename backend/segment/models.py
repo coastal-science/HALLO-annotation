@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from file.models import File
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.conf import settings
 
 
 class Segment(models.Model):
@@ -16,6 +17,9 @@ class Segment(models.Model):
     audio = models.FileField(upload_to='audio_clips', blank=True, null=True)
     label = models.CharField(max_length=128, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
+    model_developer = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='segments'
+    )
 
     objects = models.Manager()
 

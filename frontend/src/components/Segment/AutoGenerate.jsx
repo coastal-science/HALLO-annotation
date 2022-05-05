@@ -40,6 +40,7 @@ const AutoGenerate = ({ onClose, open }) => {
   const [durations, setDurations] = useState([]);
 
   const { files, fileIds } = useSelector((state) => state.file);
+  const { id: model_developer } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const segmentColumns = useMemo(() => {
@@ -106,6 +107,7 @@ const AutoGenerate = ({ onClose, open }) => {
           start: step * i,
           end: step * i + length * 1,
           label,
+          model_developer,
         });
         i++;
       }
@@ -123,6 +125,7 @@ const AutoGenerate = ({ onClose, open }) => {
           start: step * segmentsNumber,
           end: step * segmentsNumber + length,
           label,
+          model_developer,
         });
       }
     });
