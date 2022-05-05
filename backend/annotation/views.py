@@ -8,7 +8,16 @@ class AnnotationList(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AnnotationSerializer
     queryset = Annotation.objects.all()
-    filterset_fields = ['annotator', 'segment', 'batch', 'pod', 'call_type', 'sound_id_species', 'kw_ecotype']
+    filterset_fields = {
+        'id': ["in", "exact"],
+        'annotator': ["exact"], 
+        'segment': ["exact"], 
+        'batch': ["exact"], 
+        'pod': ["exact"], 
+        'call_type': ["exact"], 
+        'sound_id_species': ["exact"], 
+        'kw_ecotype': ["exact"],
+    }
 
 
 class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):

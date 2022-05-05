@@ -9,7 +9,8 @@ class BatchList(generics.ListCreateAPIView):
     queryset = Batch.objects.all().order_by('id')
     serializer_class = BatchSerializer
     filterset_fields = {
-        'id': ["in", "exact"]
+        'id': ["in", "exact"],
+        'model_developer': ["exact"],
     }
 
 
