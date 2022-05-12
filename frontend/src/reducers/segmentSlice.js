@@ -32,6 +32,14 @@ export const addSegments = createAsyncThunk(
     }
 );
 
+export const updateSegment = createAsyncThunk(
+    'segment/updateSegment',
+    async ({ end, segmentId }) => {
+        const { data } = await axiosWithAuth.patch(`/segment/${segmentId}/`, { end });
+        return data;
+    }
+);
+
 export const removeSegments = createAsyncThunk(
     'segment/removeSegments',
     async ({ checked }) => {
