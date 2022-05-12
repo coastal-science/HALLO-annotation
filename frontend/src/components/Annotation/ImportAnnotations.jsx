@@ -15,7 +15,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { DataGrid } from "@material-ui/data-grid";
 import { CSVReader } from "react-papaparse";
-import { fetchSegments } from "../../reducers/segmentSlice";
+import {
+  addSegments,
+  fetchSegments,
+  updateSegment,
+} from "../../reducers/segmentSlice";
 import { openAlert } from "../../reducers/errorSlice";
 import {
   addBatch,
@@ -59,7 +63,7 @@ const columns = [
 
 const ImportAnnotations = ({ onClose, open }) => {
   const classes = useStyles();
-  const { fileNames } = useSelector((state) => state.file);
+  const { fileNames, files } = useSelector((state) => state.file);
   const { id, annotators, annotatorIds } = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
@@ -67,6 +71,7 @@ const ImportAnnotations = ({ onClose, open }) => {
   const [data, setData] = useState([]);
   const [newBatch, setNewBatch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [segmentLength, setSegmentLength] = useState(60);
   const processedData = useRef(null);
   const processedDataArr = useRef(null);
   const selectedAnnotationsArr = useRef(null);
@@ -224,8 +229,6 @@ const ImportAnnotations = ({ onClose, open }) => {
 
     setLoading(true);
 
-    const batchSegments = [];
-
     dispatch(
       addBatch({
         settings,
@@ -235,60 +238,46 @@ const ImportAnnotations = ({ onClose, open }) => {
       })
     )
       .unwrap()
-      .then(async (res) => {
-        const batchId = res.data.id;
-
+      .then((res) => res.data.id)
+      .then(async (batchId) => {
+        const createdSegmentsIds = [];
+        //iterate the annotations objects, the key of the object is the filename
+        //and the value is the annotation array associated with the file
         for (const [fileName, annotations] of Object.entries(
           selectedAnnotations
         )) {
-          const durations = [];
-          const requests = [];
+          //create segments for the file with the length
+          const fileId = fileNames[fileName];
+          const fileLength = files[fileId].duration;
+          const segmentsNumber = Math.trunc(fileLength / segmentLength) + 1;
 
-          let left = 0;
-          let right = 0;
+          //generate segments according to the segmentlength and file
+          const generatedSegments = [];
 
-          while (left < annotations.length) {
-            while (
-              right < annotations.length &&
-              annotations[right].data[2] - annotations[left].data[1] <= 60
-            ) {
-              right++;
-            }
-            durations.push({ left, right: right - 1 });
-            left = right;
-          }
+          let i = 0;
 
-          durations.forEach((duration) => {
-            const { left, right } = duration;
-            const start =
-              annotations[left].data[1] * 1 - 1 > 0
-                ? annotations[left].data[1] * 1 - 1
-                : 0;
-            const end = annotations[right].data[2] * 1 + 1;
-            const file = fileNames[fileName];
-
-            requests.push(
-              axiosWithAuth.post(`/segment/`, [
-                {
-                  start: start.toFixed(3) * 1,
-                  end: end.toFixed(3) * 1,
-                  file,
-                },
-              ])
-            );
-          });
-
-          await Promise.all(requests).then((res) => {
-            const segmentsArr = [];
-            res.forEach((item) => {
-              segmentsArr.push(item.data[0].id);
-              batchSegments.push(item.data[0].id);
+          while (i < segmentsNumber) {
+            generatedSegments.push({
+              file: fileId,
+              start: segmentLength * i,
+              end: segmentLength * i + segmentLength * 1,
+              model_developer: id,
             });
+            i++;
+          }
+          const generatedAnnotations = [];
 
-            const annotationsArr = [];
+          await dispatch(addSegments({ durations: generatedSegments }))
+            .unwrap()
+            .then(async (createdSegments) => {
+              //get ids from the created segments
+              createdSegments.forEach((segment) =>
+                createdSegmentsIds.push(segment.id)
+              );
 
-            durations.forEach((item, index) => {
-              for (let i = item.left; i <= item.right; i++) {
+              let currentSegmentIndex = 0;
+
+              annotations.forEach(async (annotation) => {
                 const [
                   ,
                   start,
@@ -300,32 +289,89 @@ const ImportAnnotations = ({ onClose, open }) => {
                   pod,
                   call_type,
                   comments,
-                ] = annotations[i].data;
+                ] = annotation.data;
 
-                for (const annotator in selectedAnnotators) {
-                  if (selectedAnnotators[annotator]) {
-                    annotationsArr.push({
-                      segment: segmentsArr[index],
-                      batch: batchId,
-                      annotator,
-                      start: (+start).toFixed(3),
-                      end: (+end).toFixed(3),
-                      comments,
-                      pod,
-                      kw_ecotype,
-                      call_type,
-                      freq_min: (+freq_min).toFixed(3),
-                      freq_max: (+freq_max).toFixed(3),
-                      sound_id_species,
-                    });
+                while (currentSegmentIndex < createdSegments.length) {
+                  if (+start > +createdSegments[currentSegmentIndex].end) {
+                    //skip to the next segment
+                    currentSegmentIndex++;
+                  } else if (
+                    +start >= +createdSegments[currentSegmentIndex].start &&
+                    +end <= +createdSegments[currentSegmentIndex].end
+                  ) {
+                    //do something
+                    for (const annotator in selectedAnnotators) {
+                      if (selectedAnnotators[annotator]) {
+                        generatedAnnotations.push({
+                          segment: createdSegments[currentSegmentIndex].id,
+                          batch: batchId,
+                          annotator,
+                          start: (+start).toFixed(3),
+                          end: (+end).toFixed(3),
+                          comments,
+                          pod,
+                          kw_ecotype,
+                          call_type,
+                          freq_min: (+freq_min).toFixed(3),
+                          freq_max: (+freq_max).toFixed(3),
+                          sound_id_species,
+                        });
+                      }
+                    }
+                    break;
+                  } else if (
+                    +start >= +createdSegments[currentSegmentIndex].start &&
+                    +end > +createdSegments[currentSegmentIndex].end
+                  ) {
+                    //edge case when the end of the annotation exceeds the segment's
+                    //update the segment with the annotation's end time
+                    const edgeCases = [];
+                    await dispatch(
+                      updateSegment({
+                        end: (+end).toFixed(3),
+                        segmentId: createdSegments[currentSegmentIndex].id,
+                      })
+                    )
+                      .unwrap()
+                      .then((segment) => segment.id)
+                      .then((segmentId) => {
+                        for (const annotator in selectedAnnotators) {
+                          if (selectedAnnotators[annotator]) {
+                            edgeCases.push({
+                              segment: segmentId,
+                              batch: batchId,
+                              annotator,
+                              start: (+start).toFixed(3),
+                              end: (+end).toFixed(3),
+                              comments,
+                              pod,
+                              kw_ecotype,
+                              call_type,
+                              freq_min: (+freq_min).toFixed(3),
+                              freq_max: (+freq_max).toFixed(3),
+                              sound_id_species,
+                            });
+                          }
+                        }
+                      })
+                      .then(() => dispatch(addBatchAnnotations(edgeCases)));
+                    currentSegmentIndex++;
+                    break;
                   }
                 }
-              }
+              });
+              return generatedAnnotations;
+            })
+            .then((generatedAnnotations) => {
+              dispatch(addBatchAnnotations(generatedAnnotations));
             });
-            dispatch(addBatchAnnotations(annotationsArr));
-          });
         }
-        dispatch(updateBatchSegments({ segments: batchSegments, batchId }));
+        return { createdSegmentsIds, batchId };
+      })
+      .then(({ createdSegmentsIds, batchId }) => {
+        dispatch(
+          updateBatchSegments({ segments: createdSegmentsIds, batchId })
+        );
       })
       .then(() => dispatch(fetchUser(id)))
       .then(() => dispatch(fetchBatches()))
@@ -375,13 +421,24 @@ const ImportAnnotations = ({ onClose, open }) => {
                 </Grid>
                 {data.length > 0 && (
                   <Grid item xs={6} container spacing={2}>
-                    <Grid item xs={6}>
-                      <Typography>Created a new Batch</Typography>
-                      <TextField
-                        value={newBatch}
-                        onChange={(e) => setNewBatch(e.target.value)}
-                        variant="outlined"
-                      />
+                    <Grid item container xs={6} spacing={1}>
+                      <Grid item xs={12}>
+                        <Typography>Created a new Batch</Typography>
+                        <TextField
+                          value={newBatch}
+                          onChange={(e) => setNewBatch(e.target.value)}
+                          variant="outlined"
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography>Segment Length(s):</Typography>
+                        <TextField
+                          value={segmentLength}
+                          onChange={(e) => setSegmentLength(e.target.value)}
+                          variant="outlined"
+                          type="number"
+                        />
+                      </Grid>
                     </Grid>
                     <Annotators
                       selectedAnnotators={selectedAnnotators}
