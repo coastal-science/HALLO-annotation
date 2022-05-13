@@ -81,7 +81,10 @@ const BatchDashboard = () => {
         if (res.groups.length === 0) {
           setLoading(false);
           history.push("no-access");
-        } else if (res.groups.includes(1) || res.groups.includes(2)) {
+        } else if (
+          res.groups.includes("Model Developer") ||
+          res.groups.includes("Admin")
+        ) {
           setInfo("Loading annotations");
           await dispatch(fetchAnnotations());
         }

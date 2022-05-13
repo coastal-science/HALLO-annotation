@@ -64,7 +64,7 @@ export const fetchUserList = createAsyncThunk(
         const { data } = await axiosWithAuth.get('/user/');
         if (data.length === 0) return { users: {} };
         else {
-            const annotators = data.filter(i => i.groups.includes(3));
+            const annotators = data.filter(i => i.groups.includes("Annotator"));
             if (annotators.length === 0) return { users: {} };
             else {
                 const { entities } = normalize(annotators, [userEntity]);
@@ -103,10 +103,10 @@ export const userSlice = createSlice({
         },
         [fetchUser.fulfilled]: (state, action) => {
             const { groups, batches, assigned_batches, id, email, user_name } = action.payload;
-            if (groups.includes(1) || groups.includes(2)) {
+            if (groups.includes("Model Developer") || groups.includes("Admin")) {
                 state.isPowerUser = true;
                 state.assignedbatches = batches;
-            } else if (groups.includes(3)) {
+            } else if (groups.includes("Annotator")) {
                 state.assignedbatches = assigned_batches;
             }
             state.id = id;

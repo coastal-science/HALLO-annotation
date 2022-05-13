@@ -35,6 +35,13 @@ class UserSerializer(serializers.ModelSerializer):
     # this would show items that use user id as foreignkey in Batch model
     batches = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
+    # to get users groups data
+    groups = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='name',
+     )  
+
     class Meta:
         model = User
         fields = ('id', 'email', 'user_name', 'password',

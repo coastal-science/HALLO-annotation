@@ -1,4 +1,4 @@
-# Hallo annotation tool
+# HALLO annotation tool
 
 [Introduction](#introduction)
 
@@ -8,19 +8,21 @@
 
 [Deployment in the Cloud](#deployment-in-the-cloud)
 
+[Deleting Local Instance](#deleting-the-local-instance)
+
 ---
 
 ## Introduction
 
-Hallo annotation tool is a web application for analyzing and annotating audio files, consisting of three main modules: front-end(user interface), back-end(data processing) and database. It is licensed under the [GNU GPLv3 licens](https://www.gnu.org/licenses/) and hence freely available for anyone to use and modify.
+The HALLO (Humans and ALgorithms Listening for Orcas) annotation tool is a web application for analyzing and annotating audio files, consisting of three main modules: front-end(user interface), back-end(data processing) and database. It is licensed under the [GNU GPLv3 licens](https://www.gnu.org/licenses/) and hence freely available for anyone to use and modify (including for commercial purposes) as long as the same license is kept. The tool was designed to facilitate the inteaction between machine learning developers and expert bioacousticians working to create automated detectors and classifiers for orcas (Orcinus orca). However, we believe it to be flexible enough to be used or modified for many other projects.
 
 The main functions are:
 
 1. Managing raw audio files, segmenting and compressing them in the back-end and generating the corresponding spectrograms.
 
-2. Users can register as two roles, Model developer and Annotator. Model developer can create a Batch containing audio segments for assigning to one or more Annotators, or import annotations created by machine and assign them to annotators. Annotator can wrok on the spectrogram of the audio segments, review the corresponding annotations, or play back the audio.
+2. Users can register as two roles, Model developer and Annotator. Model developers can create batches containing audio segments, which can then be assigned to one or more Annotators, or import annotations created by machine and assign them to annotators. Annotators can wrok on the spectrogram of the audio segments, review the corresponding annotations, create new annotations, and listen to the audio.
 
-3. The generated data can be exported to csv format.
+3. The generated annotations can be exported to csv format for further analysis or use in machine learning development.
 
 ---
 
@@ -38,9 +40,9 @@ The front-end is built using the React framework and runs in most modern browser
 
 ## Installation
 
-HALLO annotation tool is composed of two parts: front-end and back-end. The back-end needs to be installed on a server that can read data directly, and the front-end can be installed on any server.
+The HALLO annotation tool is composed of two parts: front-end and back-end. The back-end needs to be installed on a server that can read data directly, and the front-end can be installed on any server.
 
-Two methods of installation are described below, one is installed locally as a local development or usage, and the other is installed on a remote server for multiple users to access and use. Both ways use docker as a carrier to install.
+Two methods of installation are described below, one for installing locally (for use in one single computer, for example), and the other is installed on a remote server for multiple users to access and use. Both ways use docker as a carrier to install.
 
 Users can also adapt the code to their needs and deploy it according to their own installation environment.
 
@@ -105,7 +107,7 @@ In the example of a local installation, the HALLO annotation tool runs in a few 
 5. A **superuser** needs to be created at the backend to set up the groups. In the same folder, use this command to get in the backend container.
 
    ```
-   docker-compose -f docker-compose.dev.yml run backend dash
+   docker-compose -f docker-compose.dev.yml --env-file .env.dev run backend dash
    ```
 
    Then create the superuser for the Django Admin:
@@ -116,7 +118,7 @@ In the example of a local installation, the HALLO annotation tool runs in a few 
 
 6. The HALLO annotation tool uses Django's Admin panel to manage user permissions. For the first time, you need to log in and create groups and assign permissions for each group. The Django backend is at: http://localhost:8000/admin/, and you can use the superuser account you just created to log in.
 
-   After logging in, create three user groups in the Groups page in the **following order**.
+   After logging in, create three user groups in the Groups page (**Case sensitive**).
 
    ```
    1. Admin
@@ -124,15 +126,27 @@ In the example of a local installation, the HALLO annotation tool runs in a few 
    3. Annotator
    ```
 
-   You can control and modify the permissions for each group. New users will also need to be manually added to a group here after they have completed registration.
+   New users will need to be manually added to a group here after they have completed registration. Permission control here only affects the operation permissions of the **admin interface**, and does not affect the permissions when using the HALLO annotation software. After users are added to the appropriate group, they will enter the applicable user interface once logging into the software, and the group is only used here to differentiate user roles.
 
-7. The user interface is at: http://localhost:3000/
+   **Permissions for different user groups:**
+
+   - Admin: Has permission to manually create users in the admin interface.
+     <br />
+     <img src="project_plans/screenshots/admin-permissions.png" width=800 alt="Admin user permissions">
+
+     You aslo need to give a admin user permission to log in to the admin screen by setting this user to `is staff`.
+     <br />
+     <img src="project_plans/screenshots/set-user-staff.png" width=600 alt="Set user to staff">
+
+   - Model Developer and Annotators: Keep the permissions blank as they don't have access to the admin interface.
+
+7. The user interface will be available at: http://localhost:3000/
 
 ---
 
 ## Deployment in the cloud
 
-HALLO annotation tool is based on a modular design and can be flexibly deployed on cloud servers.Depending on the specific network topology, multiple deployment options can be implemented. Each service can be deployed on a separate server or a centralized deployment on a single server using a Nigix web server. Below is a brief description of two deployment methods.
+The HALLO annotation tool is based on a modular design and can be flexibly deployed on cloud servers.Depending on the specific network topology, multiple deployment options can be implemented. Each service can be deployed on a separate server or a centralized deployment on a single server using a NGINX web server. Below is a brief description of two deployment methods.
 
 ### Using a vitrual machine with public IP or domain name.
 
@@ -151,3 +165,44 @@ In the configuration of the front-end service, you need to add the corresponding
 In the Django settings of the backend service, you need to adjust the corresponding `MEDIA_URL`, `STATIC_URL` and `LOGIN_REDIRECT_URL` configurations.
 
 The basic setup for this deployment is already done in the code base, and a minimal `docker-compose.sfu.yml` file is provided to demonstrate how to run this configuration.
+
+---
+
+## Deleting the local instance
+
+If you need to remove the software completely, or want to reinstall a fresh version, consider the following steps:
+
+1. Stop the docker containers
+
+   ```
+   docker-compose -f docker-compose.dev.yml --env-file .env.dev down
+   ```
+
+2. List the images that were used by HALLO
+
+   ```
+   $docker image ls
+   REPOSITORY                  TAG       IMAGE ID       CREATED             SIZE
+   hallo-annotation_frontend   latest    900f03c5b6d1   About an hour ago   2.03GB
+   hallo-annotation_backend    latest    5b9eb01ed370   About an hour ago   3.26GB
+   postgres                    13        b67cf799bada   12 days ago         373MB
+   dpage/pgadmin4              latest    40a516ee7dea   3 weeks ago         341MB
+   ```
+
+3. Delete the images by copying the image ids after command `docker image rm`, for example:
+
+   ```
+   docker image rm 900f03c5b6d1 5b9eb01ed370
+   ```
+
+4. Remove the volum (**note that this will clear the database**):
+
+   ```
+   docker volume rm hallo-annotation_db_data hallo-annotation_pgadmin_data
+   ```
+
+5. Use `system prune` to clean up the system (optional):
+
+   ```
+   docker system prune
+   ```
