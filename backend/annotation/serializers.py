@@ -16,7 +16,6 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'end',
             'freq_max',
             'freq_min',
-            'offset',
             'sound_id_species',
             'kw_ecotype',
             'pod',

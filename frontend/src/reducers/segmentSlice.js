@@ -36,10 +36,11 @@ export const removeSegments = createAsyncThunk(
     'segment/removeSegments',
     async ({ checked }) => {
         const ids = checked;
-        const requests = ids.map(id => {
-            return axiosWithAuth.delete(`/segment/${id}/`);
-        });
-        await Promise.all(requests);
+        await axiosWithAuth.delete(`/segment/delete/?ids=${ids.join(",")}`);
+        // const requests = ids.map(id => {
+        //     return axiosWithAuth.delete(`/segment/${id}/`);
+        // });
+        // await Promise.all(requests);
     }
 );
 

@@ -128,6 +128,7 @@ const AnnotationsGrid = () => {
         );
         setSelectedRows(new Set());
         dispatch(fetchAnnotations());
+        setDeleteConfirmation(false);
       })
       .catch((error) => console.error(error));
   };
@@ -217,7 +218,6 @@ const AnnotationsGrid = () => {
       },
       { key: "start", name: "Start", width: 90, editor: TextEditor },
       { key: "end", name: "End", width: 90, editor: TextEditor },
-      { key: "offset", name: "Offset", width: 90, editor: TextEditor },
       { key: "freq_min", name: "Min Freq", width: 90, editor: TextEditor },
       { key: "freq_max", name: "Max Freq", width: 90, editor: TextEditor },
       {

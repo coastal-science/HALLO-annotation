@@ -84,6 +84,9 @@ class FileList(CreateListModelMixin, generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = File.objects.all()
     serializer_class = FileSerializer
+    filterset_fields = {
+        'id': ["in", "exact"]
+    }
 
 
 class FileDetail(generics.RetrieveUpdateDestroyAPIView):
