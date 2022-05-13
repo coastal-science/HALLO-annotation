@@ -1,4 +1,4 @@
-# Hallo annotation tool
+# HALLO annotation tool
 
 [Introduction](#introduction)
 
@@ -14,15 +14,15 @@
 
 ## Introduction
 
-Hallo annotation tool is a web application for analyzing and annotating audio files, consisting of three main modules: front-end(user interface), back-end(data processing) and database. It is licensed under the [GNU GPLv3 licens](https://www.gnu.org/licenses/) and hence freely available for anyone to use and modify.
+The HALLO (Humans and ALgorithms Listening for Orcas) annotation tool is a web application for analyzing and annotating audio files, consisting of three main modules: front-end(user interface), back-end(data processing) and database. It is licensed under the [GNU GPLv3 licens](https://www.gnu.org/licenses/) and hence freely available for anyone to use and modify (including for commercial purposes) as long as the same license is kept. The tool was designed to facilitate the inteaction between machine learning developers and expert bioacousticians working to create automated detectors and classifiers for orcas (Orcinus orca). However, we believe it to be flexible enough to be used or modified for many other projects.
 
 The main functions are:
 
 1. Managing raw audio files, segmenting and compressing them in the back-end and generating the corresponding spectrograms.
 
-2. Users can register as two roles, Model developer and Annotator. Model developer can create a Batch containing audio segments for assigning to one or more Annotators, or import annotations created by machine and assign them to annotators. Annotator can wrok on the spectrogram of the audio segments, review the corresponding annotations, or play back the audio.
+2. Users can register as two roles, Model developer and Annotator. Model developers can create batches containing audio segments, which can then be assigned to one or more Annotators, or import annotations created by machine and assign them to annotators. Annotators can wrok on the spectrogram of the audio segments, review the corresponding annotations, create new annotations, and listen to the audio.
 
-3. The generated data can be exported to csv format.
+3. The generated annotations can be exported to csv format for further analysis or use in machine learning development.
 
 ---
 
@@ -40,9 +40,9 @@ The front-end is built using the React framework and runs in most modern browser
 
 ## Installation
 
-HALLO annotation tool is composed of two parts: front-end and back-end. The back-end needs to be installed on a server that can read data directly, and the front-end can be installed on any server.
+The HALLO annotation tool is composed of two parts: front-end and back-end. The back-end needs to be installed on a server that can read data directly, and the front-end can be installed on any server.
 
-Two methods of installation are described below, one is installed locally as a local development or usage, and the other is installed on a remote server for multiple users to access and use. Both ways use docker as a carrier to install.
+Two methods of installation are described below, one for installing locally (for use in one single computer, for example), and the other is installed on a remote server for multiple users to access and use. Both ways use docker as a carrier to install.
 
 Users can also adapt the code to their needs and deploy it according to their own installation environment.
 
@@ -140,13 +140,13 @@ In the example of a local installation, the HALLO annotation tool runs in a few 
 
    - Model Developer and Annotators: Keep the permissions blank as they don't have access to the admin interface.
 
-7. The user interface is at: http://localhost:3000/
+7. The user interface will be available at: http://localhost:3000/
 
 ---
 
 ## Deployment in the cloud
 
-HALLO annotation tool is based on a modular design and can be flexibly deployed on cloud servers.Depending on the specific network topology, multiple deployment options can be implemented. Each service can be deployed on a separate server or a centralized deployment on a single server using a Nigix web server. Below is a brief description of two deployment methods.
+The HALLO annotation tool is based on a modular design and can be flexibly deployed on cloud servers.Depending on the specific network topology, multiple deployment options can be implemented. Each service can be deployed on a separate server or a centralized deployment on a single server using a NGINX web server. Below is a brief description of two deployment methods.
 
 ### Using a vitrual machine with public IP or domain name.
 
