@@ -26,6 +26,8 @@ export const fetchFiles = createAsyncThunk(
     }
 );
 
+//This is the action that was used for labeling files as included
+//The feature is not being used for HALLO anymore but the code is here for future ref
 export const moveFiles = createAsyncThunk(
     'file/includeFiles',
     async ({ ids, type }) => {

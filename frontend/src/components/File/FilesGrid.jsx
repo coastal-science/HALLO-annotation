@@ -121,10 +121,10 @@ const FilesGrid = () => {
     setVerifyConfirmation(false);
   };
 
-  const handleIncludeExclude = (e, type) => {
-    dispatch(moveFiles({ ids: [...selectedRows], type }));
-    setSelectedRows(new Set());
-  };
+  // const handleIncludeExclude = (e, type) => {
+  //   dispatch(moveFiles({ ids: [...selectedRows], type }));
+  //   setSelectedRows(new Set());
+  // };
 
   const handleDeleteFiles = () => {
     const ids = [...selectedRows].filter((id) => files[id].deleted);
@@ -262,41 +262,46 @@ const FilesGrid = () => {
           return convert(row.filesize).from("b").to("Mb").toFixed(3);
         },
       },
-
       {
-        key: "is_included",
-        name: "included",
-        width: 100,
-        formatter({ row }) {
-          return row.is_included ? (
-            <Chip color="primary" label="Yes" />
-          ) : (
-            <Chip label="No" disabled />
-          );
-        },
-        headerRenderer: (params) => (
-          <FilterRenderer {...params}>
-            {({ filters, ...rest }) => (
-              <FormControl variant="outlined" {...rest}>
-                <Select
-                  value={filters.is_included}
-                  onChange={(e) =>
-                    setFilters({ ...filters, is_included: e.target.value })
-                  }
-                  onKeyDown={selectStopPropagation}
-                >
-                  <MenuItem value={"All"}>All</MenuItem>
-                  <MenuItem value={true}>Yes</MenuItem>
-                  <MenuItem value={false}>No</MenuItem>
-                </Select>
-              </FormControl>
-            )}
-          </FilterRenderer>
-        ),
-        summaryFormatter({ row }) {
-          return <>Yes: {row.included}</>;
-        },
+        key: "duration",
+        name: "Length(s)",
+        width: 150,
       },
+
+      // {
+      //   key: "is_included",
+      //   name: "included",
+      //   width: 100,
+      //   formatter({ row }) {
+      //     return row.is_included ? (
+      //       <Chip color="primary" label="Yes" />
+      //     ) : (
+      //       <Chip label="No" disabled />
+      //     );
+      //   },
+      //   headerRenderer: (params) => (
+      //     <FilterRenderer {...params}>
+      //       {({ filters, ...rest }) => (
+      //         <FormControl variant="outlined" {...rest}>
+      //           <Select
+      //             value={filters.is_included}
+      //             onChange={(e) =>
+      //               setFilters({ ...filters, is_included: e.target.value })
+      //             }
+      //             onKeyDown={selectStopPropagation}
+      //           >
+      //             <MenuItem value={"All"}>All</MenuItem>
+      //             <MenuItem value={true}>Yes</MenuItem>
+      //             <MenuItem value={false}>No</MenuItem>
+      //           </Select>
+      //         </FormControl>
+      //       )}
+      //     </FilterRenderer>
+      //   ),
+      //   summaryFormatter({ row }) {
+      //     return <>Yes: {row.included}</>;
+      //   },
+      // },
       {
         key: "deleted",
         name: "Deleted",
@@ -465,7 +470,7 @@ const FilesGrid = () => {
                 Delete
               </Button>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <Button
                 variant="contained"
                 color="primary"
@@ -474,8 +479,8 @@ const FilesGrid = () => {
               >
                 Include
               </Button>
-            </Grid>
-            <Grid item>
+            </Grid> */}
+            {/* <Grid item>
               <Button
                 variant="contained"
                 color="primary"
@@ -484,7 +489,7 @@ const FilesGrid = () => {
               >
                 Exclude
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
           <Grid item container spacing={1} justify="center" xs={5}>
             <Grid item>
