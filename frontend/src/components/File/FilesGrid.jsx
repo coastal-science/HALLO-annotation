@@ -25,18 +25,16 @@ import {
 import Page from "../UI/Page";
 import SyncIcon from "@material-ui/icons/Sync";
 import PlaylistAddCheckOutlined from "@material-ui/icons/PlaylistAddCheckOutlined";
-import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
-import RemoveCircleOutlineOutlinedIcon from "@material-ui/icons/RemoveCircleOutlineOutlined";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
+import AutorenewOutlinedIcon from "@material-ui/icons/AutorenewOutlined";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteFiles, fetchFiles, moveFiles } from "../../reducers/fileSlice";
+import { deleteFiles, fetchFiles } from "../../reducers/fileSlice";
 import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import { useFocusRef } from "../../hooks/useFocusRef";
 import { w3cwebsocket } from "websocket";
 import { openAlert } from "../../reducers/errorSlice";
 import FileScanResult from "./FileScanResult";
 import Moment from "react-moment";
-import { selectStopPropagation } from "../../utils/dataGridUtils";
 import ExportButton from "../UI/ExportButton";
 import { exportToCsv } from "../../utils/exportUtils";
 import FilterTextField from "../UI/FilterTextField";
@@ -45,6 +43,7 @@ import CloudDownloadOutlinedIcon from "@material-ui/icons/CloudDownloadOutlined"
 import FileDownloading from "./FileDownloading";
 import axiosWithAuth from "../../utils/axiosWithAuth";
 import fileDownload from "js-file-download";
+import AutoGenerate from "../Segment/AutoGenerate";
 
 const filtersInit = {
   filename: "",
@@ -85,6 +84,9 @@ const FilesGrid = () => {
   const [progress, setProgress] = useState(null);
   const [scanConfirmation, setScanConfirmation] = useState(false);
   const [verifyConfirmation, setVerifyConfirmation] = useState(false);
+  const [openAutoGenerate, setOpenAutoGenerate] = useState({
+    autoGenerate: false,
+  });
 
   const dispatch = useDispatch();
 
@@ -99,6 +101,20 @@ const FilesGrid = () => {
     setFilename("");
     setCount(0);
     setUpdated(0);
+  };
+
+  const handleOpenAutoGenerate = (e, name) => {
+    setOpenAutoGenerate({
+      ...open,
+      [name]: true,
+    });
+  };
+
+  const handleCloseAutoGenerate = (name) => {
+    setOpenAutoGenerate({
+      ...open,
+      [name]: false,
+    });
   };
 
   const handleRescan = () => {
@@ -120,11 +136,6 @@ const FilesGrid = () => {
     );
     setVerifyConfirmation(false);
   };
-
-  // const handleIncludeExclude = (e, type) => {
-  //   dispatch(moveFiles({ ids: [...selectedRows], type }));
-  //   setSelectedRows(new Set());
-  // };
 
   const handleDeleteFiles = () => {
     const ids = [...selectedRows].filter((id) => files[id].deleted);
@@ -267,41 +278,6 @@ const FilesGrid = () => {
         name: "Length(s)",
         width: 150,
       },
-
-      // {
-      //   key: "is_included",
-      //   name: "included",
-      //   width: 100,
-      //   formatter({ row }) {
-      //     return row.is_included ? (
-      //       <Chip color="primary" label="Yes" />
-      //     ) : (
-      //       <Chip label="No" disabled />
-      //     );
-      //   },
-      //   headerRenderer: (params) => (
-      //     <FilterRenderer {...params}>
-      //       {({ filters, ...rest }) => (
-      //         <FormControl variant="outlined" {...rest}>
-      //           <Select
-      //             value={filters.is_included}
-      //             onChange={(e) =>
-      //               setFilters({ ...filters, is_included: e.target.value })
-      //             }
-      //             onKeyDown={selectStopPropagation}
-      //           >
-      //             <MenuItem value={"All"}>All</MenuItem>
-      //             <MenuItem value={true}>Yes</MenuItem>
-      //             <MenuItem value={false}>No</MenuItem>
-      //           </Select>
-      //         </FormControl>
-      //       )}
-      //     </FilterRenderer>
-      //   ),
-      //   summaryFormatter({ row }) {
-      //     return <>Yes: {row.included}</>;
-      //   },
-      // },
       {
         key: "deleted",
         name: "Deleted",
@@ -470,26 +446,19 @@ const FilesGrid = () => {
                 Delete
               </Button>
             </Grid>
-            {/* <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddCircleOutlineOutlinedIcon />}
-                onClick={(e) => handleIncludeExclude(e, "include")}
-              >
-                Include
-              </Button>
-            </Grid> */}
-            {/* <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<RemoveCircleOutlineOutlinedIcon />}
-                onClick={(e) => handleIncludeExclude(e)}
-              >
-                Exclude
-              </Button>
-            </Grid> */}
+            {
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AutorenewOutlinedIcon />}
+                  disabled={[...selectedRows].length === 0 ? true : false}
+                  onClick={(e) => handleOpenAutoGenerate(e, "autoGenerate")}
+                >
+                  Auto-Generate Segments
+                </Button>
+              </Grid>
+            }
           </Grid>
           <Grid item container spacing={1} justify="center" xs={5}>
             <Grid item>
@@ -593,6 +562,11 @@ const FilesGrid = () => {
           </DialogActions>
         </DialogContent>
       </Dialog>
+      <AutoGenerate
+        open={openAutoGenerate.autoGenerate}
+        onClose={handleCloseAutoGenerate}
+        ids={selectedRows}
+      />
     </Page>
   );
 };

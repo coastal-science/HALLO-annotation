@@ -28,11 +28,9 @@ import ImportSegments from "./ImportSegments";
 import { fetchAnnotations } from "../../reducers/annotationSlice";
 import NewSegment from "./NewSegment";
 import AddToBatch from "./AddToBatch";
-import AutoGenerate from "./AutoGenerate";
 import AddIcon from "@material-ui/icons/Add";
 import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import PlaylistAddOutlinedIcon from "@material-ui/icons/PlaylistAddOutlined";
-import AutorenewOutlinedIcon from "@material-ui/icons/AutorenewOutlined";
 import ExportButton from "../UI/ExportButton";
 import { exportToCsv } from "../../utils/exportUtils";
 import FilterTextField from "../UI/FilterTextField";
@@ -330,16 +328,6 @@ const SegmentsGrid = () => {
                 Add to Batch
               </Button>
             </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AutorenewOutlinedIcon />}
-                onClick={(e) => handleOpen(e, "autoGenerate")}
-              >
-                Auto Generate
-              </Button>
-            </Grid>
           </Grid>
           <Grid
             item
@@ -390,7 +378,6 @@ const SegmentsGrid = () => {
         open={open.addToBatch}
         setSelectedRows={setSelectedRows}
       />
-      <AutoGenerate onClose={handleClose} open={open.autoGenerate} />
       <ImportSegments onClose={handleClose} open={open.import} />
       <Dialog open={deleteComfirmation}>
         <DialogTitle>Deleting segments</DialogTitle>
