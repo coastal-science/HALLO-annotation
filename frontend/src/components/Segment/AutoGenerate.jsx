@@ -121,15 +121,15 @@ const AutoGenerate = ({ onClose, open, ids }) => {
         generatedArr.push({
           id: index++,
           filename,
-          start: step * segmentsNumber,
-          end: step * segmentsNumber + length,
+          start: step * segmentsNumber * 1,
+          end: step * segmentsNumber * 1 + length * 1,
           duration: length * 1,
           label,
         });
         generatedDurations.push({
           file: selectedFileId,
-          start: step * segmentsNumber,
-          end: step * segmentsNumber + length,
+          start: step * segmentsNumber * 1,
+          end: step * segmentsNumber * 1 + length * 1,
           label,
           model_developer,
         });
