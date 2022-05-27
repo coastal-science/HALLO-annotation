@@ -10,10 +10,16 @@ import AnnotationPanel from "../components/Annotation/AnnotationPanel";
 import { fetchUser, fetchUserList, switchTab } from "../reducers/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchFiles } from "../reducers/fileSlice";
-import { fetchBatches } from "../reducers/batchSlice";
-import { fetchSegments } from "../reducers/segmentSlice";
+import { fetchBatchesByIds } from "../reducers/batchSlice";
+import {
+  fetchSegmentsByCreater,
+  fetchSegmentsByIds,
+} from "../reducers/segmentSlice";
 import { useHistory } from "react-router-dom";
-import { clearRegion, fetchAnnotations } from "../reducers/annotationSlice";
+import {
+  clearRegion,
+  fetchAnnotationsByBatches,
+} from "../reducers/annotationSlice";
 import Tutorial from "../components/Tutorial/Tutorial";
 import TabPanel from "../components/UI/TabPanel";
 import {
@@ -78,36 +84,60 @@ const BatchDashboard = () => {
     dispatch(fetchUser(userId))
       .unwrap()
       .then(async (res) => {
-        if (res.groups.length === 0) {
+        const { batches, assigned_batches, id, groups } = res;
+
+        if (groups.length === 0) {
           setLoading(false);
           history.push("no-access");
         } else if (
-          res.groups.includes("Model Developer") ||
-          res.groups.includes("Admin")
+          groups.includes("Model Developer") ||
+          groups.includes("Admin")
         ) {
+          //if the user is a Admin or developer, fetch the data
+          await dispatch(fetchUserList());
+          setInfo("Loading file list");
+          await dispatch(fetchFiles());
+          setInfo("Loading batches");
+          await dispatch(fetchBatchesByIds(batches));
+          setInfo("Loading segments");
+          await dispatch(fetchSegmentsByCreater(id));
           setInfo("Loading annotations");
-          await dispatch(fetchAnnotations());
+          await dispatch(fetchAnnotationsByBatches(batches));
+          setInfo("");
+          setLoading(false);
+        } else {
+          //if the user is an annotator, fetch the limited data
+          await dispatch(fetchUserList());
+          setInfo("Loading batches");
+          await dispatch(fetchBatchesByIds(assigned_batches))
+            .unwrap()
+            .then(async (res) => {
+              let segmentIds = [];
+              Object.values(res.batches).forEach(
+                (batch) => (segmentIds = [...segmentIds, ...batch.segments])
+              );
+              return segmentIds;
+            })
+            .then(
+              async (segmentIds) =>
+                await dispatch(fetchSegmentsByIds(segmentIds))
+                  .unwrap()
+                  .then(async (res) => {
+                    const fileIds = new Set();
+                    console.log(res.segments);
+                    Object.values(res.segments).forEach((segment) =>
+                      fileIds.add(segment.file)
+                    );
+                    return [...fileIds];
+                  })
+                  .then(async (fileIds) => await dispatch(fetchFiles(fileIds)))
+            )
+            .catch((error) => console.error(error));
+          setInfo("Loading annotations");
+          await dispatch(fetchAnnotationsByBatches(assigned_batches));
+          setInfo("");
+          setLoading(false);
         }
-      })
-      .then(async () => {
-        setInfo("Loading annotator list");
-        await dispatch(fetchUserList());
-      })
-      .then(async () => {
-        setInfo("Loading file list");
-        await dispatch(fetchFiles());
-      })
-      .then(async () => {
-        setInfo("Loading batches");
-        await dispatch(fetchBatches());
-      })
-      .then(async () => {
-        setInfo("Loading segments");
-        await dispatch(fetchSegments());
-      })
-      .then(() => {
-        setInfo("");
-        setLoading(false);
       })
       .catch((error) => console.error(error));
 

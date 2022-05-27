@@ -18,19 +18,19 @@ import { CSVReader } from "react-papaparse";
 import {
   addSegments,
   fetchSegments,
+  fetchSegmentsByCreater,
   updateSegment,
 } from "../../reducers/segmentSlice";
 import { openAlert } from "../../reducers/errorSlice";
 import {
   addBatch,
-  fetchBatches,
+  fetchBatchesByIds,
   updateBatchSegments,
 } from "../../reducers/batchSlice";
 import { formInit as batchDefaultSettings } from "../Batch/BatchSettings";
-import axiosWithAuth from "../../utils/axiosWithAuth";
 import {
   addBatchAnnotations,
-  fetchAnnotations,
+  fetchAnnotationsByBatches,
 } from "../../reducers/annotationSlice";
 import { fetchUser, fetchUserList } from "../../reducers/userSlice";
 import Annotators from "./Annotators";
@@ -65,6 +65,7 @@ const ImportAnnotations = ({ onClose, open }) => {
   const classes = useStyles();
   const { fileNames, files } = useSelector((state) => state.file);
   const { id, annotators, annotatorIds } = useSelector((state) => state.user);
+  const { batchIds } = useSelector((state) => state.batch);
 
   const dispatch = useDispatch();
 
@@ -374,10 +375,10 @@ const ImportAnnotations = ({ onClose, open }) => {
         );
       })
       .then(() => dispatch(fetchUser(id)))
-      .then(() => dispatch(fetchBatches()))
+      .then(() => dispatch(fetchBatchesByIds(batchIds)))
       .then(() => dispatch(fetchUserList()))
-      .then(() => dispatch(fetchSegments()))
-      .then(() => dispatch(fetchAnnotations()))
+      .then(() => dispatch(fetchSegmentsByCreater(id)))
+      .then(() => dispatch(fetchAnnotationsByBatches(batchIds)))
       .then(() => handleCancel())
       .catch((error) => console.error(error));
   };

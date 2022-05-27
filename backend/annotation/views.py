@@ -12,7 +12,7 @@ class AnnotationList(generics.ListCreateAPIView):
         'id': ["in", "exact"],
         'annotator': ["exact"], 
         'segment': ["exact"], 
-        'batch': ["exact"], 
+        'batch': ["in","exact"], 
         'pod': ["exact"], 
         'call_type': ["exact"], 
         'sound_id_species': ["exact"], 

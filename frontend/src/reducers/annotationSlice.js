@@ -27,10 +27,10 @@ const initialState = {
 const annotationEntity = new schema.Entity('annotations');
 const currentAnnotationEntity = new schema.Entity('currentAnnotations');
 
-export const fetchAnnotations = createAsyncThunk(
+export const fetchAnnotationsByBatches = createAsyncThunk(
     'annotation/fetchAnnotationss',
-    async () => {
-        const { data } = await axiosWithAuth.get('/annotation/');
+    async (batches) => {
+        const { data } = await axiosWithAuth.get(`/annotation/?batch__in=${batches.join(",")}`);
         if (data.length === 0) return { annotations: {} };
         else {
             const { entities } = normalize(data, [annotationEntity]);
@@ -207,7 +207,7 @@ export const annotationSlice = createSlice({
         }
     },
     extraReducers: {
-        [fetchAnnotations.fulfilled]: (state, action) => {
+        [fetchAnnotationsByBatches.fulfilled]: (state, action) => {
             state.annotations = action.payload.annotations;
             state.annotationIds = Object.keys(action.payload.annotations);
         },

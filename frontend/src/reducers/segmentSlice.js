@@ -12,10 +12,10 @@ const initialState = {
 
 const segmentEntity = new schema.Entity('segments');
 
-export const fetchSegments = createAsyncThunk(
+export const fetchSegmentsByIds = createAsyncThunk(
     'segment/fetchSegments',
-    async () => {
-        const { data } = await axiosWithAuth.get('/segment/');
+    async (segmentIds) => {
+        const { data } = await axiosWithAuth.get(`/segment/?id__in=${segmentIds.join(",")}`);
         if (data.length === 0) return { segments: {} };
         else {
             const normalized = normalize(data, [segmentEntity]);
@@ -23,6 +23,20 @@ export const fetchSegments = createAsyncThunk(
         }
     }
 );
+
+export const fetchSegmentsByCreater = createAsyncThunk(
+    'segment/fetchSegments',
+    async (model_developer) => {
+        const { data } = await axiosWithAuth.get(`/segment/?model_developer=${model_developer}`);
+        if (data.length === 0) return { segments: {} };
+        else {
+            const normalized = normalize(data, [segmentEntity]);
+            return normalized.entities;
+        }
+    }
+);
+
+
 
 export const addSegments = createAsyncThunk(
     'segment/addSegments',
@@ -84,7 +98,7 @@ export const segmentSlice = createSlice({
         }
     },
     extraReducers: {
-        [fetchSegments.fulfilled]: (state, action) => {
+        [fetchSegmentsByCreater.fulfilled]: (state, action) => {
             state.segments = action.payload.segments;
             state.segmentIds = Object.keys(action.payload.segments);
         },

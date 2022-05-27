@@ -20,21 +20,19 @@ import { useFocusRef } from "../../hooks/useFocusRef";
 import { openAlert } from "../../reducers/errorSlice";
 import Moment from "react-moment";
 import {
-  fetchSegments,
+  fetchSegmentsByCreater,
   handleSelect,
   removeSegments,
 } from "../../reducers/segmentSlice";
 import ImportSegments from "./ImportSegments";
-import { fetchAnnotations } from "../../reducers/annotationSlice";
-import NewSegment from "./NewSegment";
+import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
 import AddToBatch from "./AddToBatch";
-import AddIcon from "@material-ui/icons/Add";
 import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import PlaylistAddOutlinedIcon from "@material-ui/icons/PlaylistAddOutlined";
 import ExportButton from "../UI/ExportButton";
 import { exportToCsv } from "../../utils/exportUtils";
 import FilterTextField from "../UI/FilterTextField";
-import { fetchBatches } from "../../reducers/batchSlice";
+import { fetchBatchesByIds } from "../../reducers/batchSlice";
 
 const openInit = {
   newSegment: false,
@@ -72,11 +70,12 @@ const SegmentsGrid = () => {
   const [selectedRows, setSelectedRows] = useState(() => new Set());
   const [deleteComfirmation, setDeleteConfirmation] = useState(false);
 
+  const { id } = useSelector((state) => state.user);
   const { files } = useSelector((state) => state.file);
   const { segments, segmentIds, checked, loading } = useSelector(
     (state) => state.segment
   );
-  const { batches } = useSelector((state) => state.batch);
+  const { batches, batchIds } = useSelector((state) => state.batch);
 
   const dispatch = useDispatch();
 
@@ -97,9 +96,9 @@ const SegmentsGrid = () => {
   const handleDeleteSegments = () => {
     dispatch(removeSegments({ checked }))
       .unwrap()
-      .then(() => dispatch(fetchSegments()))
-      .then(() => dispatch(fetchAnnotations()))
-      .then(() => dispatch(fetchBatches()))
+      .then(() => dispatch(fetchSegmentsByCreater(id)))
+      .then(() => dispatch(fetchAnnotationsByBatches(batchIds)))
+      .then(() => dispatch(fetchBatchesByIds(batchIds)))
       .then(() => setSelectedRows(() => new Set()))
       .catch((error) => console.error(error));
 
@@ -292,10 +291,10 @@ const SegmentsGrid = () => {
               <Button
                 variant="contained"
                 color="primary"
-                startIcon={<AddIcon />}
-                onClick={(e) => handleOpen(e, "newSegment")}
+                startIcon={<PlaylistAddOutlinedIcon />}
+                onClick={(e) => handleOpen(e, "addToBatch")}
               >
-                New
+                Add to Batch
               </Button>
             </Grid>
             <Grid item>
@@ -316,16 +315,6 @@ const SegmentsGrid = () => {
                 onClick={(e) => handleOpen(e, "import")}
               >
                 Import
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<PlaylistAddOutlinedIcon />}
-                onClick={(e) => handleOpen(e, "addToBatch")}
-              >
-                Add to Batch
               </Button>
             </Grid>
           </Grid>
@@ -372,7 +361,6 @@ const SegmentsGrid = () => {
           </FilterContext.Provider>
         </Grid>
       </Grid>
-      <NewSegment onClose={handleClose} open={open.newSegment} />
       <AddToBatch
         onClose={handleClose}
         open={open.addToBatch}

@@ -14,10 +14,11 @@ const initialState = {
 
 const batchEntity = new schema.Entity('batches');
 
-export const fetchBatches = createAsyncThunk(
-    'batch/fetchBatches',
-    async () => {
-        const { data } = await axiosWithAuth.get(`/batch/`);
+
+export const fetchBatchesByIds = createAsyncThunk(
+    'batch/fetchBatchesByIds',
+    async (batches) => {
+        const { data } = await axiosWithAuth.get(`/batch/?id__in=${batches.join(",")}`);
         if (data.length === 0) return { batches: {} };
         else {
             const normalized = normalize(data, [batchEntity]);
@@ -103,7 +104,7 @@ export const batchSlice = createSlice({
         }
     },
     extraReducers: {
-        [fetchBatches.fulfilled]: (state, action) => {
+        [fetchBatchesByIds.fulfilled]: (state, action) => {
             state.batches = action.payload.batches;
             state.batchIds = Object.keys(action.payload.batches);
             state.batchLoading = false;
@@ -115,8 +116,9 @@ export const batchSlice = createSlice({
         [editBatch.fulfilled]: (state, action) => {
             state.batches[action.payload.data.id] = action.payload.data;
         },
-        [deleteBatch.fulfilled]: (state) => {
+        [deleteBatch.fulfilled]: (state, action) => {
             state.batchLoading = true;
+            state.batchIds = state.batchIds.filter(id => id !== action.payload);
         },
         [updateBatchSegments.fulfilled]: (state, action) => {
             state.batches[action.payload.id] = action.payload;

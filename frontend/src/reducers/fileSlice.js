@@ -16,8 +16,8 @@ const fileEntity = new schema.Entity('files');
 
 export const fetchFiles = createAsyncThunk(
     'file/fetchFiles',
-    async () => {
-        const { data } = await axiosWithAuth.get(`/file/`);
+    async (fileIds) => {
+        const { data } = await axiosWithAuth.get(`/file/${fileIds ? "?id__in=" + fileIds.join(",") : ""}`);
         if (data.length === 0) return { files: {} };
         else {
             const { entities } = normalize(data, [fileEntity]);

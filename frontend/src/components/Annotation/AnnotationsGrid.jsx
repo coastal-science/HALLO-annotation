@@ -17,7 +17,10 @@ import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined"
 import ImportAnnotations from "./ImportAnnotations";
 import Page from "../UI/Page";
 import axiosWithAuth from "../../utils/axiosWithAuth";
-import { fetchAnnotations } from "../../reducers/annotationSlice";
+import {
+  fetchAnnotations,
+  fetchAnnotationsByBatches,
+} from "../../reducers/annotationSlice";
 import { openAlert } from "../../reducers/errorSlice";
 import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import ExportButton from "../UI/ExportButton";
@@ -64,7 +67,7 @@ const AnnotationsGrid = () => {
   const { files } = useSelector((state) => state.file);
   const { annotators } = useSelector((state) => state.user);
   const { segments } = useSelector((state) => state.segment);
-  const { batches } = useSelector((state) => state.batch);
+  const { batches, batchIds } = useSelector((state) => state.batch);
   const [filters, setFilters] = useState(filtersInit);
   const [selectedRows, setSelectedRows] = useState(() => new Set());
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
@@ -127,7 +130,7 @@ const AnnotationsGrid = () => {
           })
         );
         setSelectedRows(new Set());
-        dispatch(fetchAnnotations());
+        dispatch(fetchAnnotationsByBatches(batchIds));
         setDeleteConfirmation(false);
       })
       .catch((error) => console.error(error));
