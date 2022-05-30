@@ -64,6 +64,7 @@ const ImportSegments = ({ onClose, open }) => {
           end,
           label,
           duration,
+          model_developer: id,
         });
       } else {
         errorData.push(filename);
