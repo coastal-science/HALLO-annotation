@@ -248,7 +248,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                   <Typography>{sound_id_species}</Typography>
                 )}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={3} container justify="flex-end" direction="column">
                 <Typography variant="subtitle1">KW ecotype:</Typography>
                 {editable || newBatch ? (
                   <TextField
@@ -261,7 +261,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                   <Typography>{kw_ecotype}</Typography>
                 )}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={3} container justify="flex-end" direction="column">
                 <Typography variant="subtitle1">Call Type:</Typography>
                 {editable || newBatch ? (
                   <TextField
@@ -274,7 +274,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                   <Typography>{call_type}</Typography>
                 )}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item container xs={3} justify="flex-end" direction="column">
                 <Typography variant="subtitle1">Pod:</Typography>
                 {editable || newBatch ? (
                   <TextField
@@ -304,7 +304,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                 )}
               </Grid>
 
-              <Grid item xs={9}>
+              <Grid item xs={9} container justify="flex-end" direction="column">
                 <Typography variant="subtitle1">Comments:</Typography>
                 {editable || newBatch ? (
                   <TextField
