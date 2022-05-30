@@ -39,7 +39,7 @@ const Progress = ({ batchId }) => {
             </Grid>
           )}
           {annotators.length !== 0 && (
-            <Grid item>
+            <Grid item xs={12}>
               <Typography variant="subtitle1">Progress:</Typography>
             </Grid>
           )}
