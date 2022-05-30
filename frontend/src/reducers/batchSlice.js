@@ -116,10 +116,6 @@ export const batchSlice = createSlice({
         [editBatch.fulfilled]: (state, action) => {
             state.batches[action.payload.data.id] = action.payload.data;
         },
-        [deleteBatch.fulfilled]: (state, action) => {
-            state.batchLoading = true;
-            state.batchIds = state.batchIds.filter(id => id !== action.payload);
-        },
         [updateBatchSegments.fulfilled]: (state, action) => {
             state.batches[action.payload.id] = action.payload;
         }

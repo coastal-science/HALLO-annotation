@@ -123,13 +123,14 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
       dispatch(
         addBatch({ settings, selectedAnnotators, annotatorIds, annotators })
       )
-        .then(() => {
+        .unwrap()
+        .then((res) => {
+          dispatch(fetchBatchesByIds([res.data.id, ...batchIds]));
+          dispatch(fetchUser(id));
+          dispatch(fetchUserList());
           setForm(formInit);
           onClose();
         })
-        .then(() => dispatch(fetchUser(id)))
-        .then(() => dispatch(fetchUserList()))
-        .then(() => dispatch(fetchBatchesByIds(batchIds)))
         .catch((error) => console.log(error));
     }
   };

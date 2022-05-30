@@ -48,13 +48,15 @@ const Batches = () => {
   };
 
   const handleOK = () => {
-    dispatch(deleteBatch(batchId))
-      .then(() => dispatch(fetchUser(id)))
-      .then(() => dispatch(fetchUserList()))
-      .then(() => dispatch(fetchBatchesByIds(batchIds)))
-      .then(() => dispatch(fetchSegmentsByCreater(id)))
-      .then(() => dispatch(fetchAnnotationsByBatches(batchIds)));
     setOpen(false);
+    dispatch(deleteBatch(batchId)).then(() => {
+      const filteredIds = batchIds.filter((id) => id !== String(batchId));
+      dispatch(fetchUser(id));
+      dispatch(fetchUserList());
+      dispatch(fetchBatchesByIds(filteredIds));
+      dispatch(fetchSegmentsByCreater(id));
+      dispatch(fetchAnnotationsByBatches(filteredIds));
+    });
   };
 
   return (

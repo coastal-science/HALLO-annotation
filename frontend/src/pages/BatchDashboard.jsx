@@ -116,7 +116,7 @@ const BatchDashboard = () => {
               Object.values(res.batches).forEach(
                 (batch) => (segmentIds = [...segmentIds, ...batch.segments])
               );
-              return segmentIds;
+              return [...new Set(segmentIds)];
             })
             .then(
               async (segmentIds) =>
