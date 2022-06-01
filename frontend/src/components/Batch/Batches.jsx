@@ -49,9 +49,9 @@ const Batches = () => {
 
   const handleOK = () => {
     setOpen(false);
-    dispatch(deleteBatch(batchId)).then(() => {
+    dispatch(deleteBatch(batchId)).then(async () => {
       const filteredIds = batchIds.filter((id) => id !== String(batchId));
-      dispatch(fetchBatchesByIds(filteredIds));
+      await dispatch(fetchBatchesByIds(filteredIds));
       dispatch(fetchUser(id));
       dispatch(fetchUserList());
       dispatch(fetchSegmentsByCreater(id));
