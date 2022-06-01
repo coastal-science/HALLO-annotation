@@ -59,10 +59,6 @@ export const removeSegments = createAsyncThunk(
     async ({ checked }) => {
         const ids = checked;
         await axiosWithAuth.delete(`/segment/delete/?ids=${ids.join(",")}`);
-        // const requests = ids.map(id => {
-        //     return axiosWithAuth.delete(`/segment/${id}/`);
-        // });
-        // await Promise.all(requests);
     }
 );
 
@@ -98,7 +94,12 @@ export const segmentSlice = createSlice({
         }
     },
     extraReducers: {
+
+        [fetchSegmentsByCreater.pending]: (state, action) => {
+            state.loading = true;
+        },
         [fetchSegmentsByCreater.fulfilled]: (state, action) => {
+            state.loading = false;
             state.segments = action.payload.segments;
             state.segmentIds = Object.keys(action.payload.segments);
         },
@@ -119,6 +120,7 @@ export const segmentSlice = createSlice({
             state.checked = [];
         },
         [addSegmentsToBatches.fulfilled]: (state) => {
+            state.loading = false;
             state.checked = [];
         },
         [fetchAudio.fulfilled]: (state, action) => {
