@@ -31,9 +31,9 @@ const currentAnnotationEntity = new schema.Entity('currentAnnotations');
 export const fetchAnnotationsByBatches = createAsyncThunk(
     'annotation/fetchAnnotationss',
     async (batches) => {
-        const { data } = await axiosWithAuth.get(`/annotation/?batch__in=${batches.join(",")}`);
-        if (data.length === 0) return { annotations: {} };
+        if (batches.length === 0) return { annotations: {} };
         else {
+            const { data } = await axiosWithAuth.get(`/annotation/?batch__in=${batches.join(",")}`);
             const { entities } = normalize(data, [annotationEntity]);
             return entities;
         }
