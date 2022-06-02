@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Card,
@@ -13,7 +13,7 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import { DataGrid } from "@material-ui/data-grid";
+import DataGrid from "react-data-grid";
 import { CSVReader } from "react-papaparse";
 import {
   addSegments,
@@ -46,20 +46,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const columns = [
-  { field: "filename", headerName: "File Name", width: 250 },
-  { field: "start", headerName: "Start", width: 100 },
-  { field: "end", headerName: "End", width: 100 },
-  { field: "duration", headerName: "Duration", width: 120 },
-  { field: "freq_min", headerName: "Freq Min", width: 120 },
-  { field: "freq_max", headerName: "Freq Max", width: 120 },
-  { field: "sound_id_species", headerName: "Sound id species", width: 120 },
-  { field: "kw_ecotype", headerName: "KW ecotype", width: 120 },
-  { field: "pod", headerName: "Pod", width: 120 },
-  { field: "call_type", headerName: "Call type", width: 120 },
-  { field: "comments", headerName: "Comments", width: 120 },
-];
-
 const ImportAnnotations = ({ onClose, open }) => {
   const classes = useStyles();
   const { fileNames, files } = useSelector((state) => state.file);
@@ -73,8 +59,7 @@ const ImportAnnotations = ({ onClose, open }) => {
   const [loading, setLoading] = useState(false);
   const [segmentLength, setSegmentLength] = useState(60);
   const processedData = useRef(null);
-  const processedDataArr = useRef(null);
-  const selectedAnnotationsArr = useRef(null);
+  const processedDataArr = useRef([]);
   const selectAnnotatorInit = {};
 
   annotatorIds.forEach((id) => {
@@ -177,18 +162,8 @@ const ImportAnnotations = ({ onClose, open }) => {
     console.log(data);
   };
 
-  const handleSelectMultiple = (param) => {
-    const { selectionModel } = param;
-    selectedAnnotationsArr.current = selectionModel.map(
-      (id) => processedDataArr.current[id]
-    );
-  };
-
   const handleSubmit = async () => {
-    if (
-      !selectedAnnotationsArr.current ||
-      selectedAnnotationsArr.current.length === 0
-    ) {
+    if (!processedDataArr.current || processedDataArr.current.length === 0) {
       dispatch(
         openAlert({
           severity: "error",
@@ -225,7 +200,7 @@ const ImportAnnotations = ({ onClose, open }) => {
       model_developer: id,
     };
 
-    const selectedAnnotations = processData(selectedAnnotationsArr.current);
+    const selectedAnnotations = processData(processedDataArr.current);
 
     setLoading(true);
 
@@ -269,8 +244,9 @@ const ImportAnnotations = ({ onClose, open }) => {
 
           await dispatch(addSegments({ durations: generatedSegments }))
             .unwrap()
-            .then(async (createdSegments) => {
+            .then(async (res) => {
               //get ids from the created segments
+              const createdSegments = Object.values(res.segments);
               createdSegments.forEach((segment) =>
                 createdSegmentsIds.push(segment.id)
               );
@@ -372,13 +348,16 @@ const ImportAnnotations = ({ onClose, open }) => {
         dispatch(
           updateBatchSegments({ segments: createdSegmentsIds, batchId })
         );
+        return batchId;
       })
-      .then(() => dispatch(fetchUser(id)))
-      .then(() => dispatch(fetchBatchesByIds(batchIds)))
-      .then(() => dispatch(fetchUserList()))
-      .then(() => dispatch(fetchSegmentsByCreater(id)))
-      .then(() => dispatch(fetchAnnotationsByBatches(batchIds)))
-      .then(() => handleCancel())
+      .then((batchId) => {
+        dispatch(fetchUser(id));
+        dispatch(fetchBatchesByIds([...batchIds, batchId]));
+        dispatch(fetchUserList());
+        dispatch(fetchSegmentsByCreater(id));
+        dispatch(fetchAnnotationsByBatches([...batchIds, batchId]));
+        handleCancel();
+      })
       .catch((error) => console.error(error));
   };
 
@@ -387,8 +366,36 @@ const ImportAnnotations = ({ onClose, open }) => {
     setNewBatch("");
     setLoading(false);
     onClose("import");
-    selectedAnnotationsArr.current = [];
+    processedDataArr.current = [];
   };
+
+  const columns = [
+    {
+      key: "filename",
+      name: "File Name",
+      width: 250,
+      summaryFormatter({ row }) {
+        return <>Total: {row.totalAnnotations} annotations</>;
+      },
+    },
+    { key: "start", name: "Start", width: 100 },
+    { key: "end", name: "End", width: 100 },
+    { key: "duration", name: "Duration", width: 120 },
+    { key: "freq_min", name: "Freq Min", width: 120 },
+    { key: "freq_max", name: "Freq Max", width: 120 },
+    { key: "sound_id_species", name: "Sound id species", width: 120 },
+    { key: "kw_ecotype", name: "KW ecotype", width: 120 },
+    { key: "pod", name: "Pod", width: 120 },
+    { key: "call_type", name: "Call type", width: 120 },
+    { key: "comments", name: "Comments", width: 120 },
+  ];
+
+  const summaryRows = useMemo(() => {
+    const summaryRow = {
+      totalAnnotations: processedDataArr.current.length,
+    };
+    return [summaryRow];
+  }, [processedDataArr.current]);
 
   return (
     <Modal
@@ -406,8 +413,8 @@ const ImportAnnotations = ({ onClose, open }) => {
                 <CircularProgress />
               </Grid>
             ) : (
-              <Grid container spacing={2}>
-                <Grid item xs={6}>
+              <Grid container spacing={2} justify="center">
+                <Grid item xs={4}>
                   <CSVReader
                     onDrop={handleOnDrop}
                     onError={handleOnError}
@@ -420,18 +427,18 @@ const ImportAnnotations = ({ onClose, open }) => {
                   </CSVReader>
                 </Grid>
                 {data.length > 0 && (
-                  <Grid item xs={6} container spacing={2}>
+                  <Grid item xs={8} container spacing={2}>
                     <Grid item container xs={6} spacing={1}>
-                      <Grid item xs={12}>
-                        <Typography>Created a new Batch</Typography>
+                      <Grid item xs={10} container direction="column">
+                        <Typography paragraph>Created a new Batch:</Typography>
                         <TextField
                           value={newBatch}
                           onChange={(e) => setNewBatch(e.target.value)}
                           variant="outlined"
                         />
                       </Grid>
-                      <Grid item xs={12}>
-                        <Typography>Segment Length(s):</Typography>
+                      <Grid item xs={10} container direction="column">
+                        <Typography paragraph>Segment Length(s):</Typography>
                         <TextField
                           value={segmentLength}
                           onChange={(e) => setSegmentLength(e.target.value)}
@@ -446,6 +453,17 @@ const ImportAnnotations = ({ onClose, open }) => {
                     />
                   </Grid>
                 )}
+
+                <Grid item xs={12}>
+                  {data.length > 0 && (
+                    <DataGrid
+                      rows={data}
+                      columns={columns}
+                      style={{ height: 250 }}
+                      summaryRows={summaryRows}
+                    />
+                  )}
+                </Grid>
                 {data.length > 0 && (
                   <Grid item container xs={6} spacing={1}>
                     <Grid item>
@@ -468,16 +486,6 @@ const ImportAnnotations = ({ onClose, open }) => {
                     </Grid>
                   </Grid>
                 )}
-                <Grid item xs={12} style={{ height: 500 }}>
-                  {data.length > 0 && (
-                    <DataGrid
-                      rows={data}
-                      columns={columns}
-                      checkboxSelection
-                      onSelectionModelChange={handleSelectMultiple}
-                    />
-                  )}
-                </Grid>
               </Grid>
             )}
           </CardContent>
