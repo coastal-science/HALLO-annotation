@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosWithAuth, { backendURL } from '.././utils/axiosWithAuth';
 import { normalize, schema } from 'normalizr';
+import { queryFormater } from '../utils/segmentUtils';
 
 const initialState = {
     segments: {},
@@ -59,7 +60,7 @@ export const removeSegments = createAsyncThunk(
     'segment/removeSegments',
     async ({ checked }) => {
         const ids = checked;
-        await axiosWithAuth.delete(`/segment/delete/?ids=${ids.join(",")}`);
+        queryFormater(ids).forEach(sub => axiosWithAuth.delete(`/segment/delete/?ids=${sub.join(",")}`));
         return ids;
     }
 );
