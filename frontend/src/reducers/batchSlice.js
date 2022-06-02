@@ -18,9 +18,9 @@ const batchEntity = new schema.Entity('batches');
 export const fetchBatchesByIds = createAsyncThunk(
     'batch/fetchBatchesByIds',
     async (batches) => {
-        const { data } = await axiosWithAuth.get(`/batch/?id__in=${batches.join(",")}`);
-        if (data.length === 0) return { batches: {} };
+        if (batches.length === 0) return { batches: {} };
         else {
+            const { data } = await axiosWithAuth.get(`/batch/?id__in=${batches.join(",")}`);
             const normalized = normalize(data, [batchEntity]);
             return normalized.entities;
         }
@@ -118,7 +118,7 @@ export const batchSlice = createSlice({
         },
         [updateBatchSegments.fulfilled]: (state, action) => {
             state.batches[action.payload.id] = action.payload;
-        }
+        },
     }
 });
 

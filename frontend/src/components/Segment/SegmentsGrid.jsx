@@ -91,9 +91,11 @@ const SegmentsGrid = () => {
   const handleDeleteSegments = () => {
     dispatch(removeSegments({ checked }))
       .unwrap()
-      .then(() => dispatch(fetchAnnotationsByBatches(batchIds)))
-      .then(() => dispatch(fetchBatchesByIds(batchIds)))
-      .then(() => setSelectedRows(() => new Set()))
+      .then(() => {
+        dispatch(fetchBatchesByIds(batchIds));
+        dispatch(fetchAnnotationsByBatches(batchIds));
+        setSelectedRows(() => new Set());
+      })
       .catch((error) => console.error(error));
 
     setDeleteConfirmation(false);

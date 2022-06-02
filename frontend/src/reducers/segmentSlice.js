@@ -16,12 +16,13 @@ const segmentEntity = new schema.Entity('segments');
 export const fetchSegmentsByIds = createAsyncThunk(
     'segment/fetchSegments',
     async (segmentIds) => {
-        const { data } = await axiosWithAuth.get(`/segment/?id__in=${segmentIds.join(",")}`);
-        if (data.length === 0) return { segments: {} };
+        if (segmentIds.length === 0) return { segments: {} };
         else {
+            const { data } = await axiosWithAuth.get(`/segment/?id__in=${segmentIds.join(",")}`);
             const normalized = normalize(data, [segmentEntity]);
             return normalized.entities;
         }
+
     }
 );
 

@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from .models import Annotation
 from .serializers import AnnotationSerializer
 from rest_framework.permissions import IsAuthenticated
