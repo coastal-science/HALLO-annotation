@@ -16,8 +16,7 @@ import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import ImportAnnotations from "./ImportAnnotations";
 import Page from "../UI/Page";
-import axiosWithAuth from "../../utils/axiosWithAuth";
-import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
+import { deleteAnnotation } from "../../reducers/annotationSlice";
 import { openAlert } from "../../reducers/errorSlice";
 import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import ExportButton from "../UI/ExportButton";
@@ -64,7 +63,7 @@ const AnnotationsGrid = () => {
   const { files } = useSelector((state) => state.file);
   const { annotators } = useSelector((state) => state.user);
   const { segments } = useSelector((state) => state.segment);
-  const { batches, batchIds } = useSelector((state) => state.batch);
+  const { batches } = useSelector((state) => state.batch);
   const [filters, setFilters] = useState(filtersInit);
   const [selectedRows, setSelectedRows] = useState(() => new Set());
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
@@ -113,24 +112,18 @@ const AnnotationsGrid = () => {
     }
   };
 
-  const handleDeleteAnnotations = () => {
-    const selectedAnnotations = [...selectedRows];
+  const handleDeleteAnnotations = async () => {
+    const ids = [...selectedRows];
 
-    const requests = selectedAnnotations.map((annotationId) =>
-      axiosWithAuth.delete(`/annotation/${annotationId}`)
-    );
-    Promise.all(requests)
-      .then(() => {
-        dispatch(
-          openAlert({
-            message: `${selectedAnnotations.length} annotations has been deleted`,
-          })
-        );
-        setSelectedRows(new Set());
-        dispatch(fetchAnnotationsByBatches(batchIds));
-        setDeleteConfirmation(false);
+    await dispatch(deleteAnnotation({ ids }));
+    dispatch(
+      openAlert({
+        message: `${ids.length} annotations has been deleted`,
       })
-      .catch((error) => console.error(error));
+    );
+
+    setSelectedRows(new Set());
+    setDeleteConfirmation(false);
   };
 
   const rows = useMemo(() => {

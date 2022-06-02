@@ -130,7 +130,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
   };
 
   const handleDelete = () => {
-    dispatch(deleteAnnotation(id));
+    dispatch(deleteAnnotation({ ids: [id] }));
   };
 
   useEffect(() => {
