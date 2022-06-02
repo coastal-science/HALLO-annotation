@@ -14,10 +14,7 @@ import {
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid from "react-data-grid";
-import {
-  addSegments,
-  fetchSegmentsByCreater,
-} from "../../reducers/segmentSlice";
+import { addSegments } from "../../reducers/segmentSlice";
 import { switchTab } from "../../reducers/userSlice";
 
 const useStyles = makeStyles(() => ({
@@ -145,9 +142,7 @@ const AutoGenerate = ({ onClose, open, ids }) => {
 
   const handleSubmit = () => {
     if (durations.length > 0) {
-      dispatch(addSegments({ durations })).then(() =>
-        dispatch(fetchSegmentsByCreater(model_developer))
-      );
+      dispatch(addSegments({ durations }));
       setDurations([]);
       onClose("autoGenerate");
       setLength(60);

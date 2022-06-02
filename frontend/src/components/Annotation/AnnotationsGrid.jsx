@@ -17,10 +17,7 @@ import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined"
 import ImportAnnotations from "./ImportAnnotations";
 import Page from "../UI/Page";
 import axiosWithAuth from "../../utils/axiosWithAuth";
-import {
-  fetchAnnotations,
-  fetchAnnotationsByBatches,
-} from "../../reducers/annotationSlice";
+import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
 import { openAlert } from "../../reducers/errorSlice";
 import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import ExportButton from "../UI/ExportButton";

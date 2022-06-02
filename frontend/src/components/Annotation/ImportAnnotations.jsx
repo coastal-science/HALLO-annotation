@@ -17,7 +17,6 @@ import { DataGrid } from "@material-ui/data-grid";
 import { CSVReader } from "react-papaparse";
 import {
   addSegments,
-  fetchSegments,
   fetchSegmentsByCreater,
   updateSegment,
 } from "../../reducers/segmentSlice";

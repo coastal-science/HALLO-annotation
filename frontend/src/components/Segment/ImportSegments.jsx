@@ -14,10 +14,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid from "react-data-grid";
 import { CSVReader } from "react-papaparse";
-import {
-  addSegments,
-  fetchSegmentsByCreater,
-} from "../../reducers/segmentSlice";
+import { addSegments } from "../../reducers/segmentSlice";
 import { openAlert } from "../../reducers/errorSlice";
 
 const useStyles = makeStyles(() => ({
@@ -123,13 +120,11 @@ const ImportSegments = ({ onClose, open }) => {
   };
 
   const handleSubmit = () => {
-    dispatch(addSegments({ durations: segments })).then(() => {
-      dispatch(fetchSegmentsByCreater(id));
-      setSegments([]);
-      onClose("import");
-      setErrorList([]);
-      setPadding(0);
-    });
+    dispatch(addSegments({ durations: segments }));
+    setSegments([]);
+    onClose("import");
+    setErrorList([]);
+    setPadding(0);
   };
 
   const handleCancel = () => {

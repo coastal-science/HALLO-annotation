@@ -25,6 +25,7 @@ const NoAccess = () => {
           history.push("batch-dashboard");
         }
       });
+    // eslint-disable-next-line
   }, []);
   return (
     <Box

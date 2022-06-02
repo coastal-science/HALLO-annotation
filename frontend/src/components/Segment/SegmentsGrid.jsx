@@ -19,11 +19,7 @@ import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import { useFocusRef } from "../../hooks/useFocusRef";
 import { openAlert } from "../../reducers/errorSlice";
 import Moment from "react-moment";
-import {
-  fetchSegmentsByCreater,
-  handleSelect,
-  removeSegments,
-} from "../../reducers/segmentSlice";
+import { handleSelect, removeSegments } from "../../reducers/segmentSlice";
 import ImportSegments from "./ImportSegments";
 import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
 import AddToBatch from "./AddToBatch";
@@ -70,7 +66,6 @@ const SegmentsGrid = () => {
   const [selectedRows, setSelectedRows] = useState(() => new Set());
   const [deleteComfirmation, setDeleteConfirmation] = useState(false);
 
-  const { id } = useSelector((state) => state.user);
   const { files } = useSelector((state) => state.file);
   const { segments, segmentIds, checked, loading } = useSelector(
     (state) => state.segment
@@ -96,7 +91,6 @@ const SegmentsGrid = () => {
   const handleDeleteSegments = () => {
     dispatch(removeSegments({ checked }))
       .unwrap()
-      .then(() => dispatch(fetchSegmentsByCreater(id)))
       .then(() => dispatch(fetchAnnotationsByBatches(batchIds)))
       .then(() => dispatch(fetchBatchesByIds(batchIds)))
       .then(() => setSelectedRows(() => new Set()))
@@ -274,13 +268,12 @@ const SegmentsGrid = () => {
         (batchId) => batches[batchId].batch_name
       );
       batchNames = batchNames.length > 0 ? batchNames.join(", ") : "NA";
-
       return { start, end, filename, duration, batchNames, ...rest };
     });
 
     setRows(formatedArr);
     // eslint-disable-next-line
-  }, [segments]);
+  }, [segmentIds]);
 
   return (
     <Page title="Segments">

@@ -42,7 +42,8 @@ export const addSegments = createAsyncThunk(
     'segment/addSegments',
     async ({ durations }) => {
         const { data } = await axiosWithAuth.post('/segment/', durations);
-        return data;
+        const normalized = normalize(data, [segmentEntity]);
+        return normalized.entities;
     }
 );
 
@@ -59,6 +60,7 @@ export const removeSegments = createAsyncThunk(
     async ({ checked }) => {
         const ids = checked;
         await axiosWithAuth.delete(`/segment/delete/?ids=${ids.join(",")}`);
+        return ids;
     }
 );
 
@@ -106,8 +108,10 @@ export const segmentSlice = createSlice({
         [addSegments.pending]: (state) => {
             state.loading = true;
         },
-        [addSegments.fulfilled]: (state) => {
+        [addSegments.fulfilled]: (state, action) => {
             state.loading = false;
+            state.segments = { ...action.payload.segments, ...state.segments };
+            state.segmentIds = [...Object.keys(action.payload.segments), ...state.segmentIds];
         },
         [addSegments.rejected]: (state, action) => {
             console.log(action.error);
@@ -115,7 +119,9 @@ export const segmentSlice = createSlice({
         [removeSegments.pending]: (state) => {
             state.loading = true;
         },
-        [removeSegments.fulfilled]: (state) => {
+        [removeSegments.fulfilled]: (state, action) => {
+            const ids = action.payload;
+            state.segmentIds = state.segmentIds.filter(id => !ids.includes(+id));
             state.loading = false;
             state.checked = [];
         },

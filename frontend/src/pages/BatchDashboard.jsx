@@ -124,7 +124,6 @@ const BatchDashboard = () => {
                   .unwrap()
                   .then(async (res) => {
                     const fileIds = new Set();
-                    console.log(res.segments);
                     Object.values(res.segments).forEach((segment) =>
                       fileIds.add(segment.file)
                     );
