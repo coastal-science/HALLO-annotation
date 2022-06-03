@@ -231,10 +231,14 @@ export const annotationSlice = createSlice({
             state.selectedRegion = null;
             state.pending = false;
         },
+        [fetchCurrentAnnotations.pending]: (state, action) => {
+            state.pending = true;
+        },
         [fetchCurrentAnnotations.fulfilled]: (state, action) => {
             state.currentAnnotations = action.payload.currentAnnotations;
             state.currentAnnotationIds = Object.keys(action.payload.currentAnnotations);
             state.selectedRegion = null;
+            state.pending = false;
         },
         [fetchBatchProgress.pending]: (state) => {
             state.progressMapLoading = true;
