@@ -344,18 +344,18 @@ const ImportAnnotations = ({ onClose, open }) => {
         }
         return { createdSegmentsIds, batchId };
       })
-      .then(({ createdSegmentsIds, batchId }) => {
-        dispatch(
+      .then(async ({ createdSegmentsIds, batchId }) => {
+        await dispatch(
           updateBatchSegments({ segments: createdSegmentsIds, batchId })
         );
         return batchId;
       })
-      .then((batchId) => {
-        dispatch(fetchUser(id));
-        dispatch(fetchBatchesByIds([...batchIds, batchId]));
-        dispatch(fetchUserList());
-        dispatch(fetchSegmentsByCreater(id));
-        dispatch(fetchAnnotationsByBatches([...batchIds, batchId]));
+      .then(async (batchId) => {
+        await dispatch(fetchUser(id));
+        await dispatch(fetchBatchesByIds([...batchIds, batchId]));
+        await dispatch(fetchUserList());
+        await dispatch(fetchSegmentsByCreater(id));
+        await dispatch(fetchAnnotationsByBatches([...batchIds, batchId]));
         handleCancel();
       })
       .catch((error) => console.error(error));
@@ -395,6 +395,7 @@ const ImportAnnotations = ({ onClose, open }) => {
       totalAnnotations: processedDataArr.current.length,
     };
     return [summaryRow];
+    // eslint-disable-next-line
   }, [processedDataArr.current]);
 
   return (
