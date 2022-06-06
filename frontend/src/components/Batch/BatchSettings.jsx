@@ -110,7 +110,7 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
     setSelectedAnnotators(updatedSelectedAnnotators);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const settings = { ...form, model_developer: id };
     if (!form.batch_name) {
       dispatch(
@@ -120,18 +120,19 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
         })
       );
     } else {
-      dispatch(
-        addBatch({ settings, selectedAnnotators, annotatorIds, annotators })
-      )
-        .unwrap()
-        .then((res) => {
-          dispatch(fetchBatchesByIds([res.data.id, ...batchIds]));
-          dispatch(fetchUser(id));
-          dispatch(fetchUserList());
-          setForm(formInit);
-          onClose();
-        })
-        .catch((error) => console.log(error));
+      try {
+        const { data } = await dispatch(
+          addBatch({ settings, selectedAnnotators, annotatorIds, annotators })
+        ).unwrap();
+
+        dispatch(fetchBatchesByIds([data.id, ...batchIds]));
+        dispatch(fetchUser(id));
+        dispatch(fetchUserList());
+        setForm(formInit);
+        onClose();
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
