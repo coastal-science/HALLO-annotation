@@ -34,6 +34,7 @@ export const fetchAnnotationsByBatches = createAsyncThunk(
         if (batches.length === 0) return { annotations: {} };
         else {
             const { data } = await axiosWithAuth.get(`/annotation/?batch__in=${batches.join(",")}`);
+            if (data.length === 0) return { annotations: {} };
             const { entities } = normalize(data, [annotationEntity]);
             return entities;
         }

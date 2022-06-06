@@ -5,8 +5,7 @@ export const queryFormater = (ids) => {
     for (let i = 0; i < queryNumber; i++) {
         formatedIdsArray.push(ids.slice(i * 2000, (i + 1) * 2000));
     }
-
-    formatedIdsArray.push(ids.slice(queryNumber * 2000));
+    if (ids[queryNumber * 2000]) formatedIdsArray.push(ids.slice(queryNumber * 2000));
     return formatedIdsArray;
 };
 
