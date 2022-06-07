@@ -19,6 +19,7 @@ import {
   clearRegion,
   deleteAnnotation,
   editAnnotation,
+  fetchCurrentAnnotations,
   saveAnnotation,
   updateAnnotation,
 } from "../../reducers/annotationSlice";
@@ -129,8 +130,10 @@ const Annotation = ({ annotation, newBatch, editable }) => {
     dispatch(cancelEditAnnotation(id));
   };
 
-  const handleDelete = () => {
-    dispatch(deleteAnnotation({ ids: [id] }));
+  const handleDelete = async () => {
+    const { batch: batchId, segment: segmentId, annotator } = annotation;
+    await dispatch(deleteAnnotation({ ids: [id] }));
+    await dispatch(fetchCurrentAnnotations({ batchId, segmentId, annotator }));
   };
 
   useEffect(() => {
