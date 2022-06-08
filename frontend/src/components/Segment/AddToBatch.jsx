@@ -14,10 +14,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import {
   addSegmentsToBatches,
-  fetchSegments,
+  fetchSegmentsByCreater,
 } from "../../reducers/segmentSlice";
 import DataGrid, { SelectColumn } from "react-data-grid";
-import { fetchBatches } from "../../reducers/batchSlice";
+import { fetchBatchesByIds } from "../../reducers/batchSlice";
 import { useMemo } from "react";
 
 const useStyles = makeStyles(() => ({
@@ -33,9 +33,11 @@ const AddToBatch = ({ onClose, open, setSelectedRows }) => {
 
   const [checkedBatches, setCheckedBatches] = useState(() => new Set());
   const dispatch = useDispatch();
-  const { batches } = useSelector((state) => state.batch);
+  const { batches, batchIds } = useSelector((state) => state.batch);
   const { checked } = useSelector((state) => state.segment);
-  const { annotators, assignedbatches } = useSelector((state) => state.user);
+  const { annotators, assignedbatches, id } = useSelector(
+    (state) => state.user
+  );
 
   const handleSubmit = () => {
     const checkedBatchIds = [...checkedBatches];
@@ -43,8 +45,8 @@ const AddToBatch = ({ onClose, open, setSelectedRows }) => {
     dispatch(
       addSegmentsToBatches({ checkedBatchIds, checkedSegmentIds, batches })
     )
-      .then(() => dispatch(fetchSegments()))
-      .then(() => dispatch(fetchBatches()));
+      .then(() => dispatch(fetchSegmentsByCreater(id)))
+      .then(() => dispatch(fetchBatchesByIds(batchIds)));
     onClose("addToBatch");
     setSelectedRows(new Set());
     setCheckedBatches(new Set());

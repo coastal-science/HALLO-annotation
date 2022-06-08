@@ -16,8 +16,8 @@ const fileEntity = new schema.Entity('files');
 
 export const fetchFiles = createAsyncThunk(
     'file/fetchFiles',
-    async () => {
-        const { data } = await axiosWithAuth.get(`/file/`);
+    async (fileIds) => {
+        const { data } = await axiosWithAuth.get(`/file/${fileIds ? "?id__in=" + fileIds.join(",") : ""}`);
         if (data.length === 0) return { files: {} };
         else {
             const { entities } = normalize(data, [fileEntity]);
@@ -26,6 +26,8 @@ export const fetchFiles = createAsyncThunk(
     }
 );
 
+//This is the action that was used for labeling files as included
+//The feature is not being used for HALLO anymore but the code is here for future ref
 export const moveFiles = createAsyncThunk(
     'file/includeFiles',
     async ({ ids, type }) => {

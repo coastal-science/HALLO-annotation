@@ -42,17 +42,19 @@ const ProgressItem = ({ userId, batchId }) => {
     // eslint-disable-next-line
   }, [userId]);
 
-  return loading ? (
-    <Box>loading</Box>
-  ) : (
-    <Grid item>
-      <Typography>{users[userId]?.user_name}</Typography>
-      <BorderLinearProgress variant="determinate" value={value} />
-      <Typography variant="subtitle2">
-        {completed} / {segments.length} segments completed
-      </Typography>
-    </Grid>
-  );
+  if (segments.length === 0) return <></>;
+  else
+    return loading ? (
+      <Box>loading</Box>
+    ) : (
+      <Grid item>
+        <Typography>{users[userId]?.user_name}</Typography>
+        <BorderLinearProgress variant="determinate" value={value} />
+        <Typography variant="subtitle2">
+          {completed} / {segments.length} segments completed
+        </Typography>
+      </Grid>
+    );
 };
 
 ProgressItem.propTypes = {

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosWithAuth from '.././utils/axiosWithAuth';
 import { normalize, schema } from 'normalizr';
 import { annotationToRegion } from '../utils/annotationUtils';
+import { queryFormater } from '../utils/segmentUtils';
 
 const initialState = {
     annotations: {},
@@ -27,12 +28,13 @@ const initialState = {
 const annotationEntity = new schema.Entity('annotations');
 const currentAnnotationEntity = new schema.Entity('currentAnnotations');
 
-export const fetchAnnotations = createAsyncThunk(
+export const fetchAnnotationsByBatches = createAsyncThunk(
     'annotation/fetchAnnotationss',
-    async () => {
-        const { data } = await axiosWithAuth.get('/annotation/');
-        if (data.length === 0) return { annotations: {} };
+    async (batches) => {
+        if (batches.length === 0) return { annotations: {} };
         else {
+            const { data } = await axiosWithAuth.get(`/annotation/?batch__in=${batches.join(",")}`);
+            if (data.length === 0) return { annotations: {} };
             const { entities } = normalize(data, [annotationEntity]);
             return entities;
         }
@@ -57,9 +59,9 @@ export const updateAnnotation = createAsyncThunk(
 
 export const deleteAnnotation = createAsyncThunk(
     'annotation/delete',
-    async (id) => {
-        await axiosWithAuth.delete(`/annotation/${id}`);
-        return id;
+    async ({ ids }) => {
+        queryFormater(ids).forEach(sub => axiosWithAuth.delete(`/annotation/delete/?ids=${sub.join(",")}`));
+        return ids;
     }
 );
 
@@ -207,7 +209,7 @@ export const annotationSlice = createSlice({
         }
     },
     extraReducers: {
-        [fetchAnnotations.fulfilled]: (state, action) => {
+        [fetchAnnotationsByBatches.fulfilled]: (state, action) => {
             state.annotations = action.payload.annotations;
             state.annotationIds = Object.keys(action.payload.annotations);
         },
@@ -225,16 +227,19 @@ export const annotationSlice = createSlice({
             state.pending = true;
         },
         [deleteAnnotation.fulfilled]: (state, action) => {
-            const annotationId = action.payload;
-            state.currentAnnotationIds = state.currentAnnotationIds.filter(id => id * 1 !== annotationId * 1);
-            delete state.currentAnnotations[annotationId];
+            const ids = action.payload;
+            state.annotationIds = state.annotationIds.filter(id => !ids.includes(+id));
             state.selectedRegion = null;
             state.pending = false;
+        },
+        [fetchCurrentAnnotations.pending]: (state, action) => {
+            state.pending = true;
         },
         [fetchCurrentAnnotations.fulfilled]: (state, action) => {
             state.currentAnnotations = action.payload.currentAnnotations;
             state.currentAnnotationIds = Object.keys(action.payload.currentAnnotations);
             state.selectedRegion = null;
+            state.pending = false;
         },
         [fetchBatchProgress.pending]: (state) => {
             state.progressMapLoading = true;

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosWithAuth, { backendURL } from '.././utils/axiosWithAuth';
 import { normalize, schema } from 'normalizr';
+import { queryFormater } from '../utils/segmentUtils';
 
 const initialState = {
     segments: {},
@@ -12,10 +13,23 @@ const initialState = {
 
 const segmentEntity = new schema.Entity('segments');
 
-export const fetchSegments = createAsyncThunk(
+export const fetchSegmentsByIds = createAsyncThunk(
     'segment/fetchSegments',
-    async () => {
-        const { data } = await axiosWithAuth.get('/segment/');
+    async (segmentIds) => {
+        if (segmentIds.length === 0) return { segments: {} };
+        else {
+            const { data } = await axiosWithAuth.get(`/segment/?id__in=${segmentIds.join(",")}`);
+            const normalized = normalize(data, [segmentEntity]);
+            return normalized.entities;
+        }
+
+    }
+);
+
+export const fetchSegmentsByCreater = createAsyncThunk(
+    'segment/fetchSegments',
+    async (model_developer) => {
+        const { data } = await axiosWithAuth.get(`/segment/?model_developer=${model_developer}`);
         if (data.length === 0) return { segments: {} };
         else {
             const normalized = normalize(data, [segmentEntity]);
@@ -24,11 +38,14 @@ export const fetchSegments = createAsyncThunk(
     }
 );
 
+
+
 export const addSegments = createAsyncThunk(
     'segment/addSegments',
     async ({ durations }) => {
         const { data } = await axiosWithAuth.post('/segment/', durations);
-        return data;
+        const normalized = normalize(data, [segmentEntity]);
+        return normalized.entities;
     }
 );
 
@@ -44,11 +61,8 @@ export const removeSegments = createAsyncThunk(
     'segment/removeSegments',
     async ({ checked }) => {
         const ids = checked;
-        await axiosWithAuth.delete(`/segment/delete/?ids=${ids.join(",")}`);
-        // const requests = ids.map(id => {
-        //     return axiosWithAuth.delete(`/segment/${id}/`);
-        // });
-        // await Promise.all(requests);
+        queryFormater(ids).forEach(sub => axiosWithAuth.delete(`/segment/delete/?ids=${sub.join(",")}`));
+        return ids;
     }
 );
 
@@ -84,15 +98,22 @@ export const segmentSlice = createSlice({
         }
     },
     extraReducers: {
-        [fetchSegments.fulfilled]: (state, action) => {
+
+        [fetchSegmentsByCreater.pending]: (state, action) => {
+            state.loading = true;
+        },
+        [fetchSegmentsByCreater.fulfilled]: (state, action) => {
+            state.loading = false;
             state.segments = action.payload.segments;
             state.segmentIds = Object.keys(action.payload.segments);
         },
         [addSegments.pending]: (state) => {
             state.loading = true;
         },
-        [addSegments.fulfilled]: (state) => {
+        [addSegments.fulfilled]: (state, action) => {
             state.loading = false;
+            state.segments = { ...action.payload.segments, ...state.segments };
+            state.segmentIds = [...Object.keys(action.payload.segments), ...state.segmentIds];
         },
         [addSegments.rejected]: (state, action) => {
             console.log(action.error);
@@ -100,11 +121,14 @@ export const segmentSlice = createSlice({
         [removeSegments.pending]: (state) => {
             state.loading = true;
         },
-        [removeSegments.fulfilled]: (state) => {
+        [removeSegments.fulfilled]: (state, action) => {
+            const ids = action.payload;
+            state.segmentIds = state.segmentIds.filter(id => !ids.includes(+id));
             state.loading = false;
             state.checked = [];
         },
         [addSegmentsToBatches.fulfilled]: (state) => {
+            state.loading = false;
             state.checked = [];
         },
         [fetchAudio.fulfilled]: (state, action) => {

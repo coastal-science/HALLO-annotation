@@ -19,24 +19,16 @@ import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import { useFocusRef } from "../../hooks/useFocusRef";
 import { openAlert } from "../../reducers/errorSlice";
 import Moment from "react-moment";
-import {
-  fetchSegments,
-  handleSelect,
-  removeSegments,
-} from "../../reducers/segmentSlice";
+import { handleSelect, removeSegments } from "../../reducers/segmentSlice";
 import ImportSegments from "./ImportSegments";
-import { fetchAnnotations } from "../../reducers/annotationSlice";
-import NewSegment from "./NewSegment";
+import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
 import AddToBatch from "./AddToBatch";
-import AutoGenerate from "./AutoGenerate";
-import AddIcon from "@material-ui/icons/Add";
 import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import PlaylistAddOutlinedIcon from "@material-ui/icons/PlaylistAddOutlined";
-import AutorenewOutlinedIcon from "@material-ui/icons/AutorenewOutlined";
 import ExportButton from "../UI/ExportButton";
 import { exportToCsv } from "../../utils/exportUtils";
 import FilterTextField from "../UI/FilterTextField";
-import { fetchBatches } from "../../reducers/batchSlice";
+import { fetchBatchesByIds } from "../../reducers/batchSlice";
 
 const openInit = {
   newSegment: false,
@@ -78,7 +70,7 @@ const SegmentsGrid = () => {
   const { segments, segmentIds, checked, loading } = useSelector(
     (state) => state.segment
   );
-  const { batches } = useSelector((state) => state.batch);
+  const { batches, batchIds } = useSelector((state) => state.batch);
 
   const dispatch = useDispatch();
 
@@ -99,10 +91,11 @@ const SegmentsGrid = () => {
   const handleDeleteSegments = () => {
     dispatch(removeSegments({ checked }))
       .unwrap()
-      .then(() => dispatch(fetchSegments()))
-      .then(() => dispatch(fetchAnnotations()))
-      .then(() => dispatch(fetchBatches()))
-      .then(() => setSelectedRows(() => new Set()))
+      .then(() => {
+        dispatch(fetchBatchesByIds(batchIds));
+        dispatch(fetchAnnotationsByBatches(batchIds));
+        setSelectedRows(() => new Set());
+      })
       .catch((error) => console.error(error));
 
     setDeleteConfirmation(false);
@@ -277,13 +270,12 @@ const SegmentsGrid = () => {
         (batchId) => batches[batchId].batch_name
       );
       batchNames = batchNames.length > 0 ? batchNames.join(", ") : "NA";
-
       return { start, end, filename, duration, batchNames, ...rest };
     });
 
     setRows(formatedArr);
     // eslint-disable-next-line
-  }, [segments]);
+  }, [segmentIds]);
 
   return (
     <Page title="Segments">
@@ -294,10 +286,10 @@ const SegmentsGrid = () => {
               <Button
                 variant="contained"
                 color="primary"
-                startIcon={<AddIcon />}
-                onClick={(e) => handleOpen(e, "newSegment")}
+                startIcon={<PlaylistAddOutlinedIcon />}
+                onClick={(e) => handleOpen(e, "addToBatch")}
               >
-                New
+                Add to Batch
               </Button>
             </Grid>
             <Grid item>
@@ -318,26 +310,6 @@ const SegmentsGrid = () => {
                 onClick={(e) => handleOpen(e, "import")}
               >
                 Import
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<PlaylistAddOutlinedIcon />}
-                onClick={(e) => handleOpen(e, "addToBatch")}
-              >
-                Add to Batch
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AutorenewOutlinedIcon />}
-                onClick={(e) => handleOpen(e, "autoGenerate")}
-              >
-                Auto Generate
               </Button>
             </Grid>
           </Grid>
@@ -384,13 +356,11 @@ const SegmentsGrid = () => {
           </FilterContext.Provider>
         </Grid>
       </Grid>
-      <NewSegment onClose={handleClose} open={open.newSegment} />
       <AddToBatch
         onClose={handleClose}
         open={open.addToBatch}
         setSelectedRows={setSelectedRows}
       />
-      <AutoGenerate onClose={handleClose} open={open.autoGenerate} />
       <ImportSegments onClose={handleClose} open={open.import} />
       <Dialog open={deleteComfirmation}>
         <DialogTitle>Deleting segments</DialogTitle>

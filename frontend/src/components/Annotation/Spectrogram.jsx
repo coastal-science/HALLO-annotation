@@ -45,6 +45,7 @@ const Spectrogram = ({
     region,
     isDrawing,
     currentAnnotations,
+    currentAnnotationIds,
     selectedRegion,
     currentRegionIds,
     currentRegions,
@@ -224,6 +225,7 @@ const Spectrogram = ({
     dispatch(
       convertAnnotationsToRegions({
         currentAnnotations,
+        currentAnnotationIds,
         region,
         duration,
         start,

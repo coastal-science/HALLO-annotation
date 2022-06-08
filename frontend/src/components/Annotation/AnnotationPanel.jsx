@@ -419,7 +419,7 @@ const AnnotationPanel = () => {
         spacing={1}
         style={{
           overflowY: "scroll",
-          maxHeight: "76vh",
+          maxHeight: "80vh",
         }}
         direction="column"
         wrap="nowrap"
