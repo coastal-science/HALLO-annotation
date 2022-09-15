@@ -15,10 +15,10 @@ import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallback from "../UI/ErrorFallback";
 import Page from "../UI/Page";
 import { useState } from "react";
-import { deleteBatch, fetchBatches } from "../../reducers/batchSlice";
+import { deleteBatch, fetchBatchesByIds } from "../../reducers/batchSlice";
 import { fetchUser, fetchUserList } from "../../reducers/userSlice";
-import { fetchSegments } from "../../reducers/segmentSlice";
-import { fetchAnnotations } from "../../reducers/annotationSlice";
+import { fetchSegmentsByCreater } from "../../reducers/segmentSlice";
+import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
 import AddIcon from "@material-ui/icons/Add";
 
 const Batches = () => {
@@ -48,13 +48,15 @@ const Batches = () => {
   };
 
   const handleOK = () => {
-    dispatch(deleteBatch(batchId))
-      .then(() => dispatch(fetchUser(id)))
-      .then(() => dispatch(fetchUserList()))
-      .then(() => dispatch(fetchBatches()))
-      .then(() => dispatch(fetchSegments()))
-      .then(() => dispatch(fetchAnnotations()));
     setOpen(false);
+    dispatch(deleteBatch(batchId)).then(async () => {
+      const filteredIds = batchIds.filter((id) => id !== String(batchId));
+      await dispatch(fetchBatchesByIds(filteredIds));
+      dispatch(fetchUser(id));
+      dispatch(fetchUserList());
+      dispatch(fetchSegmentsByCreater(id));
+      dispatch(fetchAnnotationsByBatches(filteredIds));
+    });
   };
 
   return (
@@ -85,29 +87,17 @@ const Batches = () => {
               style={{ height: "70vh", overflowY: "auto" }}
             >
               {isPowerUser
-                ? batchIds
-                    .filter(
-                      (batchId) => batches[batchId].model_developer === id
-                    )
-                    .reverse()
-                    .map((batchId) => {
-                      return (
-                        <Batch
-                          key={batchId}
-                          batch={batches[batchId]}
-                          highlight={true}
-                          handleDelete={handleDelete}
-                        />
-                      );
-                    })
+                ? batchIds.map((batchId) => {
+                    return (
+                      <Batch
+                        key={batchId}
+                        batch={batches[batchId]}
+                        highlight={true}
+                        handleDelete={handleDelete}
+                      />
+                    );
+                  })
                 : assignedbatches.map((batchId) => {
-                    return <Batch key={batchId} batch={batches[batchId]} />;
-                  })}
-              {isPowerUser &&
-                batchIds
-                  .filter((batchId) => batches[batchId].model_developer !== id)
-                  .reverse()
-                  .map((batchId) => {
                     return <Batch key={batchId} batch={batches[batchId]} />;
                   })}
             </Grid>

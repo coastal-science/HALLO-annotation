@@ -25,7 +25,10 @@ import {
 import AddOutlinedIcon from "@material-ui/icons/AddOutlined";
 import ClearOutlinedIcon from "@material-ui/icons/ClearOutlined";
 import { useDispatch, useSelector } from "react-redux";
-import { addSegments, fetchSegments } from "../../reducers/segmentSlice";
+import {
+  addSegments,
+  fetchSegmentsByCreater,
+} from "../../reducers/segmentSlice";
 import { openAlert } from "../../reducers/errorSlice";
 
 const useStyles = makeStyles(() => ({
@@ -58,6 +61,8 @@ const NewSegment = ({ onClose, open }) => {
   const [addButtonDissabled, setAddButtonDissabled] = useState(true);
 
   const { files, fileIds } = useSelector((state) => state.file);
+  const { id } = useSelector((state) => state.user);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -126,7 +131,7 @@ const NewSegment = ({ onClose, open }) => {
 
     dispatch(addSegments({ durations }))
       .then(() => {
-        dispatch(fetchSegments());
+        dispatch(fetchSegmentsByCreater(id));
         setDurations([]);
         setFileId("");
         setStartEnd(startEndInit);

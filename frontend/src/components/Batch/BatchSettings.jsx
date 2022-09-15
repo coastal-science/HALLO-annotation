@@ -14,7 +14,11 @@ import {
 import { useEffect, useState, useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useSelector, useDispatch } from "react-redux";
-import { addBatch, editBatch, fetchBatches } from "../../reducers/batchSlice";
+import {
+  addBatch,
+  editBatch,
+  fetchBatchesByIds,
+} from "../../reducers/batchSlice";
 import axiosWithAuth from "../../utils/axiosWithAuth";
 import DataGrid from "react-data-grid";
 import { openAlert } from "../../reducers/errorSlice";
@@ -60,7 +64,7 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
     (state) => state.user
   );
   const { segments } = useSelector((state) => state.segment);
-  const { batches } = useSelector((state) => state.batch);
+  const { batches, batchIds } = useSelector((state) => state.batch);
   const { files } = useSelector((state) => state.file);
 
   const dispatch = useDispatch();
@@ -106,7 +110,7 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
     setSelectedAnnotators(updatedSelectedAnnotators);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const settings = { ...form, model_developer: id };
     if (!form.batch_name) {
       dispatch(
@@ -116,17 +120,19 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
         })
       );
     } else {
-      dispatch(
-        addBatch({ settings, selectedAnnotators, annotatorIds, annotators })
-      )
-        .then(() => {
-          setForm(formInit);
-          onClose();
-        })
-        .then(() => dispatch(fetchUser(id)))
-        .then(() => dispatch(fetchUserList()))
-        .then(() => dispatch(fetchBatches()))
-        .catch((error) => console.log(error));
+      try {
+        const { data } = await dispatch(
+          addBatch({ settings, selectedAnnotators, annotatorIds, annotators })
+        ).unwrap();
+
+        dispatch(fetchBatchesByIds([data.id, ...batchIds]));
+        dispatch(fetchUser(id));
+        dispatch(fetchUserList());
+        setForm(formInit);
+        onClose();
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -143,7 +149,7 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
         });
       })
       .then(() => dispatch(fetchUserList()))
-      .then(() => dispatch(fetchBatches()))
+      .then(() => dispatch(fetchBatchesByIds(batchIds)))
       .catch((error) => console.error(error));
     setForm(formInit);
     onClose();

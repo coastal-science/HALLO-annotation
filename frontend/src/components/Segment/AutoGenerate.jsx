@@ -13,9 +13,9 @@ import {
   Button,
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-import DataGrid, { SelectColumn } from "react-data-grid";
-import { addSegments, fetchSegments } from "../../reducers/segmentSlice";
-import { openAlert } from "../../reducers/errorSlice";
+import DataGrid from "react-data-grid";
+import { addSegments } from "../../reducers/segmentSlice";
+import { switchTab } from "../../reducers/userSlice";
 
 const useStyles = makeStyles(() => ({
   modal: {
@@ -29,9 +29,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const AutoGenerate = ({ onClose, open }) => {
+const AutoGenerate = ({ onClose, open, ids }) => {
   const classes = useStyles();
-  const [selectedFileIds, setSelectedFileIds] = useState(() => new Set());
   const [length, setLength] = useState(60);
   const [step, setStep] = useState(60);
   const [label, setLabel] = useState("");
@@ -39,13 +38,19 @@ const AutoGenerate = ({ onClose, open }) => {
   const [segments, setSegments] = useState([]);
   const [durations, setDurations] = useState([]);
 
-  const { files, fileIds } = useSelector((state) => state.file);
+  const { files } = useSelector((state) => state.file);
   const { id: model_developer } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const segmentColumns = useMemo(() => {
     return [
-      { key: "filename", name: "File Name" },
+      {
+        key: "filename",
+        name: "File Name",
+        summaryFormatter({ row }) {
+          return <>Total: {row.totalSegments} segments</>;
+        },
+      },
       { key: "start", name: "Start", width: 100 },
       { key: "end", name: "End", width: 100 },
       { key: "duration", name: "Duration", width: 100 },
@@ -54,38 +59,39 @@ const AutoGenerate = ({ onClose, open }) => {
   }, []);
 
   const fileColumns = [
-    SelectColumn,
-    { key: "filename", name: "File" },
+    {
+      key: "filename",
+      name: "File",
+      summaryFormatter({ row }) {
+        return <>Total: {row.totalFiles} files</>;
+      },
+    },
     { key: "duration", name: "Duration" },
     { key: "dirname", name: "Path" },
   ];
 
-  const fileList = useMemo(() => {
-    return fileIds.length !== 0
-      ? fileIds
-          .filter((id) => files[id].is_included)
-          .map((id) => {
-            const { filename, duration, dirname } = files[id];
-            return { id, filename, duration, dirname };
-          })
-      : [];
-  }, [fileIds, files]);
+  const summaryRows = useMemo(() => {
+    const summaryRow = {
+      totalFiles: [...ids].length,
+    };
+    return [summaryRow];
+  }, [ids]);
+
+  const summarySegments = useMemo(() => {
+    const summaryRow = {
+      totalSegments: segments.length,
+    };
+    return [summaryRow];
+  }, [segments]);
+
+  const fileList = [...ids].map((id) => files[id]);
 
   const handleGenerate = () => {
-    if ([...selectedFileIds].length === 0) {
-      dispatch(
-        openAlert({
-          severity: "error",
-          message: "Please select at least one file",
-        })
-      );
-    }
-
     const generatedArr = [];
     const generatedDurations = [];
     let index = 0;
 
-    [...selectedFileIds].forEach((selectedFileId) => {
+    [...ids].forEach((selectedFileId) => {
       const filename = files[selectedFileId].filename;
       const fileDuration = files[selectedFileId].duration;
 
@@ -115,15 +121,15 @@ const AutoGenerate = ({ onClose, open }) => {
         generatedArr.push({
           id: index++,
           filename,
-          start: step * segmentsNumber,
-          end: step * segmentsNumber + length,
+          start: step * segmentsNumber * 1,
+          end: step * segmentsNumber * 1 + length * 1,
           duration: length * 1,
           label,
         });
         generatedDurations.push({
           file: selectedFileId,
-          start: step * segmentsNumber,
-          end: step * segmentsNumber + length,
+          start: step * segmentsNumber * 1,
+          end: step * segmentsNumber * 1 + length * 1,
           label,
           model_developer,
         });
@@ -136,24 +142,21 @@ const AutoGenerate = ({ onClose, open }) => {
 
   const handleSubmit = () => {
     if (durations.length > 0) {
-      dispatch(addSegments({ durations })).then(() =>
-        dispatch(fetchSegments())
-      );
+      dispatch(addSegments({ durations }));
       setDurations([]);
       onClose("autoGenerate");
-      setSelectedFileIds(new Set());
       setLength(60);
       setStep(60);
       setPad(false);
       setSegments([]);
       setLabel("");
+      dispatch(switchTab(2));
     }
   };
 
   const handleCancel = () => {
     setSegments([]);
     setDurations([]);
-    setSelectedFileIds(new Set());
     setLabel("");
     setLength(60);
     setStep(60);
@@ -178,9 +181,7 @@ const AutoGenerate = ({ onClose, open }) => {
                   style={{ height: 200 }}
                   rows={fileList}
                   columns={fileColumns}
-                  rowKeyGetter={(row) => row.id}
-                  selectedRows={selectedFileIds}
-                  onSelectedRowsChange={setSelectedFileIds}
+                  summaryRows={summaryRows}
                 />
               </Grid>
               <Grid item xs={12} container spacing={2}>
@@ -241,6 +242,7 @@ const AutoGenerate = ({ onClose, open }) => {
                     rows={segments}
                     columns={segmentColumns}
                     style={{ height: 200 }}
+                    summaryRows={summarySegments}
                   />
                 </Grid>
               )}

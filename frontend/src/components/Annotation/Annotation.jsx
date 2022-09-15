@@ -19,6 +19,7 @@ import {
   clearRegion,
   deleteAnnotation,
   editAnnotation,
+  fetchCurrentAnnotations,
   saveAnnotation,
   updateAnnotation,
 } from "../../reducers/annotationSlice";
@@ -129,8 +130,10 @@ const Annotation = ({ annotation, newBatch, editable }) => {
     dispatch(cancelEditAnnotation(id));
   };
 
-  const handleDelete = () => {
-    dispatch(deleteAnnotation(id));
+  const handleDelete = async () => {
+    const { batch: batchId, segment: segmentId, annotator } = annotation;
+    await dispatch(deleteAnnotation({ ids: [id] }));
+    await dispatch(fetchCurrentAnnotations({ batchId, segmentId, annotator }));
   };
 
   useEffect(() => {
@@ -236,7 +239,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
             </Grid>
             <Grid item container xs={12} spacing={1}>
               <Grid item xs={3}>
-                <Typography variant="subtitle1">Sound ID Species:</Typography>
+                <Typography variant="subtitle1">SIS:</Typography>
                 {editable || newBatch ? (
                   <TextField
                     variant="outlined"
@@ -248,7 +251,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                   <Typography>{sound_id_species}</Typography>
                 )}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={3} container direction="column">
                 <Typography variant="subtitle1">KW ecotype:</Typography>
                 {editable || newBatch ? (
                   <TextField
@@ -261,7 +264,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                   <Typography>{kw_ecotype}</Typography>
                 )}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item xs={3} container direction="column">
                 <Typography variant="subtitle1">Call Type:</Typography>
                 {editable || newBatch ? (
                   <TextField
@@ -274,7 +277,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                   <Typography>{call_type}</Typography>
                 )}
               </Grid>
-              <Grid item xs={3}>
+              <Grid item container xs={3} direction="column">
                 <Typography variant="subtitle1">Pod:</Typography>
                 {editable || newBatch ? (
                   <TextField
@@ -289,7 +292,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               </Grid>
             </Grid>
             <Grid item container xs={12} spacing={1}>
-              <Grid item xs={3}>
+              <Grid item xs={4}>
                 <Typography variant="subtitle1">Confidence level:</Typography>
                 {editable || newBatch ? (
                   <TextField
@@ -304,7 +307,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                 )}
               </Grid>
 
-              <Grid item xs={9}>
+              <Grid item xs={8} container direction="column">
                 <Typography variant="subtitle1">Comments:</Typography>
                 {editable || newBatch ? (
                   <TextField
