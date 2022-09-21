@@ -14,6 +14,7 @@ const initialState = {
     isDrawing: false,
     isSelected: false,
     annotation: null,
+    annotationHistory: null,
     currentAnnotations: {},
     currentAnnotationIds: [],
     currentRegions: {},
@@ -218,6 +219,7 @@ export const annotationSlice = createSlice({
             state.currentAnnotationIds.push(action.payload.id);
             state.annotation = null;
             state.region = null;
+            state.annotationHistory = action.payload;
         },
         [updateAnnotation.fulfilled]: (state, action) => {
             const updatedAnnotation = action.payload;
