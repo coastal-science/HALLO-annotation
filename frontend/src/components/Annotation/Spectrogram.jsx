@@ -158,6 +158,7 @@ const Spectrogram = ({
     if (!region && !selectedRegion && e.target.attrs.image) {
       const point = getRelativePointerPosition(e.target.getStage());
       dispatch(mouseDown(point));
+      document.getElementById(`annotation-new`)?.focus();
     }
 
     if (
@@ -175,6 +176,16 @@ const Spectrogram = ({
       selectShape(null);
       dispatch(cancelEditAnnotation(selectedRegion));
     }
+
+    if (!e.target.attrs.image && selectedRegion) {
+      dispatch(
+        openAlert({
+          severity: "info",
+          message: "Click on the blank area to deselect the current region",
+        })
+      );
+      return;
+    }
   };
 
   const handleMouseMove = (e) => {
@@ -186,6 +197,7 @@ const Spectrogram = ({
   const handleMouseUp = () => {
     if (!isDrawing) return;
     dispatch(mouseUp());
+    document.getElementById(`annotation-new`)?.focus();
   };
 
   useEffect(() => {

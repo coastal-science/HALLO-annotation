@@ -41,7 +41,7 @@ function TabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
     <div
-      role="tabpanel"
+      role='tabpanel'
       hidden={value !== index}
       id={`scrollable-force-tabpanel-${index}`}
       aria-labelledby={`scrollable-force-tab-${index}`}
@@ -231,16 +231,16 @@ const AnnotationPanel = () => {
   }, [tab, progressMapLoading]);
 
   return !!currentBatch ? (
-    <Grid container spacing={1} wrap="nowrap">
-      <Grid item container xs={8} spacing={1} justify="center">
+    <Grid container spacing={1} wrap='nowrap'>
+      <Grid item container xs={8} spacing={1} justify='center'>
         <Grid item xs={12} className={classes.root}>
-          <AppBar position="static" color="default">
+          <AppBar position='static' color='default'>
             <Tabs
               value={tab}
-              variant="scrollable"
-              scrollButtons="on"
-              indicatorColor="primary"
-              textColor="primary"
+              variant='scrollable'
+              scrollButtons='on'
+              indicatorColor='primary'
+              textColor='primary'
               onChange={handleChange}
               className={classes.tabs}
             >
@@ -260,21 +260,21 @@ const AnnotationPanel = () => {
                 })}
             </Tabs>
             <Toolbar>
-              <IconButton color="primary" onClick={handlePrevious}>
+              <IconButton color='primary' onClick={handlePrevious}>
                 <SkipPreviousOutlinedIcon />
               </IconButton>
               <Typography>
                 {index + 1} / {totalSegments}
               </Typography>
-              <IconButton color="primary" onClick={handleNext}>
+              <IconButton color='primary' onClick={handleNext}>
                 <SkipNextOutlinedIcon />
               </IconButton>
               <Tabs
                 value={tab}
-                variant="scrollable"
-                scrollButtons="on"
-                indicatorColor="primary"
-                textColor="secondary"
+                variant='scrollable'
+                scrollButtons='on'
+                indicatorColor='primary'
+                textColor='secondary'
                 onChange={handleChange}
               >
                 {batches[currentBatch].segments
@@ -313,33 +313,34 @@ const AnnotationPanel = () => {
                       zoomLevel={zoomLevel}
                       audioError={audioError}
                       setAudioError={setAudioError}
+              
                     />
                   </ErrorBoundary>
                 </TabPanel>
               );
             })}
         </Grid>
-        <Grid item xs={12} container justify="center">
+        <Grid item xs={12} container justify='center'>
           <Card style={{ width: "100%" }}>
             <CardContent>
               <CardActions>
                 <Grid
                   container
                   spacing={2}
-                  alignItems="center"
-                  justify="space-between"
+                  alignItems='center'
+                  justify='space-between'
                 >
-                  <Grid item container xs={5} spacing={2} alignItems="center">
+                  <Grid item container xs={5} spacing={2} alignItems='center'>
                     <Grid item container xs={3}>
                       <FormControlLabel
                         control={
                           <Checkbox
                             checked={isMarked}
-                            name="checkedA"
+                            name='checkedA'
                             onChange={handleMark}
                           />
                         }
-                        label="Marked"
+                        label='Marked'
                       />
                     </Grid>
                     <Grid item container xs={3}>
@@ -347,11 +348,11 @@ const AnnotationPanel = () => {
                         control={
                           <Checkbox
                             checked={isCompleted}
-                            name="checkedA"
+                            name='checkedA'
                             onChange={handleComplete}
                           />
                         }
-                        label="Reviewed"
+                        label='Reviewed'
                       />
                     </Grid>
                     <Grid item container xs={3}>
@@ -359,13 +360,13 @@ const AnnotationPanel = () => {
                         control={
                           <Switch
                             checked={filterSwitch}
-                            name="checkedA"
+                            name='checkedA'
                             onChange={() =>
                               setFilterSwitch((filterSwitch) => !filterSwitch)
                             }
                           />
                         }
-                        label="Filter Marked"
+                        label='Filter Marked'
                       />
                     </Grid>
                     <Grid item container xs={3}>
@@ -373,13 +374,13 @@ const AnnotationPanel = () => {
                         control={
                           <Switch
                             checked={zoomLevel}
-                            name="checkedA"
+                            name='checkedA'
                             onChange={() =>
                               setZoomLevel((zoomLevel) => !zoomLevel)
                             }
                           />
                         }
-                        label="Hover Zoom (2x)"
+                        label='Hover Zoom (2x)'
                       />
                     </Grid>
                   </Grid>
@@ -387,15 +388,15 @@ const AnnotationPanel = () => {
                     item
                     container
                     xs={7}
-                    alignItems="center"
-                    justify="center"
+                    alignItems='center'
+                    justify='center'
                     style={{ height: 80 }}
                   >
                     {audio && !audioError ? (
                       <AudioPlayer
                         src={audio}
                         ref={audioRef}
-                        layout="horizontal"
+                        layout='horizontal'
                         autoPlayAfterSrcChange={false}
                         onPlay={handleStartTimer}
                         onPause={handleStopTimer}
@@ -421,13 +422,12 @@ const AnnotationPanel = () => {
           overflowY: "scroll",
           maxHeight: "80vh",
         }}
-        direction="column"
-        wrap="nowrap"
+        direction='column'
+        wrap='nowrap'
       >
         <Grid item>
           <BatchDetail batch={batches[currentBatch]} />
         </Grid>
-        {annotation && <Annotation annotation={annotation} newBatch={true} />}
         {currentAnnotationIds.length > 0 && pending ? (
           <CircularProgress />
         ) : (
@@ -441,6 +441,12 @@ const AnnotationPanel = () => {
               />
             );
           })
+        )}
+        {annotation && (
+          <Annotation
+            annotation={annotation}
+            newBatch={true}
+          />
         )}
       </Grid>
     </Grid>

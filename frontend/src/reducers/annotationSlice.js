@@ -207,6 +207,9 @@ export const annotationSlice = createSlice({
         },
         setProgressLoading: (state) => {
             state.progressMapLoading = true;
+        },
+        clearHistory: (state) => {
+            state.annotationHistory = null;
         }
     },
     extraReducers: {
@@ -273,6 +276,7 @@ export const {
     regionChange,
     selectRegion,
     clearRegion,
+    clearHistory,
     convertRegionToAnnotation,
     convertAnnotationsToRegions,
     editAnnotation,
