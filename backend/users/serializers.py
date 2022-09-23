@@ -78,4 +78,5 @@ class AnnotatorProgressSerializer(serializers.ModelSerializer):
             'is_completed',
             'is_marked',
             'name',
+            'created_at'
         )
