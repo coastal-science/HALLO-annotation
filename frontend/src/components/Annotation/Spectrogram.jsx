@@ -49,6 +49,7 @@ const Spectrogram = ({
     selectedRegion,
     currentRegionIds,
     currentRegions,
+    annotationHistory,
   } = useSelector((state) => state.annotation);
 
   const [image, setImage] = useState(null);
@@ -157,6 +158,7 @@ const Spectrogram = ({
     if (!region && !selectedRegion && e.target.attrs.image) {
       const point = getRelativePointerPosition(e.target.getStage());
       dispatch(mouseDown(point));
+      document.getElementById(`annotation-new`)?.focus();
     }
 
     if (
@@ -174,6 +176,16 @@ const Spectrogram = ({
       selectShape(null);
       dispatch(cancelEditAnnotation(selectedRegion));
     }
+
+    if (!e.target.attrs.image && selectedRegion) {
+      dispatch(
+        openAlert({
+          severity: "info",
+          message: "Click on the blank area to deselect the current region",
+        })
+      );
+      return;
+    }
   };
 
   const handleMouseMove = (e) => {
@@ -185,6 +197,7 @@ const Spectrogram = ({
   const handleMouseUp = () => {
     if (!isDrawing) return;
     dispatch(mouseUp());
+    document.getElementById(`annotation-new`)?.focus();
   };
 
   useEffect(() => {
@@ -204,6 +217,12 @@ const Spectrogram = ({
           segment: segmentId,
           annotator: userId,
           batch: currentBatch,
+          call_type: annotationHistory?.call_type,
+          sound_id_species: annotationHistory?.sound_id_species,
+          kw_ecotype: annotationHistory?.kw_ecotype,
+          pod: annotationHistory?.pod,
+          confidence_level: annotationHistory?.confidence_level,
+          comments: annotationHistory?.comments,
         })
       );
     }
@@ -238,7 +257,7 @@ const Spectrogram = ({
   }, [currentAnnotations]);
 
   return (
-    <Box width={"100%"} display="flex">
+    <Box width={"100%"} display='flex'>
       <Box>
         <FreqAxis
           freq_max={batchFreqMax}
@@ -251,10 +270,10 @@ const Spectrogram = ({
         {loading || error ? (
           <Box
             height={400}
-            width="100%"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
+            width='100%'
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
           >
             <CircularProgress />
           </Box>
@@ -308,7 +327,7 @@ const Spectrogram = ({
             <Layer>
               <Line
                 points={[currentTime * 40, batchFreqMax, currentTime * 40, 0]}
-                stroke="white"
+                stroke='white'
                 strokeWidth={2}
               />
               <Text
