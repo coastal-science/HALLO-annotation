@@ -68,5 +68,6 @@ class AnnotatorProgress(models.Model):
     batch = models.ForeignKey(Batch, on_delete=models.CASCADE, )
     is_completed = models.BooleanField(default=False)
     is_marked = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
 
     objects = models.Manager()

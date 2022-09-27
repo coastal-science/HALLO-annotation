@@ -90,6 +90,7 @@ const AnnotationPanel = () => {
     progressMapLoading,
     pending,
     selectedRegion,
+    latestTab,
   } = useSelector((state) => state.annotation);
 
   const tabInit = currentBatch
@@ -229,6 +230,11 @@ const AnnotationPanel = () => {
 
     // eslint-disable-next-line
   }, [tab, progressMapLoading]);
+
+  useEffect(() => {
+    console.log(latestTab)
+    if(latestTab) setTab(latestTab)
+  },[latestTab])
 
   return !!currentBatch ? (
     <Grid container spacing={1} wrap='nowrap'>
