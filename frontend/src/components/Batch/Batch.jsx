@@ -15,7 +15,7 @@ import Progress from "./Progress";
 import BatchSettings from "./BatchSettings";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentBatch } from "../../reducers/batchSlice";
-import { clearRegion } from "../../reducers/annotationSlice";
+import { cleanProgressMap, clearRegion, resetLatestTab } from "../../reducers/annotationSlice";
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -45,6 +45,8 @@ const Batch = ({ batch, highlight, handleDelete }) => {
   const handleClick = (e, id) => {
     dispatch(setCurrentBatch(id));
     dispatch(clearRegion());
+    dispatch(cleanProgressMap());
+    dispatch(resetLatestTab());
   };
 
   return (

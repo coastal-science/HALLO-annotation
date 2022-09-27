@@ -22,6 +22,7 @@ const initialState = {
     copyOfEditRegion: null,
     progressMap: {},
     progressMapLoading: true,
+    latestTab: null,
     selectedRegion: null,
     pending: false,
 };
@@ -210,6 +211,9 @@ export const annotationSlice = createSlice({
         },
         clearHistory: (state) => {
             state.annotationHistory = null;
+        },
+        resetLatestTab: (state) => {
+            state.latestTab = null;
         }
     },
     extraReducers: {
@@ -251,9 +255,18 @@ export const annotationSlice = createSlice({
         },
         [fetchBatchProgress.fulfilled]: (state, action) => {
             action.payload.forEach(progress => {
-                const { id, segment, is_completed, is_marked } = progress;
-                state.progressMap[segment] = { is_completed, is_marked, progressId: id };
+                const { id, segment, is_completed, is_marked, created_at } = progress;
+                state.progressMap[segment] = { is_completed, is_marked, progressId: id, created_at };
             });
+            let tabIndex;
+            let latest = new Date("1970-01-01Z00:00:00:000");
+            for (const key in state.progressMap) {
+                if (new Date(state.progressMap[key].created_at) > latest) {
+                    latest = new Date(state.progressMap[key].created_at);
+                    tabIndex = key * 1;
+                };
+            }
+            state.latestTab = tabIndex;
             state.progressMapLoading = false;
         },
         [addProgress.fulfilled]: (state, action) => {
@@ -284,6 +297,7 @@ export const {
     currentRegionChange,
     cleanProgressMap,
     setProgressLoading,
+    resetLatestTab,
 } = annotationSlice.actions;
 
 export default annotationSlice.reducer;
