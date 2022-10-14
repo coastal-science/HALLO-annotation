@@ -22,7 +22,7 @@ import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import ExportButton from "../UI/ExportButton";
 import { exportToCsv } from "../../utils/exportUtils";
 import { useFocusRef } from "../../hooks/useFocusRef";
-import Moment from "react-moment";
+import Moment from "../../react-moment-shim.jsx";
 import FilterTextField from "../UI/FilterTextField";
 
 const openInit = {

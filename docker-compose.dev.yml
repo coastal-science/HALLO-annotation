@@ -63,12 +63,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     volumes:
-      - ./frontend/src:/frontend/src
+      - ./frontend:/frontend
 
     ports:
       - "3000:3000"
     container_name: hallo_frontend
-    command: npm start
+    command: npm run dev
     depends_on:
       - backend
     links:

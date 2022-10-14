@@ -30,7 +30,7 @@ import { grey } from "@material-ui/core/colors";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import convert from "convert-units";
-import Moment from "react-moment";
+import Moment from "../../react-moment-shim.jsx";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {

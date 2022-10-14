@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import { useFocusRef } from "../../hooks/useFocusRef";
 import { openAlert } from "../../reducers/errorSlice";
-import Moment from "react-moment";
+import Moment from "../../react-moment-shim.jsx";
 import { handleSelect, removeSegments } from "../../reducers/segmentSlice";
 import ImportSegments from "./ImportSegments";
 import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";

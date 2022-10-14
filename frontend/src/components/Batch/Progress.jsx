@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useSelector } from "react-redux";
 import ProgressItem from "./ProgressItem";
 import PropTypes from "prop-types";
-import Moment from "react-moment";
+import Moment from "../../react-moment-shim.jsx";
 
 const useStyles = makeStyles(() => ({
   paper: {

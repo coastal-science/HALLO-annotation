@@ -34,7 +34,7 @@ import { useFocusRef } from "../../hooks/useFocusRef";
 import { w3cwebsocket } from "websocket";
 import { openAlert } from "../../reducers/errorSlice";
 import FileScanResult from "./FileScanResult";
-import Moment from "react-moment";
+import Moment from "../../react-moment-shim.jsx";
 import ExportButton from "../UI/ExportButton";
 import { exportToCsv } from "../../utils/exportUtils";
 import FilterTextField from "../UI/FilterTextField";

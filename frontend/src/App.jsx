@@ -14,7 +14,6 @@ import AlertBar from "./components/UI/AlertBar";
 const basename = process.env.REACT_APP_BASENAME || null;
 
 function App() {
-
   return (
     <Provider store={store}>
       <BrowserRouter basename={basename}>
