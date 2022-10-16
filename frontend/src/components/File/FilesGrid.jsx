@@ -34,7 +34,7 @@ import { useFocusRef } from "../../hooks/useFocusRef";
 import { w3cwebsocket } from "websocket";
 import { openAlert } from "../../reducers/errorSlice";
 import FileScanResult from "./FileScanResult";
-import Moment from "../../react-moment-shim.jsx";
+import { DateTime } from "../UI/Date";
 import ExportButton from "../UI/ExportButton";
 import { exportToCsv } from "../../utils/exportUtils";
 import FilterTextField from "../UI/FilterTextField";
@@ -317,7 +317,7 @@ const FilesGrid = () => {
         width: 200,
         formatter({ row }) {
           return (
-            <Moment date={row.datetime} format="YYYY/MM/DD-HH:MM:SS"></Moment>
+            <DateTime>{row.datetime}</DateTime>
           );
         },
       },

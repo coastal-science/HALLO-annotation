@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useSelector } from "react-redux";
 import ProgressItem from "./ProgressItem";
 import PropTypes from "prop-types";
-import Moment from "../../react-moment-shim.jsx";
+import { Date } from "../UI/Date";
 
 const useStyles = makeStyles(() => ({
   paper: {
@@ -28,7 +28,7 @@ const Progress = ({ batchId }) => {
           <Grid item>
             <Typography variant="subtitle1">
               Created at:{" "}
-              <Moment date={created_at} format="YYYY/MM/DD"></Moment>
+              <Date>{created_at}</Date>
             </Typography>
           </Grid>
           {annotators.length === 0 && (

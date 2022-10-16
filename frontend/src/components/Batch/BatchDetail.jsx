@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Card, CardContent, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
-import Moment from "../../react-moment-shim.jsx";
+import { Date } from "../UI/Date";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles(() => ({
@@ -54,7 +54,7 @@ const BatchDetail = memo(({ batch }) => {
             <Grid item>
               <Typography variant="subtitle1">
                 Created At:{" "}
-                {<Moment format="YYYY/MM/DD" date={created_at}></Moment>}
+                <Date>{created_at}</Date>
               </Typography>
             </Grid>
           </Grid>

@@ -22,7 +22,7 @@ import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import ExportButton from "../UI/ExportButton";
 import { exportToCsv } from "../../utils/exportUtils";
 import { useFocusRef } from "../../hooks/useFocusRef";
-import Moment from "../../react-moment-shim.jsx";
+import { DateTime } from "../UI/Date";
 import FilterTextField from "../UI/FilterTextField";
 
 const openInit = {
@@ -354,7 +354,7 @@ const AnnotationsGrid = () => {
         width: 200,
         formatter({ row }) {
           return (
-            <Moment date={row.created_at} format="YYYY/MM/DD-HH:MM:SS"></Moment>
+            <DateTime>{row.created_at}</DateTime>
           );
         },
       },

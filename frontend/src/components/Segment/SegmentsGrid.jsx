@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
 import { useFocusRef } from "../../hooks/useFocusRef";
 import { openAlert } from "../../reducers/errorSlice";
-import Moment from "../../react-moment-shim.jsx";
+import { DateTime } from "../UI/Date";
 import { handleSelect, removeSegments } from "../../reducers/segmentSlice";
 import ImportSegments from "./ImportSegments";
 import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
@@ -214,7 +214,7 @@ const SegmentsGrid = () => {
         width: 200,
         formatter({ row }) {
           return (
-            <Moment date={row.created_at} format="YYYY/MM/DD-HH:MM:SS"></Moment>
+            <DateTime>{row.created_at}</DateTime>
           );
         },
       },

@@ -33,7 +33,6 @@ import {
 } from "../../reducers/annotationSlice";
 import { fetchUser, fetchUserList } from "../../reducers/userSlice";
 import Annotators from "./Annotators";
-import { includes } from "lodash";
 
 const useStyles = makeStyles(() => ({
   modal: {
@@ -183,7 +182,7 @@ const ImportAnnotations = ({ onClose, open }) => {
       return;
     }
 
-    if (!includes(selectedAnnotators, true)) {
+    if (!Object.values(selectedAnnotators).some(Boolean)) {
       dispatch(
         openAlert({
           severity: "error",

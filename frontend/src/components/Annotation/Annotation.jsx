@@ -30,7 +30,7 @@ import { grey } from "@material-ui/core/colors";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import convert from "convert-units";
-import Moment from "../../react-moment-shim.jsx";
+import { DateTime } from "../UI/Date";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -211,7 +211,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
           }
           title={batches[batch]?.batch_name}
           subheader={
-            <Moment date={created_at} format='YYYY/MM/DD - hh:mm:ss'></Moment>
+            <DateTime>{created_at}</DateTime>
           }
         />
         <CardContent>

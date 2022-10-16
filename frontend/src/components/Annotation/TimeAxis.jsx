@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Stage, Layer, Rect, Text } from "react-konva";
-import moment from "moment";
+import { duration } from "../UI/Date";
 
 const TimeAxis = memo(({ width, start, end }) => {
   const duration = end - start;
@@ -10,8 +10,7 @@ const TimeAxis = memo(({ width, start, end }) => {
     ticks.push({
       x: 200 * i,
       text:
-        `${(+start + 5 * i).toFixed(3)} ` +
-        `(${moment.utc((+start + 5 * i) * 1000).format("HH:mm:ss")})`,
+        `${(+start + 5 * i).toFixed(3)} (${duration(+start + 5 * i)})`,
     });
   }
 
@@ -34,7 +33,7 @@ const TimeAxis = memo(({ width, start, end }) => {
           })}
         <Rect x={width - 2} y={0} width={2} height={12} fill="black" />
         <Text
-          text={`${start} (${moment.utc(start * 1000).format("HH:mm:ss")})`}
+          text={`${start} (${duration(start)})`}
           x={0}
           y={15}
           fontSize={10}
