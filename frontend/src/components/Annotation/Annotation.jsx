@@ -38,7 +38,6 @@ import {
   SIS_options,
   kw_ecotype_options,
   pod_options,
-  signal_type_options,
   call_type_options,
   confidence_options,
 } from "./annotationFields";
