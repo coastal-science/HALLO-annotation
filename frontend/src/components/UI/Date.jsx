@@ -1,9 +1,9 @@
 const ymd = {year: "numeric", month: "numeric", day: "numeric"};
 const hms = {hour: "numeric", minute: "numeric", second: "numeric", hour12: false};
 
-const fdate = new Intl.DateTimeFormat("en-CA", ymd);
-const ftime = new Intl.DateTimeFormat("en-CA", hms);
-const fdatetime = new Intl.DateTimeFormat("en-CA", {...ymd, ...hms});
+const fdate = new Intl.DateTimeFormat([], ymd);
+const ftime = new Intl.DateTimeFormat([], hms);
+const fdatetime = new Intl.DateTimeFormat([], {...ymd, ...hms});
 
 const leadingZero = n =>
   (n < 10 ? "0" : "") + String(n)
