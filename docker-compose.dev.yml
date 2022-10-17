@@ -37,7 +37,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./backend:/backend
-      - ../audio:/backend/media/audio:ro
+      - ../data/audio:/backend/media/audio:ro
       - ../spectrogram:/backend/media/spectrogram
       - ../audio_clips:/backend/media/audio_clips
     ports:

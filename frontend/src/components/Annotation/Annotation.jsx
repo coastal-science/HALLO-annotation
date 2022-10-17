@@ -31,6 +31,19 @@ import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import convert from "convert-units";
 import Moment from "react-moment";
+import Autocomplete, {
+  createFilterOptions,
+} from "@material-ui/lab/Autocomplete";
+import {
+  SIS_options,
+  kw_ecotype_options,
+  pod_options,
+  signal_type_options,
+  call_type_options,
+  confidence_options,
+} from "./annotationFields";
+
+const filter = createFilterOptions();
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -90,12 +103,58 @@ const Annotation = ({ annotation, newBatch, editable }) => {
     created_at,
   } = formData;
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e, formValue, reason, field) => {
+    if (reason === "select-option") {
+      const { value } = formValue;
+      setFormData({
+        ...formData,
+        [field]: value,
+      });
+    }
+
+    if (reason === "create-option") {
+      setFormData({
+        ...formData,
+        [field]: formValue,
+      });
+    }
+    if (reason === "clear") {
+      setFormData({
+        ...formData,
+        [field]: "",
+      });
+    }
   };
+
+  const handleFilterOptions = (options, params) => {
+    const filtered = filter(options, params);
+
+    if (params.inputValue !== "") {
+      filtered.push({
+        inputValue: params.inputValue,
+        value: `Press Enter to add "${params.inputValue}"`,
+      });
+    }
+
+    return filtered;
+  };
+
+  const handleGetOptionLabel = (option) => {
+    // Value selected with enter, right from the input
+    if (typeof option === "string") {
+      return option;
+    }
+    // Add "xxx" option created dynamically
+    if (option.inputValue) {
+      return option.inputValue;
+    }
+    // Regular option
+    return option.value;
+  };
+
+  const handleRenderInput = (params) => (
+    <TextField variant='outlined' {...params} />
+  );
 
   const handleSubmit = () => {
     const annotationData = {
@@ -256,11 +315,18 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item xs={3}>
                 <Typography variant='subtitle1'>SIS:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
-                    name='sound_id_species'
+                  <Autocomplete
+                    freeSolo
+                    handleHomeEndKeys
+                    options={SIS_options}
+                    onChange={(e, value, reason) =>
+                      handleChange(e, value, reason, "sound_id_species")
+                    }
                     value={sound_id_species}
-                    onChange={handleChange}
+                    filterOptions={handleFilterOptions}
+                    getOptionLabel={handleGetOptionLabel}
+                    renderOption={(option) => option.value}
+                    renderInput={handleRenderInput}
                   />
                 ) : (
                   <Typography>{sound_id_species}</Typography>
@@ -269,11 +335,18 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item xs={3} container direction='column'>
                 <Typography variant='subtitle1'>KW ecotype:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
-                    name='kw_ecotype'
+                  <Autocomplete
+                    freeSolo
+                    handleHomeEndKeys
+                    options={kw_ecotype_options}
+                    onChange={(e, value, reason) =>
+                      handleChange(e, value, reason, "kw_ecotype")
+                    }
                     value={kw_ecotype}
-                    onChange={handleChange}
+                    filterOptions={handleFilterOptions}
+                    getOptionLabel={handleGetOptionLabel}
+                    renderOption={(option) => option.value}
+                    renderInput={handleRenderInput}
                   />
                 ) : (
                   <Typography>{kw_ecotype}</Typography>
@@ -282,11 +355,18 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item xs={3} container direction='column'>
                 <Typography variant='subtitle1'>Call Type:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
-                    name='call_type'
+                  <Autocomplete
+                    freeSolo
+                    handleHomeEndKeys
+                    options={call_type_options}
+                    onChange={(e, value, reason) =>
+                      handleChange(e, value, reason, "call_type")
+                    }
                     value={call_type}
-                    onChange={handleChange}
+                    filterOptions={handleFilterOptions}
+                    getOptionLabel={handleGetOptionLabel}
+                    renderOption={(option) => option.value}
+                    renderInput={handleRenderInput}
                   />
                 ) : (
                   <Typography>{call_type}</Typography>
@@ -295,11 +375,18 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item container xs={3} direction='column'>
                 <Typography variant='subtitle1'>Pod:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
-                    name='pod'
+                  <Autocomplete
+                    freeSolo
+                    handleHomeEndKeys
+                    options={pod_options}
+                    onChange={(e, value, reason) =>
+                      handleChange(e, value, reason, "pod")
+                    }
                     value={pod}
-                    onChange={handleChange}
+                    filterOptions={handleFilterOptions}
+                    getOptionLabel={handleGetOptionLabel}
+                    renderOption={(option) => option.value}
+                    renderInput={handleRenderInput}
                   />
                 ) : (
                   <Typography>{pod}</Typography>
@@ -310,12 +397,18 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item xs={4}>
                 <Typography variant='subtitle1'>Confidence level:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
+                  <Autocomplete
+                    freeSolo
+                    handleHomeEndKeys
+                    options={confidence_options}
+                    onChange={(e, value, reason) =>
+                      handleChange(e, value, reason, "confidence_level")
+                    }
                     value={confidence_level}
-                    name='confidence_level'
-                    onChange={handleChange}
-                    fullWidth
+                    filterOptions={handleFilterOptions}
+                    getOptionLabel={handleGetOptionLabel}
+                    renderOption={(option) => option.value}
+                    renderInput={handleRenderInput}
                   />
                 ) : (
                   <Typography>{confidence_level}</Typography>
