@@ -319,7 +319,7 @@ const AnnotationPanel = () => {
                       zoomLevel={zoomLevel}
                       audioError={audioError}
                       setAudioError={setAudioError}
-              
+
                     />
                   </ErrorBoundary>
                 </TabPanel>
@@ -457,7 +457,7 @@ const AnnotationPanel = () => {
       </Grid>
     </Grid>
   ) : (
-    <Box>Please go back and select a bach</Box>
+    <Box>Please go back and select a batch</Box>
   );
 };
 
