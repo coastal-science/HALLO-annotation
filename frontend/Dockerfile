@@ -6,5 +6,3 @@ ADD package.json ./
 ADD package-lock.json ./
 
 RUN npm ci -D
-
-EXPOSE 3000
