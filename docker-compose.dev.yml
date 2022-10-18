@@ -59,12 +59,12 @@ services:
       - db
   # React application frontend
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
+    build: ./frontend
     volumes:
-      - ./frontend:/frontend
-
+      - ./frontend/public:/frontend/public
+      - ./frontend/src:/frontend/src
+      - ./frontend/index.html:/frontend/index.html
+      - ./frontend/vite.config.js:/frontend/vite.config.js
     ports:
       - "3000:3000"
     container_name: hallo_frontend
