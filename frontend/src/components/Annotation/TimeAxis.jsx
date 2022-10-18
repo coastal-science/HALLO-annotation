@@ -3,10 +3,10 @@ import { Stage, Layer, Rect, Text } from "react-konva";
 import { duration } from "../UI/Date";
 
 const TimeAxis = memo(({ width, start, end }) => {
-  const duration = end - start;
+  const delta = end - start;
   const ticks = [];
 
-  for (let i = 1; i < Math.floor(duration / 5); i++) {
+  for (let i = 1; i < Math.floor(delta / 5); i++) {
     ticks.push({
       x: 200 * i,
       text:
@@ -18,7 +18,7 @@ const TimeAxis = memo(({ width, start, end }) => {
     <Stage width={width} height={25}>
       <Layer>
         <Rect x={0} y={0} width={2} height={12} fill="black" />
-        {duration >= 5 &&
+        {delta >= 5 &&
           ticks.map((tick) => {
             return (
               <Rect
@@ -38,7 +38,7 @@ const TimeAxis = memo(({ width, start, end }) => {
           y={15}
           fontSize={10}
         />
-        {duration >= 5 &&
+        {delta >= 5 &&
           ticks.map((tick) => {
             return (
               <Text
