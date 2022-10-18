@@ -39,12 +39,6 @@
     "cy:open": "cypress open",
     "sh": "docker compose -f ../docker-compose.dev.yml --env-file ../.env.dev run --rm frontend bash"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
