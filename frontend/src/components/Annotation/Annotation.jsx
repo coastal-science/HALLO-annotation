@@ -321,7 +321,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                     onChange={(e, value, reason) =>
                       handleChange(e, value, reason, "sound_id_species")
                     }
-                    value={sound_id_species}
+                    value={sound_id_species || ""}
                     filterOptions={handleFilterOptions}
                     getOptionLabel={handleGetOptionLabel}
                     renderOption={(option) => option.value}
@@ -341,7 +341,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                     onChange={(e, value, reason) =>
                       handleChange(e, value, reason, "kw_ecotype")
                     }
-                    value={kw_ecotype}
+                    value={kw_ecotype || ""}
                     filterOptions={handleFilterOptions}
                     getOptionLabel={handleGetOptionLabel}
                     renderOption={(option) => option.value}
@@ -361,7 +361,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                     onChange={(e, value, reason) =>
                       handleChange(e, value, reason, "call_type")
                     }
-                    value={call_type}
+                    value={call_type || ""}
                     filterOptions={handleFilterOptions}
                     getOptionLabel={handleGetOptionLabel}
                     renderOption={(option) => option.value}
@@ -381,7 +381,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                     onChange={(e, value, reason) =>
                       handleChange(e, value, reason, "pod")
                     }
-                    value={pod}
+                    value={pod || ""}
                     filterOptions={handleFilterOptions}
                     getOptionLabel={handleGetOptionLabel}
                     renderOption={(option) => option.value}
@@ -403,7 +403,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                     onChange={(e, value, reason) =>
                       handleChange(e, value, reason, "confidence_level")
                     }
-                    value={confidence_level}
+                    value={confidence_level || ""}
                     filterOptions={handleFilterOptions}
                     getOptionLabel={handleGetOptionLabel}
                     renderOption={(option) => option.value}
@@ -420,7 +420,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                   <TextField
                     variant='outlined'
                     name='comments'
-                    value={comments}
+                    value={comments || ""}
                     onChange={handleChange}
                     fullWidth
                   />
@@ -482,7 +482,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                       startIcon={<ClearIcon />}
                       onClick={handleClearHistory}
                     >
-                      Clear Form
+                      Clear History
                     </Button>
                   )}
                 </Grid>
