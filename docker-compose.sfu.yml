@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./backend:/backend
-      - ../data/for_annotation:/backend/media/audio:ro
+      - ${FILE_PATH}:/backend/media/audio:ro
       - ../spectrogram:/backend/media/spectrogram
       - ../audio_clips:/backend/media/audio_clips
       - backend_media:/backend/media

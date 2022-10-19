@@ -1,16 +1,17 @@
 from django.shortcuts import HttpResponse
+from django.http import FileResponse, Http404
 from filebrowser.base import FileListing, FileObject
 from filebrowser.sites import site
+from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 from .models import File
 from .serializers import FileSerializer
-from rest_framework import generics
 import soundfile as sf
 import math
 import os
-from django.http import FileResponse, Http404
 
 site.directory = "/audio/"
 
@@ -87,6 +88,15 @@ class FileList(CreateListModelMixin, generics.ListCreateAPIView):
     filterset_fields = {
         'id': ["in", "exact"]
     }
+
+#This view would handle Files delete
+class FileListDelete(APIView):
+    def delete(self, request, *args, **kwargs):
+        ids = request.query_params.get('ids').split(',')
+        if ids:
+            queryset = File.objects.filter(id__in=ids)
+            queryset.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FileDetail(generics.RetrieveUpdateDestroyAPIView):
