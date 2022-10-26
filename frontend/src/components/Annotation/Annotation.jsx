@@ -17,9 +17,7 @@ import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
 import ClearIcon from "@material-ui/icons/Clear";
 import {
   cancelEditAnnotation,
-  clearRegion,
   deleteAnnotation,
-  editAnnotation,
   fetchCurrentAnnotations,
   saveAnnotation,
   updateAnnotation,
@@ -61,7 +59,7 @@ const formInit = {
   created_at: "",
 };
 
-const Annotation = ({ annotation, newBatch, editable }) => {
+const Annotation = ({ annotation, newBatch = false, editable = true, persistField }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(formInit);
@@ -90,13 +88,6 @@ const Annotation = ({ annotation, newBatch, editable }) => {
     created_at,
   } = formData;
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const handleSubmit = () => {
     const annotationData = {
       ...formData,
@@ -107,16 +98,6 @@ const Annotation = ({ annotation, newBatch, editable }) => {
     };
 
     dispatch(saveAnnotation(annotationData));
-  };
-
-  const handleEdit = () => {
-    setFormDataCopy({ ...formData });
-    dispatch(editAnnotation(id));
-  };
-
-  const handleCancelChange = () => {
-    setFormData({ ...formDataCopy });
-    dispatch(cancelEditAnnotation(id));
   };
 
   const handleSaveChange = () => {
@@ -191,24 +172,12 @@ const Annotation = ({ annotation, newBatch, editable }) => {
   return (
     <Grid item>
       <Card
-        style={{ border: editable || newBatch ? `2px solid ${grey[900]}` : "" }}
-        id={newBatch ? `annotation-new` : `annotation-${annotation.id}`}
+        style={{ border: editable ? `2px solid ${grey[900]}` : "" }}
+        id={`annotation-${annotation.id}`}
         tabIndex='-1'
       >
         <CardHeader
           avatar={<Avatar className={classes.avatar}>{id}</Avatar>}
-          action={
-            !newBatch &&
-            (!editable ? (
-              <IconButton onClick={handleEdit}>
-                <EditOutlinedIcon />
-              </IconButton>
-            ) : (
-              <IconButton onClick={handleCancelChange}>
-                <CloseOutlinedIcon />
-              </IconButton>
-            ))
-          }
           title={batches[batch]?.batch_name}
           subheader={
             <DateTime>{created_at}</DateTime>
@@ -255,12 +224,12 @@ const Annotation = ({ annotation, newBatch, editable }) => {
             <Grid item container xs={12} spacing={1}>
               <Grid item xs={3}>
                 <Typography variant='subtitle1'>SIS:</Typography>
-                {editable || newBatch ? (
+                {editable ? (
                   <TextField
                     variant='outlined'
                     name='sound_id_species'
                     value={sound_id_species}
-                    onChange={handleChange}
+                    onChange={persistField}
                   />
                 ) : (
                   <Typography>{sound_id_species}</Typography>
@@ -268,12 +237,12 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               </Grid>
               <Grid item xs={3} container direction='column'>
                 <Typography variant='subtitle1'>KW ecotype:</Typography>
-                {editable || newBatch ? (
+                {editable ? (
                   <TextField
                     variant='outlined'
                     name='kw_ecotype'
                     value={kw_ecotype}
-                    onChange={handleChange}
+                    onChange={persistField}
                   />
                 ) : (
                   <Typography>{kw_ecotype}</Typography>
@@ -281,12 +250,12 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               </Grid>
               <Grid item xs={3} container direction='column'>
                 <Typography variant='subtitle1'>Call Type:</Typography>
-                {editable || newBatch ? (
+                {editable ? (
                   <TextField
                     variant='outlined'
                     name='call_type'
                     value={call_type}
-                    onChange={handleChange}
+                    onChange={persistField}
                   />
                 ) : (
                   <Typography>{call_type}</Typography>
@@ -294,12 +263,12 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               </Grid>
               <Grid item container xs={3} direction='column'>
                 <Typography variant='subtitle1'>Pod:</Typography>
-                {editable || newBatch ? (
+                {editable ? (
                   <TextField
                     variant='outlined'
                     name='pod'
                     value={pod}
-                    onChange={handleChange}
+                    onChange={persistField}
                   />
                 ) : (
                   <Typography>{pod}</Typography>
@@ -309,12 +278,12 @@ const Annotation = ({ annotation, newBatch, editable }) => {
             <Grid item container xs={12} spacing={1}>
               <Grid item xs={4}>
                 <Typography variant='subtitle1'>Confidence level:</Typography>
-                {editable || newBatch ? (
+                {editable ? (
                   <TextField
                     variant='outlined'
                     value={confidence_level}
                     name='confidence_level'
-                    onChange={handleChange}
+                    onChange={persistField}
                     fullWidth
                   />
                 ) : (
@@ -324,12 +293,12 @@ const Annotation = ({ annotation, newBatch, editable }) => {
 
               <Grid item xs={8} container direction='column'>
                 <Typography variant='subtitle1'>Comments:</Typography>
-                {editable || newBatch ? (
+                {editable ? (
                   <TextField
                     variant='outlined'
                     name='comments'
                     value={comments}
-                    onChange={handleChange}
+                    onChange={persistField}
                     fullWidth
                   />
                 ) : (
@@ -338,49 +307,27 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               </Grid>
             </Grid>
 
-            {(editable || newBatch) && (
+            {editable && (
               <Grid item container xs={12} justify='center' spacing={1}>
                 <Grid item>
-                  {newBatch ? (
-                    <Button
-                      variant='contained'
-                      color='primary'
-                      startIcon={<BackupOutlinedIcon />}
-                      onClick={handleSubmit}
-                    >
-                      Submit
-                    </Button>
-                  ) : (
-                    <Button
-                      variant='contained'
-                      color='primary'
-                      startIcon={<BackupOutlinedIcon />}
-                      onClick={handleSaveChange}
-                    >
-                      Save
-                    </Button>
-                  )}
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    startIcon={<BackupOutlinedIcon />}
+                    onClick={_ => handleSaveChange}
+                  >
+                    Save
+                  </Button>
                 </Grid>
                 <Grid item>
-                  {newBatch ? (
-                    <Button
-                      variant='contained'
-                      color='primary'
-                      startIcon={<DeleteForeverOutlinedIcon />}
-                      onClick={() => dispatch(clearRegion())}
-                    >
-                      Clear Region
-                    </Button>
-                  ) : (
-                    <Button
-                      variant='contained'
-                      color='primary'
-                      startIcon={<DeleteForeverOutlinedIcon />}
-                      onClick={handleDelete}
-                    >
-                      Delete
-                    </Button>
-                  )}
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    startIcon={<DeleteForeverOutlinedIcon />}
+                    onClick={_ => handleDelete}
+                  >
+                    Delete
+                  </Button>
                 </Grid>
                 <Grid item>
                   {annotationHistory && (

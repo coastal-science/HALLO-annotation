@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axiosWithAuth from '#utils/axiosWithAuth';
 import { normalize, schema } from 'normalizr';
-import { annotationToRegion } from '#utils/annotationUtils';
 import { queryFormater } from '#utils/segmentUtils';
 
 const initialState = {
@@ -40,14 +39,6 @@ export const fetchAnnotationsByBatches = createAsyncThunk(
             const { entities } = normalize(data, [annotationEntity]);
             return entities;
         }
-    }
-);
-
-export const saveAnnotation = createAsyncThunk(
-    'annotation/saveAnnotation',
-    async (annotation) => {
-        const { data } = await axiosWithAuth.post(`/annotation/`, annotation);
-        return data;
     }
 );
 
@@ -135,68 +126,9 @@ export const annotationSlice = createSlice({
     name: 'annotation',
     initialState,
     reducers: {
-        mouseDown: (state, action) => {
-            state.isDrawing = true;
-            const point = action.payload;
-            state.region = {
-                id: "New",
-                x: point.x,
-                y: point.y,
-                width: 0,
-                height: 0,
-                name: "region",
-                stroke: "white",
-            };
-        },
-        mouseMove: (state, action) => {
-            const point = action.payload;
-            state.region.width = Math.abs(state.region.x - point.x);
-            state.region.height = Math.abs(state.region.y - point.y);
-        },
-        mouseUp: (state) => {
-            state.isDrawing = false;
-            if (state.region.width === 0 || state.region.width === 0) {
-                state.region = null;
-                state.annotation = null;
-            }
-        },
-        regionChange: (state, action) => {
-            state.region = action.payload;
-        },
-        currentRegionChange: (state, action) => {
-            const { id } = action.payload;
-            state.currentRegions[id] = action.payload;
-        },
-        selectRegion: (state) => {
-            state.isSelected = true;
-        },
-        convertRegionToAnnotation: (state, action) => {
-            state.annotation = action.payload;
-        },
-        convertAnnotationsToRegions: (state, action) => {
-            const {
-                currentAnnotations,
-                ...rest
-            } = action.payload;
-
-            state.currentRegions = {};
-            state.currentRegionIds = [];
-
-            for (const key in currentAnnotations) {
-                const annotation = currentAnnotations[key];
-                const region = annotationToRegion({ annotation, ...rest });
-                state.currentRegions[key] = region;
-                state.currentRegionIds.push(key);
-            }
-        },
         clearRegion: (state) => {
             state.region = null;
             state.annotation = null;
-        },
-        editAnnotation: (state, action) => {
-            const annotationId = action.payload;
-            state.selectedRegion = annotationId;
-            state.copyOfEditRegion = { ...state.currentRegions[annotationId] };
         },
         cancelEditAnnotation: (state, action) => {
             state.selectedRegion = null;
@@ -220,13 +152,6 @@ export const annotationSlice = createSlice({
         [fetchAnnotationsByBatches.fulfilled]: (state, action) => {
             state.annotations = action.payload.annotations;
             state.annotationIds = Object.keys(action.payload.annotations);
-        },
-        [saveAnnotation.fulfilled]: (state, action) => {
-            state.currentAnnotations[action.payload.id] = action.payload;
-            state.currentAnnotationIds.push(action.payload.id);
-            state.annotation = null;
-            state.region = null;
-            state.annotationHistory = action.payload;
         },
         [updateAnnotation.fulfilled]: (state, action) => {
             const updatedAnnotation = action.payload;
@@ -283,18 +208,9 @@ export const annotationSlice = createSlice({
 
 
 export const {
-    mouseDown,
-    mouseMove,
-    mouseUp,
-    regionChange,
-    selectRegion,
     clearRegion,
     clearHistory,
-    convertRegionToAnnotation,
-    convertAnnotationsToRegions,
-    editAnnotation,
     cancelEditAnnotation,
-    currentRegionChange,
     cleanProgressMap,
     setProgressLoading,
     resetLatestTab,

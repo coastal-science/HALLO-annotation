@@ -17,12 +17,8 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import BatchDetail from "#components/Batch/BatchDetail";
-import Spectrogram from "./Spectrogram";
-import Annotation from "./Annotation";
-import AudioPlayer from "react-h5-audio-player";
-import "react-h5-audio-player/lib/styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addProgress,
@@ -32,10 +28,12 @@ import {
   markAsNotCompleted,
   setProgressLoading,
 } from "#reducers/annotationSlice";
-import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallback from "#ui/ErrorFallback";
 import SkipNextOutlinedIcon from "@material-ui/icons/SkipNextOutlined";
 import SkipPreviousOutlinedIcon from "@material-ui/icons/SkipPreviousOutlined";
+import * as Specviz from "../../specviz/src/specviz-react.jsx"
+import axiosWithAuth from "../../utils/axiosWithAuth";
+import { fetchCurrentAnnotations } from "../../reducers/annotationSlice";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -73,11 +71,173 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+async function fetchImage(params) {
+  console.log("fetchImage", params)
+  const { data:segment } = await axiosWithAuth.get(
+    `/batch/image/?batch=${params.batch_id}&segment=${params.segment_id}`
+  );
+  if (segment.length !== 0) return segment[0].image;
+  const { data:init } = await axiosWithAuth({
+    method: "get",
+    url: "/hallo/image/",
+    params,
+  });
+  const { data:image } = await axiosWithAuth.get(
+    `/batch/image/?id=${init.id}`
+  );
+  return image[0].image;
+};
+
+async function fetchAudio(params) {
+  const { data:segment } = await axiosWithAuth({
+    method: "get",
+    url: "/hallo/audio",
+    params
+  })
+  const { data:result } = await axiosWithAuth.get(`/segment?id=${segment.id}`)
+  return result[0].audio
+}
+
+const spectrogramMap = new Map([
+  [0, 'MagSpectrogram'],
+  [1, 'MelSpectrogram'],
+  [2, 'PowerSpectrogram'],
+  [3, 'CQTSpectrogram'],
+]);
+
+function HalloSpectrogram({ segmentId }) {
+  const { batches, currentBatch } = useSelector((state) => state.batch);
+  const { files } = useSelector((state) => state.file);
+  const { segments } = useSelector((state) => state.segment);
+  const batch = batches[currentBatch];
+  const segment = segments[segmentId];
+  const filename = files[segment.file].filename;
+  const filePath = files[segment.file].path;
+  const [image, setImage] = useState(null);
+  useEffect(() => {
+    let mounted = true;
+    fetchImage({
+      type: spectrogramMap.get(batch.spectrogram_type),
+      window: batch.window_length,
+      rate: batch.rate,
+      step: batch.step_size,
+      freq_min: batch.freq_min,
+      freq_max: batch.freq_max,
+      audio_file: filePath,
+      spec_output: `/backend/media/spectrogram/${filename}_batch_${currentBatch}_segment_${segment.id}.png`,
+      start: segment.start,
+      end: segment.end,
+      segment_id: segment.id,
+      batch_id: currentBatch,
+      image_url: `spectrogram/${filename}_batch_${currentBatch}_segment_${segment.id}.png`,
+    })
+    .then(href => { if (mounted) setImage(href) })
+    .catch(console.error)
+    return () => { mounted = false; }
+  }, [
+    spectrogramMap,
+    filename,
+    batch,
+    segment,
+    currentBatch,
+    filePath
+  ])
+
+  if (image == null) return <CircularProgress />
+
+  return <div className="specviz"><Specviz.Spectrogram
+    height={400}
+    data={image}
+    duration={segment.end - segment.start}
+    f_max={batch.freq_max}
+    f_min={batch.freq_min}
+  /></div>
+}
+
+function HalloAudio({ segmentId }) {
+  const { files } = useSelector((state) => state.file);
+  const { segments } = useSelector((state) => state.segment);
+  const [audio, setAudio] = useState(null);
+  const segment = segments[segmentId];
+
+  useEffect(() => {
+    let mounted = true;
+    fetchAudio({
+      audio_file: files[segment.file].path,
+      start: segment.start,
+      end: segment.end,
+      audio_clip_output: `/backend/media/audio_clips/${files[segment.file].filename}_segment_${segment.id}.flac`,
+      segment_id: segment.id,
+      audio_url: `audio_clips/${files[segment.file].filename}_segment_${segment.id}.flac`
+    })
+    .then(href => { if (mounted) setAudio(href) })
+    .catch(console.error)
+    return () => { mounted = false; }
+  }, [segmentId, files[segment.file].path, files[segment.file].filename, segment.id, segment.start, segment.end])
+
+  useEffect(() => {
+    console.log("audio href", String(audio))
+  }, [audio])
+
+  if (audio == null) return <CircularProgress />
+  return <Specviz.Audio src={audio}>
+    {({status, playpause, stop}) => (
+      <div>
+        <button onClick={playpause}>
+          {status === "playing" ? "⏸" : "▶️" }
+        </button>
+        <button onClick={stop}>
+          {"⏹"}
+        </button>
+      </div>
+    )}
+  </Specviz.Audio>
+}
+
+const formInit = {
+  id: "",
+  batch: "",
+  start: "",
+  end: "",
+  freq_max: "",
+  freq_min: "",
+  sound_id_species: "",
+  kw_ecotype: "",
+  pod: "",
+  call_type: "",
+  confidence_level: "",
+  comments: "",
+  created_at: "",
+};
+
+const iso = {
+  toSpecviz({ id, start, end, freq_min, freq_max, ...annotation }) {
+    return {
+      id,
+      timeFreq: {
+        startTime: Number.parseFloat(start),
+        endTime: Number.parseFloat(end),
+        startFreq: Number.parseFloat(freq_min),
+        endFreq: Number.parseFloat(freq_max),
+      },
+      annotation
+    }
+  },
+  toHallo({ id, timeFreq, annotation }) {
+    return {
+      ...annotation,
+      id,
+      start: String(timeFreq.startTime),
+      end: String(timeFreq.endTime),
+      freq_min: String(timeFreq.startFreq),
+      freq_max: String(timeFreq.endFreq),
+    }
+  }
+}
+
 const AnnotationPanel = () => {
   const classes = useStyles();
-
   const dispatch = useDispatch();
-
   const { id } = useSelector((state) => state.user);
   const { currentBatch, batches } = useSelector((state) => state.batch);
   const { segments } = useSelector((state) => state.segment);
@@ -92,24 +252,18 @@ const AnnotationPanel = () => {
     selectedRegion,
     latestTab,
   } = useSelector((state) => state.annotation);
-
   const tabInit = currentBatch
     ? Math.min(...batches[currentBatch].segments)
     : 0;
 
   const [tab, setTab] = useState(tabInit);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [audio, setAudio] = useState(null);
   const [isCompleted, setIsCompleted] = useState(true);
   const [isMarked, setIsMarked] = useState(false);
   const [filterSwitch, setFilterSwitch] = useState(false);
-  const audioRef = useRef(null);
   const [index, setIndex] = useState(0);
   const [totalSegments, setTotalSegments] = useState(0);
   const [indexSegment, setIndexSegment] = useState(null);
-  const [timer, setTimer] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(false);
-  const [audioError, setAudioError] = useState(false);
 
   const handleChange = (event, newValue) => {
     setTab(newValue);
@@ -153,20 +307,6 @@ const AnnotationPanel = () => {
     }
   };
 
-  const handleStopTimer = () => {
-    clearInterval(timer);
-  };
-
-  const handleStartTimer = () => {
-    if (!audioRef.current) {
-      return;
-    }
-    const interval = setInterval(() => {
-      setCurrentTime(audioRef.current.audio.current.currentTime);
-    }, 100);
-    setTimer(interval);
-  };
-
   useEffect(() => {
     if (!currentBatch) {
       return;
@@ -185,15 +325,6 @@ const AnnotationPanel = () => {
 
     // eslint-disable-next-line
   }, [currentBatch, filterSwitch]);
-
-  useEffect(() => {
-    if (currentBatch) {
-      const { audio } = segments[tab];
-      setAudio(audio);
-      setCurrentTime(0);
-    }
-    // eslint-disable-next-line
-  }, [tab]);
 
   useEffect(() => {
     dispatch(fetchBatchProgress({ batchId: currentBatch, userId: id }));
@@ -232,11 +363,24 @@ const AnnotationPanel = () => {
   }, [tab, progressMapLoading]);
 
   useEffect(() => {
-    console.log(latestTab)
+    // console.log(latestTab)
     if(latestTab) setTab(latestTab)
   },[latestTab])
 
-  return !!currentBatch ? (
+  useEffect(() => {
+    dispatch(
+      fetchCurrentAnnotations({
+        batchId: currentBatch,
+        segmentId: tab,
+        annotator: id,
+      })
+    );
+    // eslint-disable-next-line
+  }, [currentBatch, tab, id]);
+
+  if (currentBatch == null)
+    return <Box>Please go back and select a batch</Box>
+  return <Specviz.Specviz>
     <Grid container spacing={1} wrap='nowrap'>
       <Grid item container xs={8} spacing={1} justify='center'>
         <Grid item xs={12} className={classes.root}>
@@ -305,26 +449,9 @@ const AnnotationPanel = () => {
               </Tabs>
             </Toolbar>
           </AppBar>
-
-          {batches[currentBatch].segments
-            .filter(filterMarked)
-            .map((segmentId) => {
-              return (
-                <TabPanel value={tab} key={segmentId} index={segmentId}>
-                  <ErrorBoundary FallbackComponent={ErrorFallback}>
-                    <Spectrogram
-                      segmentId={segmentId}
-                      currentTime={currentTime}
-                      setAudio={setAudio}
-                      zoomLevel={zoomLevel}
-                      audioError={audioError}
-                      setAudioError={setAudioError}
-
-                    />
-                  </ErrorBoundary>
-                </TabPanel>
-              );
-            })}
+          <TabPanel>
+            <HalloSpectrogram segmentId={tab} />
+          </TabPanel>
         </Grid>
         <Grid item xs={12} container justify='center'>
           <Card style={{ width: "100%" }}>
@@ -398,20 +525,7 @@ const AnnotationPanel = () => {
                     justify='center'
                     style={{ height: 80 }}
                   >
-                    {audio && !audioError ? (
-                      <AudioPlayer
-                        src={audio}
-                        ref={audioRef}
-                        layout='horizontal'
-                        autoPlayAfterSrcChange={false}
-                        onPlay={handleStartTimer}
-                        onPause={handleStopTimer}
-                        onEnded={handleStopTimer}
-                        onError={(e) => setAudioError(true)}
-                      />
-                    ) : (
-                      <CircularProgress />
-                    )}
+                    <HalloAudio segmentId={tab} />
                   </Grid>
                 </Grid>
               </CardActions>
@@ -434,31 +548,22 @@ const AnnotationPanel = () => {
         <Grid item>
           <BatchDetail batch={batches[currentBatch]} />
         </Grid>
-        {currentAnnotationIds.length > 0 && pending ? (
-          <CircularProgress />
-        ) : (
-          currentAnnotationIds.map((id) => {
-            return (
+        { currentAnnotationIds.length > 0 && pending
+        ? <CircularProgress />
+        : <Specviz.Annotations preload={Object.values(currentAnnotations).map(iso.toSpecviz)} initState={formInit}>
+            {(annotation, persistField) => (
               <Annotation
-                key={"annotation" + id}
-                annotation={currentAnnotations[id]}
-                newBatch={false}
-                editable={id * 1 === selectedRegion * 1}
+                key={"annotation" + annotation.id}
+                annotation={iso.toHallo(annotation)}
+                // editable={id * 1 === selectedRegion * 1}
+                persistField={persistField}
               />
-            );
-          })
-        )}
-        {annotation && (
-          <Annotation
-            annotation={annotation}
-            newBatch={true}
-          />
-        )}
+            )}
+          </Specviz.Annotations>
+        }
       </Grid>
     </Grid>
-  ) : (
-    <Box>Please go back and select a batch</Box>
-  );
+  </Specviz.Specviz>
 };
 
 export default AnnotationPanel;
