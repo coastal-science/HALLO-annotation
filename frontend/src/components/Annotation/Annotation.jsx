@@ -19,7 +19,6 @@ import {
   cancelEditAnnotation,
   deleteAnnotation,
   fetchCurrentAnnotations,
-  saveAnnotation,
   updateAnnotation,
   clearHistory,
 } from "#reducers/annotationSlice";
@@ -87,18 +86,6 @@ const Annotation = ({ annotation, newBatch = false, editable = true, persistFiel
     comments,
     created_at,
   } = formData;
-
-  const handleSubmit = () => {
-    const annotationData = {
-      ...formData,
-      start: (formData.start * 1).toFixed(3),
-      end: (formData.end * 1).toFixed(3),
-      freq_min: (formData.freq_min * 1).toFixed(3),
-      freq_max: (formData.freq_max * 1).toFixed(3),
-    };
-
-    dispatch(saveAnnotation(annotationData));
-  };
 
   const handleSaveChange = () => {
     const updatedFromdata = {
