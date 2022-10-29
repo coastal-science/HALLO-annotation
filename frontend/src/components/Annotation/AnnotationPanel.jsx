@@ -31,9 +31,9 @@ import {
 import ErrorFallback from "#ui/ErrorFallback";
 import SkipNextOutlinedIcon from "@material-ui/icons/SkipNextOutlined";
 import SkipPreviousOutlinedIcon from "@material-ui/icons/SkipPreviousOutlined";
-import * as Specviz from "../../specviz/src/specviz-react.jsx"
-import axiosWithAuth from "../../utils/axiosWithAuth";
-import { fetchCurrentAnnotations } from "../../reducers/annotationSlice";
+import * as Specviz from "#specviz/src/specviz-react.jsx"
+import axiosWithAuth from "#utils/axiosWithAuth";
+import { fetchCurrentAnnotations } from "#reducers/annotationSlice";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -72,7 +72,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 async function fetchImage(params) {
-  console.log("fetchImage", params)
   const { data:segment } = await axiosWithAuth.get(
     `/batch/image/?batch=${params.batch_id}&segment=${params.segment_id}`
   );
@@ -174,10 +173,6 @@ function HalloAudio({ segmentId }) {
     .catch(console.error)
     return () => { mounted = false; }
   }, [segmentId, files[segment.file].path, files[segment.file].filename, segment.id, segment.start, segment.end])
-
-  useEffect(() => {
-    console.log("audio href", String(audio))
-  }, [audio])
 
   if (audio == null) return <CircularProgress />
   return <Specviz.Audio src={audio}>
