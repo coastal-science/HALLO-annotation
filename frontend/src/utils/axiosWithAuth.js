@@ -28,11 +28,14 @@ axiosWithAuth.interceptors.response.use(
             return Promise.reject(error);
         }
 
-        if (error.response.status === 401 || 403) {
+        switch (error.response.status) {
+        case 401:
+        case 403:
             window.location.href = baseURL + '/sign-in/';
-        }
-        if (error.response.status === 400) {
+            break
+        case 400:
             window.location.href = baseURL + '/';
+            break
         }
     }
 );
