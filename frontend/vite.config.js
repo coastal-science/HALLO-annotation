@@ -1,7 +1,7 @@
-import { resolve } from 'path'
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import commonjs from '@rollup/plugin-commonjs'
+import { resolve } from "path"
+import { defineConfig } from "vite"
+import react from "@vitejs/plugin-react"
+import commonjs from "@rollup/plugin-commonjs"
 import pkg from "./package.json"
 
 // https://vitejs.dev/config/
@@ -27,7 +27,7 @@ export default ({ mode }) => defineConfig({
       // https://github.com/vitejs/vite/issues/7385#issue-1174476084
       {
         find: /^#/,
-        replacement: '#',
+        replacement: "#",
         customResolver(id) {
           for (const [src, dest] of Object.entries(pkg.imports)) {
             const match = matchIdentifier(id, src)
@@ -46,6 +46,6 @@ export default ({ mode }) => defineConfig({
 })
 
 function matchIdentifier(id, pat) {
-  const re = new RegExp(`^${pat.replace('*', '(.*)')}$`)
+  const re = new RegExp(`^${pat.replace("*", "(.*)")}$`)
   return id.match(re)?.[1] ?? false
 }

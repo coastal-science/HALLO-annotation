@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const baseURL = import.meta.env.REACT_APP_BASE_URL ?? "http://localhost:3000";
 const backendURL = import.meta.env.REACT_APP_BACKEND ?? "http://localhost:8000";

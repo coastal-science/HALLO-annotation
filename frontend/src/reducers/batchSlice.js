@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosWithAuth from '#utils/axiosWithAuth';
-import { normalize, schema } from 'normalizr';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosWithAuth from "#utils/axiosWithAuth";
+import { normalize, schema } from "normalizr";
 
 
 const initialState = {

@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosWithAuth from '#utils/axiosWithAuth';
-import { normalize, schema } from 'normalizr';
-import { setCurrentBatch } from '#reducers/batchSlice';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosWithAuth from "#utils/axiosWithAuth";
+import { normalize, schema } from "normalizr";
+import { setCurrentBatch } from "#reducers/batchSlice";
 
 
 const initialState = {

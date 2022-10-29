@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { addBatch, editBatch } from './batchSlice';
-import { login, register } from './userSlice';
+import { createSlice } from "@reduxjs/toolkit";
+import { addBatch, editBatch } from "./batchSlice";
+import { login, register } from "./userSlice";
 
 
 const initialState = {

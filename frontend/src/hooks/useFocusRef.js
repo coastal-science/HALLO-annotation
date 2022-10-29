@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { useLayoutEffect } from '#hooks/useLayoutEffect';
+import { useRef } from "react";
+import { useLayoutEffect } from "#hooks/useLayoutEffect";
 
 export function useFocusRef(isSelected) {
     const ref = useRef(null);

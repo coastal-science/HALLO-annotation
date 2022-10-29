@@ -7,7 +7,7 @@ import SignUp from "#pages/Signup";
 import BatchDashboard from "#pages/BatchDashboard";
 import NoAccess from "#pages/NoAccess";
 import { store } from "./store";
-import { Provider } from 'react-redux';
+import { Provider } from "react-redux";
 import AlertBar from "#ui/AlertBar";
 
 const basename = import.meta.env.REACT_APP_BASENAME ?? null;

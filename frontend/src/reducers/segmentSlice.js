@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosWithAuth from '#utils/axiosWithAuth';
-import { normalize, schema } from 'normalizr';
-import { queryFormater } from '#utils/segmentUtils';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosWithAuth from "#utils/axiosWithAuth";
+import { normalize, schema } from "normalizr";
+import { queryFormater } from "#utils/segmentUtils";
 
 const initialState = {
     segments: {},
