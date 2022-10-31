@@ -58,7 +58,7 @@ const Annotator = () => {
         </Typography>
         <Typography paragraph>
           When a user logs in as a annotator, the user is presented with two
-          pages, <b>Batches and Annotation panel</b>. HALLO's main workflow is
+          pages, <b>Batches and Annotation panel</b>. HALLO&apos;s main workflow is
           to split audio files into segments of customizable length and add them
           to one or more batches. Each batch can be assigned to one or more
           annotators for annotation. Annotator can annotate the spectrogram or

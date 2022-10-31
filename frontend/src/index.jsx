@@ -3,6 +3,6 @@ import "./index.css";
 import App from "./App.jsx";
 import reportWebVitals from "./reportWebVitals";
 
-render(<App />, document.getElementById('root'));
+render(<App />, document.getElementById("root"));
 
 reportWebVitals();

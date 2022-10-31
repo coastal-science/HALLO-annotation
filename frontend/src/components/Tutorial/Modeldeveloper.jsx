@@ -65,7 +65,7 @@ const Modeldeveloper = () => {
         <Typography paragraph>
           When a user logs in as a model developer, the user is presented with
           four subpages, <b>Batches, Files, Segments and Annotations</b>.
-          HALLO's main workflow is to split audio files into segments of
+          HALLO&apos;s main workflow is to split audio files into segments of
           customizable length and add them to one or more batches. Each batch
           can be assigned to one or more annotators for annotation, and the
           results of the annotations can be exported through the{" "}

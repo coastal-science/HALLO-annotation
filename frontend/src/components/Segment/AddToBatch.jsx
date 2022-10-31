@@ -66,14 +66,14 @@ const AddToBatch = ({ onClose, open, setSelectedRows }) => {
   const batchList = useMemo(() => {
     return assignedbatches.length !== 0
       ? assignedbatches.map((id) => {
-          const batch = batches[id];
-          const { segments, annotators: users, ...rest } = batch;
-          const segmentsTotal = segments.length;
-          const annotatorNames = users.map(
-            (user) => annotators[user].user_name
-          );
-          return { segmentsTotal, annotatorNames, ...rest };
-        })
+        const batch = batches[id];
+        const { segments, annotators: users, ...rest } = batch;
+        const segmentsTotal = segments.length;
+        const annotatorNames = users.map(
+          (user) => annotators[user].user_name
+        );
+        return { segmentsTotal, annotatorNames, ...rest };
+      })
       : [];
   }, [annotators, assignedbatches, batches]);
 

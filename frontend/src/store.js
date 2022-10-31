@@ -7,12 +7,12 @@ import annotationReducer from "#reducers/annotationSlice";
 import errorReducer from "#reducers/errorSlice";
 
 export const store = configureStore({
-    reducer: {
-        user: userReducer,
-        batch: batchReducer,
-        file: fileReducer,
-        segment: segmentReducer,
-        annotation: annotationReducer,
-        error: errorReducer,
-    },
+  reducer: {
+    user: userReducer,
+    batch: batchReducer,
+    file: fileReducer,
+    segment: segmentReducer,
+    annotation: annotationReducer,
+    error: errorReducer,
+  },
 });

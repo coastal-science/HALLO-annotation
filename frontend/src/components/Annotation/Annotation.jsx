@@ -8,12 +8,9 @@ import {
   TextField,
   CardHeader,
   Avatar,
-  IconButton,
 } from "@material-ui/core";
-import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import BackupOutlinedIcon from "@material-ui/icons/BackupOutlined";
-import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
 import ClearIcon from "@material-ui/icons/Clear";
 import {
   cancelEditAnnotation,
@@ -58,11 +55,10 @@ const formInit = {
   created_at: "",
 };
 
-const Annotation = ({ annotation, newBatch = false, editable = true, persistField }) => {
+const Annotation = ({ annotation, editable = true, persistField }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(formInit);
-  const [formDataCopy, setFormDataCopy] = useState(null);
 
   const { selectedRegion, currentRegions, annotationHistory } = useSelector(
     (state) => state.annotation
@@ -96,7 +92,6 @@ const Annotation = ({ annotation, newBatch = false, editable = true, persistFiel
       freq_max: (formData.freq_max * 1).toFixed(3),
     };
     dispatch(updateAnnotation({ id, formData: updatedFromdata }));
-    setFormDataCopy(null);
     dispatch(cancelEditAnnotation(id));
   };
 

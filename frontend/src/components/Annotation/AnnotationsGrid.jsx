@@ -129,18 +129,18 @@ const AnnotationsGrid = () => {
   const rows = useMemo(() => {
     return annotationIds.length !== 0
       ? annotationIds.map((id) => {
-          const annotation = annotations[id];
-          const { batch, annotator, segment, ...rest } = annotation;
-          const filename = files[segments[segment].file].filename;
-          const batchname = batches[batch].batch_name;
-          const annotatorName = annotators[annotator].user_name;
-          return {
-            filename,
-            batchname,
-            annotatorName,
-            ...rest,
-          };
-        })
+        const annotation = annotations[id];
+        const { batch, annotator, segment, ...rest } = annotation;
+        const filename = files[segments[segment].file].filename;
+        const batchname = batches[batch].batch_name;
+        const annotatorName = annotators[annotator].user_name;
+        return {
+          filename,
+          batchname,
+          annotatorName,
+          ...rest,
+        };
+      })
       : [];
   }, [annotationIds, annotations, annotators, batches, files, segments]);
 
@@ -152,31 +152,31 @@ const AnnotationsGrid = () => {
           : true) &&
         (filters.batchname
           ? row.batchname
-              .toLowerCase()
-              .includes(filters.batchname.toLowerCase())
+            .toLowerCase()
+            .includes(filters.batchname.toLowerCase())
           : true) &&
         (filters.sound_id_species
           ? row.sound_id_species
-              .toLowerCase()
-              .includes(filters.sound_id_species.toLowerCase())
+            .toLowerCase()
+            .includes(filters.sound_id_species.toLowerCase())
           : true) &&
         (filters.call_type
           ? row.call_type
-              .toLowerCase()
-              .includes(filters.call_type.toLowerCase())
+            .toLowerCase()
+            .includes(filters.call_type.toLowerCase())
           : true) &&
         (filters.kw_ecotype
           ? row.kw_ecotype
-              .toLowerCase()
-              .includes(filters.kw_ecotype.toLowerCase())
+            .toLowerCase()
+            .includes(filters.kw_ecotype.toLowerCase())
           : true) &&
         (filters.pod
           ? row.pod.toLowerCase().includes(filters.pod.toLowerCase())
           : true) &&
         (filters.annotator
           ? row.annotatorName
-              .toLowerCase()
-              .includes(filters.annotator.toLowerCase())
+            .toLowerCase()
+            .includes(filters.annotator.toLowerCase())
           : true) &&
         (filters.comments
           ? row.comments.toLowerCase().includes(filters.comments.toLowerCase())

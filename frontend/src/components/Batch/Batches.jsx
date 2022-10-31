@@ -88,18 +88,18 @@ const Batches = () => {
             >
               {isPowerUser
                 ? batchIds.map((batchId) => {
-                    return (
-                      <Batch
-                        key={batchId}
-                        batch={batches[batchId]}
-                        highlight={true}
-                        handleDelete={handleDelete}
-                      />
-                    );
-                  })
+                  return (
+                    <Batch
+                      key={batchId}
+                      batch={batches[batchId]}
+                      highlight={true}
+                      handleDelete={handleDelete}
+                    />
+                  );
+                })
                 : assignedbatches.map((batchId) => {
-                    return <Batch key={batchId} batch={batches[batchId]} />;
-                  })}
+                  return <Batch key={batchId} batch={batches[batchId]} />;
+                })}
             </Grid>
           </Grid>
           {openBatchSetting && (

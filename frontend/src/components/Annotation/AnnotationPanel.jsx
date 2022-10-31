@@ -28,10 +28,9 @@ import {
   markAsNotCompleted,
   setProgressLoading,
 } from "#reducers/annotationSlice";
-import ErrorFallback from "#ui/ErrorFallback";
 import SkipNextOutlinedIcon from "@material-ui/icons/SkipNextOutlined";
 import SkipPreviousOutlinedIcon from "@material-ui/icons/SkipPreviousOutlined";
-import * as Specviz from "#specviz/src/specviz-react.jsx"
+import * as Specviz from "#specviz/src/specviz-react.jsx";
 import axiosWithAuth from "#utils/axiosWithAuth";
 import { fetchCurrentAnnotations } from "#reducers/annotationSlice";
 
@@ -92,16 +91,16 @@ async function fetchAudio(params) {
     method: "get",
     url: "/hallo/audio",
     params
-  })
-  const { data:result } = await axiosWithAuth.get(`/segment?id=${segment.id}`)
-  return result[0].audio
+  });
+  const { data:result } = await axiosWithAuth.get(`/segment?id=${segment.id}`);
+  return result[0].audio;
 }
 
 const spectrogramMap = new Map([
-  [0, 'MagSpectrogram'],
-  [1, 'MelSpectrogram'],
-  [2, 'PowerSpectrogram'],
-  [3, 'CQTSpectrogram'],
+  [0, "MagSpectrogram"],
+  [1, "MelSpectrogram"],
+  [2, "PowerSpectrogram"],
+  [3, "CQTSpectrogram"],
 ]);
 
 function HalloSpectrogram({ segmentId }) {
@@ -130,9 +129,9 @@ function HalloSpectrogram({ segmentId }) {
       batch_id: currentBatch,
       image_url: `spectrogram/${filename}_batch_${currentBatch}_segment_${segment.id}.png`,
     })
-    .then(href => { if (mounted) setImage(href) })
-    .catch(console.error)
-    return () => { mounted = false; }
+      .then(href => { if (mounted) setImage(href); })
+      .catch(console.error);
+    return () => { mounted = false; };
   }, [
     spectrogramMap,
     filename,
@@ -140,9 +139,9 @@ function HalloSpectrogram({ segmentId }) {
     segment,
     currentBatch,
     filePath
-  ])
+  ]);
 
-  if (image == null) return <CircularProgress />
+  if (image == null) return <CircularProgress />;
 
   return <div className="specviz"><Specviz.Spectrogram
     height={400}
@@ -150,7 +149,7 @@ function HalloSpectrogram({ segmentId }) {
     duration={segment.end - segment.start}
     f_max={batch.freq_max}
     f_min={batch.freq_min}
-  /></div>
+  /></div>;
 }
 
 function HalloAudio({ segmentId }) {
@@ -169,12 +168,12 @@ function HalloAudio({ segmentId }) {
       segment_id: segment.id,
       audio_url: `audio_clips/${files[segment.file].filename}_segment_${segment.id}.flac`
     })
-    .then(href => { if (mounted) setAudio(href) })
-    .catch(console.error)
-    return () => { mounted = false; }
-  }, [segmentId, files[segment.file].path, files[segment.file].filename, segment.id, segment.start, segment.end])
+      .then(href => { if (mounted) setAudio(href); })
+      .catch(console.error);
+    return () => { mounted = false; };
+  }, [segmentId, files[segment.file].path, files[segment.file].filename, segment.id, segment.start, segment.end]);
 
-  if (audio == null) return <CircularProgress />
+  if (audio == null) return <CircularProgress />;
   return <Specviz.Audio src={audio}>
     {({status, playpause, stop}) => (
       <div>
@@ -186,7 +185,7 @@ function HalloAudio({ segmentId }) {
         </button>
       </div>
     )}
-  </Specviz.Audio>
+  </Specviz.Audio>;
 }
 
 const formInit = {
@@ -216,7 +215,7 @@ const iso = {
         endFreq: Number.parseFloat(freq_max),
       },
       annotation
-    }
+    };
   },
   toHallo({ id, timeFreq, annotation }) {
     return {
@@ -226,9 +225,9 @@ const iso = {
       end: String(timeFreq.endTime),
       freq_min: String(timeFreq.startFreq),
       freq_max: String(timeFreq.endFreq),
-    }
+    };
   }
-}
+};
 
 const AnnotationPanel = () => {
   const classes = useStyles();
@@ -238,13 +237,13 @@ const AnnotationPanel = () => {
   const { segments } = useSelector((state) => state.segment);
   const { files } = useSelector((state) => state.file);
   const {
-    annotation,
+    annotation: annotation_,
     currentAnnotations,
     currentAnnotationIds,
     progressMap,
     progressMapLoading,
     pending,
-    selectedRegion,
+    selectedRegion: selectedRegion_,
     latestTab,
   } = useSelector((state) => state.annotation);
   const tabInit = currentBatch
@@ -359,8 +358,8 @@ const AnnotationPanel = () => {
 
   useEffect(() => {
     // console.log(latestTab)
-    if(latestTab) setTab(latestTab)
-  },[latestTab])
+    if(latestTab) setTab(latestTab);
+  },[latestTab]);
 
   useEffect(() => {
     dispatch(
@@ -374,7 +373,7 @@ const AnnotationPanel = () => {
   }, [currentBatch, tab, id]);
 
   if (currentBatch == null)
-    return <Box>Please go back and select a batch</Box>
+    return <Box>Please go back and select a batch</Box>;
   return <Specviz.Specviz>
     <Grid container spacing={1} wrap='nowrap'>
       <Grid item container xs={8} spacing={1} justify='center'>
@@ -544,8 +543,8 @@ const AnnotationPanel = () => {
           <BatchDetail batch={batches[currentBatch]} />
         </Grid>
         { currentAnnotationIds.length > 0 && pending
-        ? <CircularProgress />
-        : <Specviz.Annotations preload={Object.values(currentAnnotations).map(iso.toSpecviz)} initState={formInit}>
+          ? <CircularProgress />
+          : <Specviz.Annotations preload={Object.values(currentAnnotations).map(iso.toSpecviz)} initState={formInit}>
             {(annotation, persistField) => (
               <Annotation
                 key={"annotation" + annotation.id}
@@ -558,7 +557,7 @@ const AnnotationPanel = () => {
         }
       </Grid>
     </Grid>
-  </Specviz.Specviz>
+  </Specviz.Specviz>;
 };
 
 export default AnnotationPanel;

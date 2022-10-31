@@ -37,7 +37,7 @@ const Annotators = ({ selectedAnnotators, clickHandler }) => {
         <List className={classes.list}>
           <ListItem role={undefined} dense className={classes.listTitle}>
             <ListItemIcon></ListItemIcon>
-            <ListItemText primary={`Bioacoustician`} />
+            <ListItemText primary={"Bioacoustician"} />
           </ListItem>
           <Divider component="li" />
           {annotatorIds.map((id) => {

@@ -18,7 +18,7 @@ export const spectrogramMap = new Map([
   [3, "CQTSpectrogram"],
 ]);
 
-const BatchDetail = memo(({ batch }) => {
+const BatchDetail = memo(function BatchDetail({ batch }){
   const classes = useStyles();
 
   const {

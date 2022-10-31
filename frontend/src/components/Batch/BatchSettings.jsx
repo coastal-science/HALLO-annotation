@@ -82,13 +82,13 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
   const segmentList = useMemo(() => {
     return batchId
       ? batches[batchId].segments.map((id) => {
-          const segment = segments[id];
-          const { file, ...rest } = segment;
-          return {
-            filename: files[file].filename,
-            ...rest,
-          };
-        })
+        const segment = segments[id];
+        const { file, ...rest } = segment;
+        return {
+          filename: files[file].filename,
+          ...rest,
+        };
+      })
       : [];
   }, [batchId, batches, files, segments]);
 

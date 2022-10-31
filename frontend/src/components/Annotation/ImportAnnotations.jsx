@@ -154,7 +154,7 @@ const ImportAnnotations = ({ onClose, open }) => {
   };
 
   const handleOnError = (err, file, inputElem, reason) => {
-    console.log(err);
+    console.error({ err, file, inputElem, reason });
   };
 
   const handleOnRemoveFile = (data) => {

@@ -36,7 +36,7 @@
     "#reducers/*": "./src/reducers/*.js",
     "#specviz/*": "./src/specviz/*",
     "#themes/*": "./src/themes/*.js",
-    "#ui/*":"./src/components/UI/*.jsx",
+    "#ui/*": "./src/components/UI/*.jsx",
     "#utils/*": "./src/utils/*.js"
   },
   "scripts": {

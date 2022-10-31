@@ -175,16 +175,16 @@ const FilesGrid = () => {
       });
   };
 
-  const handleDownload = (e, file) => {
+  const handleDownload = (event_, file) => {
     setOpenConfirmation(true);
     setFile(file);
   };
 
-  const handleScanConfirmation = (e) => {
+  const handleScanConfirmation = (event_) => {
     setScanConfirmation(true);
   };
 
-  const handleVerifyConfirmation = (e) => {
+  const handleVerifyConfirmation = (event_) => {
     setVerifyConfirmation(true);
   };
 

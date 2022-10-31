@@ -1,15 +1,15 @@
 export function stopPropagation(event) {
-    event.stopPropagation();
+  event.stopPropagation();
 }
 
 export const inputStopPropagation = (event) => {
-    if (["ArrowLeft", "ArrowRight"].includes(event.key)) {
-        event.stopPropagation();
-    }
+  if (["ArrowLeft", "ArrowRight"].includes(event.key)) {
+    event.stopPropagation();
+  }
 };
 
 export const selectStopPropagation = (event) => {
-    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
-        event.stopPropagation();
-    }
+  if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+    event.stopPropagation();
+  }
 };
