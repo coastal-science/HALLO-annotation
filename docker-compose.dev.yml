@@ -64,11 +64,12 @@ services:
       - ./frontend/public:/frontend/public
       - ./frontend/src:/frontend/src
       - ./frontend/index.html:/frontend/index.html
+      - ./frontend/eslint.config.js:/frontend/eslint.config.js
       - ./frontend/vite.config.js:/frontend/vite.config.js
     ports:
       - "3000:3000"
     container_name: hallo_frontend
-    command: npm run dev
+    command: pnpm dev
     depends_on:
       - backend
     links:

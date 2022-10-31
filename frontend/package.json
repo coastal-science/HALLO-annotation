@@ -34,6 +34,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "lint": "eslint --fix --ignore-pattern src/specviz ./",
     "build": "vite build",
     "serve": "vite preview",
     "cy:open": "cypress open",
@@ -55,6 +56,8 @@
     "@rollup/plugin-commonjs": "^23.0.0",
     "@vitejs/plugin-react": "^2.1.0",
     "cypress": "^8.3.0",
+    "eslint": "^8.26.0",
+    "eslint-plugin-react": "^7.31.10",
     "vite": "^3.1.7"
   }
 }
