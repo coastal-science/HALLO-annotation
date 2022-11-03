@@ -52,11 +52,11 @@ Users can also adapt the code to their needs and deploy it according to their ow
 
 ### Prerequisite
 
-In the example of a local installation, the HALLO annotation tool runs in a few Docker containers and requires Docker and Docker-compose to be pre-installed on the system.
+In the example of a local installation, the HALLO annotation tool runs in a few Docker containers and requires `docker` (and `docker compose`) to be pre-installed on the system.
 
 ### Steps
 
-1. The HALLO annotation tool needs to be installed in the same directory as the audio files, and the audio files need to be contained in a folder called **audio**.
+1. The **hallo_annoatation** folder needs to be installed in the same directory as the audio files, and the audio files need to be contained in a folder called **audio**.
 
    Clone this repo and put it in the same folder where the **audio** folder located.
 
@@ -68,57 +68,47 @@ In the example of a local installation, the HALLO annotation tool runs in a few 
     └─ hallo_annotation
    ```
 
-2. In the code base, the file docker-compose.dev.yml is used to provide a basic example. To use this file you need to create an env (eg .evn.dev) to configure some environment parameters.
-
-   An example of environmental parameters
+2. The **docker-compose.yml** file depends on some environment variables. To configure, create an environment file, (eg **.env**).
 
    ```
    # Database
-   POSTGRES_DB=name_of_the_database
-   POSTGRES_USER=username
-   POSTGRES_PASSWORD=password
+   POSTGRES_DB=hallodb
+   POSTGRES_USER=hallouser
+   POSTGRES_PASSWORD=hallopass
 
    # PGadmin
-   PGADMIN_DEFAULT_EMAIL=login_email_address
-   PGADMIN_DEFAULT_PASSWORD=password
+   PGADMIN_DEFAULT_EMAIL=pgadmin@hallo.dev
+   PGADMIN_DEFAULT_PASSWORD=hallopass
 
    # Django key
    DJANGO_SECRET_KEY=The_django_secret_key
-
    ```
 
-3. From the hallo_annotation folder, run docker command as below. If you are using linux, you might need to add `sudo`.
+3. From the **hallo_annotation** folder, run docker command as below. If you are using linux, you might need to add `sudo`.
 
    ```
-    docker-compose -f docker-compose.dev.yml --env-file .env.dev up -d
+   % docker compose up -d
    ```
 
-4. If all goes well, you can use `docker ps` to check the containers' status.
+4. If all goes well, use `docker compose ps` to check the containers' status.
 
    ```
-   hallo_annotation % docker ps
-   CONTAINER ID   IMAGE                       COMMAND                  CREATED          STATUS          PORTS                           NAMES
-   55052170d523   hallo_annotation_frontend   "docker-entrypoint.s…"   34 minutes ago   Up 33 minutes   0.0.0.0:3000->3000/tcp          hallo_frontend
-   7337d62ba365   hallo_annotation_backend    "bash -c 'python man…"   17 hours ago     Up 33 minutes   0.0.0.0:8000->8000/tcp          hallo_backend
-   416cfb0e2dd0   dpage/pgadmin4              "/entrypoint.sh"         17 hours ago     Up 33 minutes   443/tcp, 0.0.0.0:5050->80/tcp   hallo_pgadmin
-   ec8b3350a851   postgres:13                 "docker-entrypoint.s…"   17 hours ago     Up 33 minutes   0.0.0.0:5432->5432/tcp          hallo_postgres_db
+   % docker compose ps
+   NAME                COMMAND                  SERVICE    STATUS    PORTS
+   hallo_backend       "bash -c 'python man…"   backend    running   0.0.0.0:8000->8000/tcp
+   hallo_frontend      "docker-entrypoint.s…"   frontend   running   0.0.0.0:3000->3000/tcp
+   hallo_pgadmin       "/entrypoint.sh"         pgadmin    running   443/tcp, 0.0.0.0:5050->80/tcp
+   hallo_postgres_db   "docker-entrypoint.s…"   db         running   0.0.0.0:5432->5432/tcp
    ```
 
-5. A **superuser** needs to be created at the backend to set up the groups. In the same folder, use this command to get in the backend container.
+5. Create the **superuser** for backend administration using the Django `manage.py` script.
 
    ```
-   docker-compose -f docker-compose.dev.yml --env-file .env.dev run backend dash
+   % docker compose run --rm backend python manage.py createsuperuser
    ```
-
-   Then create the superuser for the Django Admin:
-
-   ```
-   python manage.py createsuperuser
-   ```
-
 6. The HALLO annotation tool uses Django's Admin panel to manage user permissions. For the first time, you need to log in and create groups and assign permissions for each group. The Django backend is at: http://localhost:8000/admin/, and you can use the superuser account you just created to log in.
 
-   After logging in, create three user groups in the Groups page (**Case sensitive**).
+   After logging in, create three user groups in the Groups page (**case-sensitive**).
 
    ```
    1. Admin
@@ -172,37 +162,37 @@ The basic setup for this deployment is already done in the code base, and a mini
 
 If you need to remove the software completely, or want to reinstall a fresh version, consider the following steps:
 
-1. Stop the docker containers
+1. Stop the docker containers:
 
    ```
-   docker-compose -f docker-compose.dev.yml --env-file .env.dev down
+   % docker compose down
    ```
 
-2. List the images that were used by HALLO
+2. List the images that were built and used by HALLO:
 
    ```
-   $docker image ls
-   REPOSITORY                  TAG       IMAGE ID       CREATED             SIZE
-   hallo-annotation_frontend   latest    900f03c5b6d1   About an hour ago   2.03GB
-   hallo-annotation_backend    latest    5b9eb01ed370   About an hour ago   3.26GB
-   postgres                    13        b67cf799bada   12 days ago         373MB
-   dpage/pgadmin4              latest    40a516ee7dea   3 weeks ago         341MB
+   % docker compose images
+   Container          Repository       Tag      Image Id       Size
+   hallo_backend      hallo-backend    latest   e0bc0ba39dae   3.4GB
+   hallo_frontend     hallo-frontend   latest   978b4924d1bc   1.68GB
+   hallo_pgadmin      dpage/pgadmin4   latest   13bb55e0df01   357MB
+   hallo_postgres_db  postgres         13       02cd4e60a6f2   353MB
    ```
 
-3. Delete the images by copying the image ids after command `docker image rm`, for example:
+3. Delete the images using their Image Id:
 
    ```
-   docker image rm 900f03c5b6d1 5b9eb01ed370
+   % docker image rm e0bc0ba39dae 978b4924d1bc 13bb55e0df01 02cd4e60a6f2
    ```
 
-4. Remove the volum (**note that this will clear the database**):
+4. Delete the database volumes (optional):
 
    ```
-   docker volume rm hallo-annotation_db_data hallo-annotation_pgadmin_data
+   % docker volume rm hallo_db_data hallo_pgadmin_data
    ```
 
-5. Use `system prune` to clean up the system (optional):
+5. Clean up docker cache and unused files (optional):
 
    ```
-   docker system prune
+   % docker system prune
    ```

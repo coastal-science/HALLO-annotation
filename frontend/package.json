@@ -37,8 +37,7 @@
     "lint": "eslint --fix --ignore-pattern src/specviz ./",
     "build": "vite build",
     "serve": "vite preview",
-    "cy:open": "cypress open",
-    "sh": "docker compose -f ../docker-compose.dev.yml --env-file ../.env.dev run --rm frontend bash"
+    "cy:open": "cypress open"
   },
   "browserslist": {
     "production": [
