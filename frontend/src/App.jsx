@@ -10,7 +10,7 @@ import { store } from "./store";
 import { Provider } from 'react-redux';
 import AlertBar from "#ui/AlertBar";
 
-const basename = process.env.REACT_APP_BASENAME || null;
+const basename = import.meta.env.REACT_APP_BASENAME ?? null;
 
 function App() {
   return (

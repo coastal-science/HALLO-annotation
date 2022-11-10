@@ -53,7 +53,7 @@ const filtersInit = {
   enabled: false,
 };
 
-const wssURL = process.env.REACT_APP_WSS || "ws://localhost:8000/ws/file/scan/";
+const wssURL = import.meta.env.REACT_APP_WSS ?? "ws://localhost:8000/ws/file/scan/";
 
 const FilterContext = createContext(filtersInit);
 

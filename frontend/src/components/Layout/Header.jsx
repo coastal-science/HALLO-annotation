@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const adminURL =
-  process.env.REACT_APP_ADMIN_LOGIN || "http://localhost:8000/admin/";
+  import.meta.env.REACT_APP_ADMIN_LOGIN ?? "http://localhost:8000/admin/";
 
 function Header() {
   const classes = useStyles();
