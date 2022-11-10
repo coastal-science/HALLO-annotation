@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Card, Grid, Typography, CardActionArea } from "@material-ui/core";
 import { grey } from "@material-ui/core/colors";

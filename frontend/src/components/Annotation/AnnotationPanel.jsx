@@ -17,7 +17,7 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import BatchDetail from "#components/Batch/BatchDetail";
 import Spectrogram from "./Spectrogram";
 import Annotation from "./Annotation";

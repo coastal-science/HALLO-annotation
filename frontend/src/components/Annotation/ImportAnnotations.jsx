@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Card,

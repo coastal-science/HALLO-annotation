@@ -8,7 +8,6 @@ import {
   Divider,
   Checkbox,
 } from "@material-ui/core";
-import React from "react";
 import { useSelector } from "react-redux";
 import { grey } from "@material-ui/core/colors";
 import { makeStyles } from "@material-ui/core/styles";

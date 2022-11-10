@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Grid, Typography, LinearProgress } from "@material-ui/core";
 import { fetchProgress } from "#reducers/batchSlice";

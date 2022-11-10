@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -67,7 +67,7 @@ export default function SignUp() {
   const dispatch = useDispatch();
   const { isLoggedIn } = useSelector((state) => state.user);
 
-  const [formState, setFormState] = React.useState({
+  const [formState, setFormState] = useState({
     isValid: false,
     values: {},
     touched: {},
