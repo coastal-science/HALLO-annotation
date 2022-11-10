@@ -1,6 +1,6 @@
 import { Typography, Box, CssBaseline } from "@material-ui/core";
 import React, { useEffect } from "react";
-import { fetchUser } from "../reducers/userSlice";
+import { fetchUser } from "#reducers/userSlice";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 

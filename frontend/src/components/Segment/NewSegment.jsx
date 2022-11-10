@@ -28,8 +28,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addSegments,
   fetchSegmentsByCreater,
-} from "../../reducers/segmentSlice";
-import { openAlert } from "../../reducers/errorSlice";
+} from "#reducers/segmentSlice";
+import { openAlert } from "#reducers/errorSlice";
 
 const useStyles = makeStyles(() => ({
   modal: {

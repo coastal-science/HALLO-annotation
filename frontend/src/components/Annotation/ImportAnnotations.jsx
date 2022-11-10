@@ -19,20 +19,20 @@ import {
   addSegments,
   fetchSegmentsByCreater,
   updateSegment,
-} from "../../reducers/segmentSlice";
-import { openAlert } from "../../reducers/errorSlice";
+} from "#reducers/segmentSlice";
+import { openAlert } from "#reducers/errorSlice";
 import {
   addBatch,
   fetchBatchesByIds,
   updateBatchSegments,
-} from "../../reducers/batchSlice";
-import { formInit as batchDefaultSettings } from "../Batch/BatchSettings";
+} from "#reducers/batchSlice";
+import { formInit as batchDefaultSettings } from "#components/Batch/BatchSettings";
 import {
   addBatchAnnotations,
   fetchAnnotationsByBatches,
-} from "../../reducers/annotationSlice";
-import { fetchUser, fetchUserList } from "../../reducers/userSlice";
-import Annotators from "./Annotators";
+} from "#reducers/annotationSlice";
+import { fetchUser, fetchUserList } from "#reducers/userSlice";
+import Annotators from "#components/Annotation/Annotators";
 
 const useStyles = makeStyles(() => ({
   modal: {

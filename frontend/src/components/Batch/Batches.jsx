@@ -12,13 +12,13 @@ import Batch from "./Batch";
 import BatchSettings from "./BatchSettings";
 import { useSelector, useDispatch } from "react-redux";
 import { ErrorBoundary } from "react-error-boundary";
-import ErrorFallback from "../UI/ErrorFallback";
-import Page from "../UI/Page";
+import ErrorFallback from "#ui/ErrorFallback";
+import Page from "#ui/Page";
 import { useState } from "react";
-import { deleteBatch, fetchBatchesByIds } from "../../reducers/batchSlice";
-import { fetchUser, fetchUserList } from "../../reducers/userSlice";
-import { fetchSegmentsByCreater } from "../../reducers/segmentSlice";
-import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
+import { deleteBatch, fetchBatchesByIds } from "#reducers/batchSlice";
+import { fetchUser, fetchUserList } from "#reducers/userSlice";
+import { fetchSegmentsByCreater } from "#reducers/segmentSlice";
+import { fetchAnnotationsByBatches } from "#reducers/annotationSlice";
 import AddIcon from "@material-ui/icons/Add";
 
 const Batches = () => {

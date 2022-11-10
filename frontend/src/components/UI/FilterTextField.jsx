@@ -1,5 +1,5 @@
 import { TextField } from "@material-ui/core";
-import { inputStopPropagation } from "../../utils/dataGridUtils";
+import { inputStopPropagation } from "#utils/dataGridUtils";
 
 const FilterTextField = ({ ...rest }) => {
   return (

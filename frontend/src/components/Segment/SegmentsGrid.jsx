@@ -12,23 +12,23 @@ import {
   Dialog,
 } from "@material-ui/core";
 import { useState, useEffect, createContext, useContext, useMemo } from "react";
-import Page from "../UI/Page";
+import Page from "#ui/Page";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
-import { useFocusRef } from "../../hooks/useFocusRef";
-import { openAlert } from "../../reducers/errorSlice";
-import { DateTime } from "../UI/Date";
-import { handleSelect, removeSegments } from "../../reducers/segmentSlice";
+import { useFocusRef } from "#hooks/useFocusRef";
+import { openAlert } from "#reducers/errorSlice";
+import { DateTime } from "#ui/Date";
+import { handleSelect, removeSegments } from "#reducers/segmentSlice";
 import ImportSegments from "./ImportSegments";
-import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
+import { fetchAnnotationsByBatches } from "#reducers/annotationSlice";
 import AddToBatch from "./AddToBatch";
 import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import PlaylistAddOutlinedIcon from "@material-ui/icons/PlaylistAddOutlined";
-import ExportButton from "../UI/ExportButton";
-import { exportToCsv } from "../../utils/exportUtils";
-import FilterTextField from "../UI/FilterTextField";
-import { fetchBatchesByIds } from "../../reducers/batchSlice";
+import ExportButton from "#ui/ExportButton";
+import { exportToCsv } from "#utils/exportUtils";
+import FilterTextField from "#ui/FilterTextField";
+import { fetchBatchesByIds } from "#reducers/batchSlice";
 
 const openInit = {
   newSegment: false,

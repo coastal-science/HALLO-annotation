@@ -22,26 +22,26 @@ import {
   useContext,
   useMemo,
 } from "react";
-import Page from "../UI/Page";
+import Page from "#ui/Page";
 import SyncIcon from "@material-ui/icons/Sync";
 import PlaylistAddCheckOutlined from "@material-ui/icons/PlaylistAddCheckOutlined";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import AutorenewOutlinedIcon from "@material-ui/icons/AutorenewOutlined";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteFiles, fetchFiles } from "../../reducers/fileSlice";
+import { deleteFiles, fetchFiles } from "#reducers/fileSlice";
 import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
-import { useFocusRef } from "../../hooks/useFocusRef";
+import { useFocusRef } from "#hooks/useFocusRef";
 import { w3cwebsocket } from "websocket";
-import { openAlert } from "../../reducers/errorSlice";
+import { openAlert } from "#reducers/errorSlice";
 import FileScanResult from "./FileScanResult";
-import { DateTime } from "../UI/Date";
-import ExportButton from "../UI/ExportButton";
-import { exportToCsv } from "../../utils/exportUtils";
-import FilterTextField from "../UI/FilterTextField";
+import { DateTime } from "#ui/Date";
+import ExportButton from "#ui/ExportButton";
+import { exportToCsv } from "#utils/exportUtils";
+import FilterTextField from "#ui/FilterTextField";
 import convert from "convert-units";
 import CloudDownloadOutlinedIcon from "@material-ui/icons/CloudDownloadOutlined";
 import FileDownloading from "./FileDownloading";
-import axiosWithAuth from "../../utils/axiosWithAuth";
+import axiosWithAuth from "#utils/axiosWithAuth";
 import fileDownload from "js-file-download";
 import AutoGenerate from "../Segment/AutoGenerate";
 

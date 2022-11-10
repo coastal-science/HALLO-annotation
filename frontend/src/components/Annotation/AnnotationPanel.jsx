@@ -18,7 +18,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { useState, useRef, useEffect } from "react";
-import BatchDetail from "../Batch/BatchDetail";
+import BatchDetail from "#components/Batch/BatchDetail";
 import Spectrogram from "./Spectrogram";
 import Annotation from "./Annotation";
 import AudioPlayer from "react-h5-audio-player";
@@ -31,9 +31,9 @@ import {
   markAsMarked,
   markAsNotCompleted,
   setProgressLoading,
-} from "../../reducers/annotationSlice";
+} from "#reducers/annotationSlice";
 import { ErrorBoundary } from "react-error-boundary";
-import ErrorFallback from "../UI/ErrorFallback";
+import ErrorFallback from "#ui/ErrorFallback";
 import SkipNextOutlinedIcon from "@material-ui/icons/SkipNextOutlined";
 import SkipPreviousOutlinedIcon from "@material-ui/icons/SkipPreviousOutlined";
 

@@ -4,10 +4,10 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
 import { Typography } from "@material-ui/core";
-import batchSetting from ".././../images/Batch-Settings.png";
-import developerWorkFlow from ".././../images/developer-work-flow.png";
-import addNewSegments from ".././../images/add-new-segments.mp4";
-import autoGenerateSegments from ".././../images/auto-generate-segments.mp4";
+import batchSetting from "#images/Batch-Settings.png";
+import developerWorkFlow from "#images/developer-work-flow.png";
+import addNewSegments from "#images/add-new-segments.mp4";
+import autoGenerateSegments from "#images/auto-generate-segments.mp4";
 
 const useStyles = makeStyles((theme) => ({
   root: {

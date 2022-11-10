@@ -32,6 +32,17 @@
     "web-vitals": "^1.0.1",
     "websocket": "^1.0.34"
   },
+  "imports": {
+    "#components/*": "./src/components/*.jsx",
+    "#hooks/*": "./src/hooks/*.js",
+    "#images/*": "./src/images/*",
+    "#pages/*": "./src/pages/*.jsx",
+    "#reducers/*": "./src/reducers/*.js",
+    "#specviz/*": "./src/specviz/*",
+    "#themes/*": "./src/themes/*.js",
+    "#ui/*":"./src/components/UI/*.jsx",
+    "#utils/*": "./src/utils/*.js"
+  },
   "scripts": {
     "dev": "vite",
     "lint": "eslint --fix --ignore-pattern src/specviz ./",

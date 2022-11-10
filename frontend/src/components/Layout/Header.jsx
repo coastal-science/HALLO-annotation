@@ -9,7 +9,7 @@ import Link from "@material-ui/core/Link";
 import Button from "@material-ui/core/Button";
 import { Avatar, Box } from "@material-ui/core";
 import { grey } from "@material-ui/core/colors";
-import { logout } from "../../reducers/userSlice";
+import { logout } from "#reducers/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({

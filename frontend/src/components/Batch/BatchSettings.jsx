@@ -18,13 +18,13 @@ import {
   addBatch,
   editBatch,
   fetchBatchesByIds,
-} from "../../reducers/batchSlice";
-import axiosWithAuth from "../../utils/axiosWithAuth";
+} from "#reducers/batchSlice";
+import axiosWithAuth from "#utils/axiosWithAuth";
 import DataGrid from "react-data-grid";
-import { openAlert } from "../../reducers/errorSlice";
+import { openAlert } from "#reducers/errorSlice";
 import PropTypes from "prop-types";
-import { fetchUser, fetchUserList } from "../../reducers/userSlice";
-import Annotators from "../Annotation/Annotators";
+import { fetchUser, fetchUserList } from "#reducers/userSlice";
+import Annotators from "#components/Annotation/Annotators";
 
 const useStyles = makeStyles(() => ({
   modal: {

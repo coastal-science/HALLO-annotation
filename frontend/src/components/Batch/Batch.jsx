@@ -14,8 +14,8 @@ import { grey } from "@material-ui/core/colors";
 import Progress from "./Progress";
 import BatchSettings from "./BatchSettings";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentBatch } from "../../reducers/batchSlice";
-import { cleanProgressMap, clearRegion, resetLatestTab } from "../../reducers/annotationSlice";
+import { setCurrentBatch } from "#reducers/batchSlice";
+import { cleanProgressMap, clearRegion, resetLatestTab } from "#reducers/annotationSlice";
 
 const useStyles = makeStyles(() => ({
   card: {

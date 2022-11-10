@@ -24,13 +24,13 @@ import {
   saveAnnotation,
   updateAnnotation,
   clearHistory,
-} from "../../reducers/annotationSlice";
+} from "#reducers/annotationSlice";
 import { makeStyles } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import convert from "convert-units";
-import { DateTime } from "../UI/Date";
+import { DateTime } from "#ui/Date";
 
 const useStyles = makeStyles((theme) => ({
   avatar: {

@@ -14,8 +14,8 @@ import {
 } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid from "react-data-grid";
-import { addSegments } from "../../reducers/segmentSlice";
-import { switchTab } from "../../reducers/userSlice";
+import { addSegments } from "#reducers/segmentSlice";
+import { switchTab } from "#reducers/userSlice";
 
 const useStyles = makeStyles(() => ({
   modal: {

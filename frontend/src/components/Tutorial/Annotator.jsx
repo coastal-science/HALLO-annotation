@@ -4,8 +4,8 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import TabPanel from "./TabPanel";
 import { Typography } from "@material-ui/core";
-import annotationPanel from ".././../images/Annotation-panel.png";
-import addNewAnnotation from ".././../images/add-new-annotation.mp4";
+import annotationPanel from "#images/Annotation-panel.png";
+import addNewAnnotation from "#images/add-new-annotation.mp4";
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Card, CardContent, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
-import { Date } from "../UI/Date";
+import { Date } from "#ui/Date";
 import PropTypes from "prop-types";
 
 const useStyles = makeStyles(() => ({

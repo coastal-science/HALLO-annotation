@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Grid, Typography, LinearProgress } from "@material-ui/core";
-import { fetchProgress } from "../../reducers/batchSlice";
+import { fetchProgress } from "#reducers/batchSlice";
 import { withStyles } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 import PropTypes from "prop-types";

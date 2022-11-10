@@ -14,8 +14,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import DataGrid from "react-data-grid";
 import { CSVReader } from "react-papaparse";
-import { addSegments } from "../../reducers/segmentSlice";
-import { openAlert } from "../../reducers/errorSlice";
+import { addSegments } from "#reducers/segmentSlice";
+import { openAlert } from "#reducers/errorSlice";
 
 const useStyles = makeStyles(() => ({
   modal: {

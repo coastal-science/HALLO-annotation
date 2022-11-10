@@ -13,12 +13,12 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { grey } from "@material-ui/core/colors";
-import Copyright from "../components/Layout/Copyright";
+import Copyright from "#components/Layout/Copyright";
 import { NavLink, useHistory } from "react-router-dom";
 import validate from "validate.js";
-import { login } from "../reducers/userSlice";
+import { login } from "#reducers/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { adminURL } from "../components/Layout/Header";
+import { adminURL } from "#components/Layout/Header";
 
 const useStyles = makeStyles((theme) => ({
   paper: {

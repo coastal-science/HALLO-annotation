@@ -15,15 +15,15 @@ import { useDispatch, useSelector } from "react-redux";
 import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
 import ImportAnnotations from "./ImportAnnotations";
-import Page from "../UI/Page";
-import { deleteAnnotation } from "../../reducers/annotationSlice";
-import { openAlert } from "../../reducers/errorSlice";
+import Page from "#ui/Page";
+import { deleteAnnotation } from "#reducers/annotationSlice";
+import { openAlert } from "#reducers/errorSlice";
 import DataGrid, { SelectColumn, TextEditor } from "react-data-grid";
-import ExportButton from "../UI/ExportButton";
-import { exportToCsv } from "../../utils/exportUtils";
-import { useFocusRef } from "../../hooks/useFocusRef";
-import { DateTime } from "../UI/Date";
-import FilterTextField from "../UI/FilterTextField";
+import ExportButton from "#ui/ExportButton";
+import { exportToCsv } from "#utils/exportUtils";
+import { useFocusRef } from "#hooks/useFocusRef";
+import { DateTime } from "#ui/Date";
+import FilterTextField from "#ui/FilterTextField";
 
 const openInit = {
   import: false,

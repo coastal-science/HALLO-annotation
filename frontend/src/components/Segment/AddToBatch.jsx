@@ -15,9 +15,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addSegmentsToBatches,
   fetchSegmentsByCreater,
-} from "../../reducers/segmentSlice";
+} from "#reducers/segmentSlice";
 import DataGrid, { SelectColumn } from "react-data-grid";
-import { fetchBatchesByIds } from "../../reducers/batchSlice";
+import { fetchBatchesByIds } from "#reducers/batchSlice";
 import { useMemo } from "react";
 
 const useStyles = makeStyles(() => ({

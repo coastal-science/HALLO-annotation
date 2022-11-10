@@ -5,23 +5,23 @@ import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
-import Batches from "../components/Batch/Batches";
-import AnnotationPanel from "../components/Annotation/AnnotationPanel";
-import { fetchUser, fetchUserList, switchTab } from "../reducers/userSlice";
+import Batches from "#components/Batch/Batches";
+import AnnotationPanel from "#components/Annotation/AnnotationPanel";
+import { fetchUser, fetchUserList, switchTab } from "#reducers/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchFiles } from "../reducers/fileSlice";
-import { fetchBatchesByIds } from "../reducers/batchSlice";
+import { fetchFiles } from "#reducers/fileSlice";
+import { fetchBatchesByIds } from "#reducers/batchSlice";
 import {
   fetchSegmentsByCreater,
   fetchSegmentsByIds,
-} from "../reducers/segmentSlice";
+} from "#reducers/segmentSlice";
 import { useHistory } from "react-router-dom";
 import {
   clearRegion,
   fetchAnnotationsByBatches,
-} from "../reducers/annotationSlice";
-import Tutorial from "../components/Tutorial/Tutorial";
-import TabPanel from "../components/UI/TabPanel";
+} from "#reducers/annotationSlice";
+import Tutorial from "#components/Tutorial/Tutorial";
+import TabPanel from "#components/UI/TabPanel";
 import {
   Dialog,
   DialogContent,
@@ -29,9 +29,9 @@ import {
   DialogTitle,
   LinearProgress,
 } from "@material-ui/core";
-import FilesGrid from "../components/File/FilesGrid";
-import SegmentsGrid from "../components/Segment/SegmentsGrid";
-import AnnotationsGrid from "../components/Annotation/AnnotationsGrid";
+import FilesGrid from "#components/File/FilesGrid";
+import SegmentsGrid from "#components/Segment/SegmentsGrid";
+import AnnotationsGrid from "#components/Annotation/AnnotationsGrid";
 
 function a11yProps(index) {
   return {
