@@ -41,7 +41,7 @@ def process_segment_image(audio_file, start, end, spec_config, spec_output, spec
     ax = plt.Axes(fig, [0., 0., 1., 1.])
     ax.set_axis_off()
     fig.add_axes(ax)
-    ax.imshow(spec.data.T, origin='lower', vmin=vmin, vmax=vmax, cmap=cmap)
+    ax.imshow(adjust_array(spec.data.T), origin='lower', vmin=vmin, vmax=vmax, cmap=cmap)
 
     plt.savefig(spec_output, dpi=spec_dpi, pad_inches=0, bbox_inches='tight')
 
