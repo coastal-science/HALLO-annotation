@@ -20,7 +20,9 @@ spec_dict = {"MagSpectrogram": MagSpectrogram,
              "CQTSpectrogram": CQTSpectrogram}
 
 
-def process_segment_image(audio_file, start, end, spec_config, spec_output, spec_height=1, spec_dpi=400):
+
+
+def process_segment_image(audio_file, start, end, spec_config, spec_output, spec_height=1, spec_dpi=400, vmin=0, vmax=1):
 
     duration = end - start
     # Spectrogram computation
@@ -34,7 +36,7 @@ def process_segment_image(audio_file, start, end, spec_config, spec_output, spec
     ax = plt.Axes(fig, [0., 0., 1., 1.])
     ax.set_axis_off()
     fig.add_axes(ax)
-    ax.imshow(spec.data.T, origin='lower')
+    ax.imshow(spec.data.T, origin='lower', vmin=vmin, vmax=vmax)
 
     plt.savefig(spec_output, dpi=spec_dpi, pad_inches=0, bbox_inches='tight')
 
