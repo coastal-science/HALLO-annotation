@@ -20,6 +20,11 @@ spec_dict = {"MagSpectrogram": MagSpectrogram,
              "CQTSpectrogram": CQTSpectrogram}
 
 
+def adjust_range(array, min=0, max=1):
+    adjusted_array = (array - array.min()) / (array.max() - array.min())
+
+    return adjusted_array
+
 
 
 def process_segment_image(audio_file, start, end, spec_config, spec_output, spec_height=1, spec_dpi=400, vmin=0, vmax=1, cmap="viridis"):
