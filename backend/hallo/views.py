@@ -25,6 +25,13 @@ def adjust_range(array, min=0, max=1):
 
     return adjusted_array
 
+def amplify(signal, factor, log=False):
+    if log:
+        amp_signal = signal * np.power(10, factor / 20)
+    else:
+        amp_signal = signal * factor
+        
+    return amp_signal
 
 
 def process_segment_image(audio_file, start, end, spec_config, spec_output, spec_height=1, spec_dpi=400, vmin=0, vmax=1, cmap="viridis"):
