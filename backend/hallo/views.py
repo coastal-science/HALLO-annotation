@@ -53,13 +53,16 @@ def process_segment_image(audio_file, start, end, spec_config, spec_output, spec
     plt.savefig(spec_output, dpi=spec_dpi, pad_inches=0, bbox_inches='tight')
 
 
-def process_segment_audio(audio_file, start, end, audio_clip_output, audio_clip_rate=22050):
-
+def process_segment_audio(audio_file, start, end, audio_clip_output, audio_clip_rate=22050, amplification_factor=1.0, amplification_log=False):
+    
     duration = end - start
     audio, _ = load_wav(audio_file, sr=audio_clip_rate,
                         offset=start, duration=duration)
+    audio = adjust_array(audio)                    
+    audio = amplify(audio, amplification_factor, amplification_log)                    
     write_audio(file=audio_clip_output, data=audio,
                 samplerate=audio_clip_rate, format='FLAC', subtype='PCM_24')
+
 
 
 @api_view()
