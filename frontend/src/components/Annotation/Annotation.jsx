@@ -8,7 +8,12 @@ import {
   TextField,
   CardHeader,
   Avatar,
+  Select,
+  Input,
+  MenuItem,
   IconButton,
+  Checkbox,
+  ListItemText,
 } from "@material-ui/core";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
@@ -72,12 +77,23 @@ const formInit = {
   comments: "",
   created_at: "",
 };
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 const Annotation = ({ annotation, newBatch, editable }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(formInit);
   const [formDataCopy, setFormDataCopy] = useState(null);
+  const [species, setSpecies] = useState([]);
 
   const { selectedRegion, currentRegions, annotationHistory } = useSelector(
     (state) => state.annotation
@@ -158,6 +174,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
   const handleSubmit = () => {
     const annotationData = {
       ...formData,
+      sound_id_species: species.join("/"),
       start: (formData.start * 1).toFixed(3),
       end: (formData.end * 1).toFixed(3),
       freq_min: (formData.freq_min * 1).toFixed(3),
@@ -180,6 +197,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
   const handleSaveChange = () => {
     const updatedFromdata = {
       ...formData,
+      sound_id_species: species.join("/"),
       start: (formData.start * 1).toFixed(3),
       end: (formData.end * 1).toFixed(3),
       freq_min: (formData.freq_min * 1).toFixed(3),
@@ -207,11 +225,19 @@ const Annotation = ({ annotation, newBatch, editable }) => {
       confidence_level: "",
       comments: "",
     });
+    setSpecies([]);
   };
 
   useEffect(() => {
     setFormData(annotation);
+    if (annotation.sound_id_species)
+      setSpecies(annotation.sound_id_species.split("/"));
+    else setSpecies([]);
   }, [annotation]);
+
+  const handleSpeciesSelect = (e) => {
+    setSpecies(e.target.value);
+  };
 
   useEffect(() => {
     const { id, segment, batch } = annotation;
@@ -314,19 +340,22 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item xs={3}>
                 <Typography variant='subtitle1'>SIS:</Typography>
                 {editable || newBatch ? (
-                  <Autocomplete
-                    freeSolo
-                    handleHomeEndKeys
-                    options={SIS_options}
-                    onChange={(e, value, reason) =>
-                      handleChange(e, value, reason, "sound_id_species")
-                    }
-                    value={sound_id_species || ""}
-                    filterOptions={handleFilterOptions}
-                    getOptionLabel={handleGetOptionLabel}
-                    renderOption={(option) => option.value}
-                    renderInput={handleRenderInput}
-                  />
+                  <Select
+                    multiple
+                    value={species}
+                    onChange={handleSpeciesSelect}
+                    input={<Input />}
+                    renderValue={(selected) => selected.join("/")}
+                    MenuProps={MenuProps}
+                    fullWidth
+                  >
+                    {SIS_options.map((item) => (
+                      <MenuItem key={item.id} value={item.value}>
+                        <Checkbox checked={species.indexOf(item.value) > -1} />
+                        <ListItemText primary={item.value} />
+                      </MenuItem>
+                    ))}
+                  </Select>
                 ) : (
                   <Typography>{sound_id_species}</Typography>
                 )}
@@ -422,7 +451,12 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                     name='comments'
                     value={comments || ""}
                     onChange={(e) =>
-                      handleChange(e, e.target.value, "create-option", "comments")
+                      handleChange(
+                        e,
+                        e.target.value,
+                        "create-option",
+                        "comments"
+                      )
                     }
                     fullWidth
                   />

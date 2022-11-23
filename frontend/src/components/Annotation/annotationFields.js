@@ -3,13 +3,13 @@ const SIS_options = [
     { id: 2, value: "KW?", description: "potential killer whale (if it was unknown but had the potential to be KW, it fell into this category)" },
     { id: 3, value: "HW", description: "Humpback whale" },
     { id: 4, value: "HW?", description: "potential humpback whale (certainly not a KW, possibly  a HW)" },
-    { id: 5, value: "HW/KW?", description: "either HW or KW, cannot determine" },
+   // { id: 5, value: "HW/KW?", description: "either HW or KW, cannot determine" },
     { id: 6, value: "PWSD", description: "Pacific White Sided Dolphin" },
     { id: 7, value: "PWSD?", description: "potential Pacific White Sided Dolphin" },
-    { id: 8, value: "KW/PWSD?", description: "either KW or PWSD, too faint or indistinct to determine" },
+    //{ id: 8, value: "KW/PWSD?", description: "either KW or PWSD, too faint or indistinct to determine" },
     { id: 9, value: "GW", description: "Grey Whale" },
     { id: 10, value: "GW?", description: "potential Grey Whale" },
-    { id: 11, value: "HW/GW?", description: "either HW or GW, cannot determine without further review" },
+   // { id: 11, value: "HW/GW?", description: "either HW or GW, cannot determine without further review" },
     { id: 12, value: "Odontocete", description: "vocalizations from a small unidentified odontocete, not PWSD" },
     { id: 13, value: "Odontocete?", description: "potential vocalizations from a small unidentified odontocete, not PWSD" },
     { id: 14, value: "Rissos", description: "Risso’s Dolphin" },
@@ -34,8 +34,12 @@ const pod_options = [
     { id: 1, value: "J", description: "J pod" },
     { id: 2, value: "K", description: "K pod" },
     { id: 3, value: "L", description: "L pod" },
-    { id: 4, value: "Unknown", description: "unable to identify or attribute sound to a definitive pod" },
-    { id: 5, value: "K/L", description: "K or L pod (because of the call types they have in common)" },
+    { id: 4, value: "JK", description: "JK pod" },
+    { id: 5, value: "JL", description: "JL pod" },
+    { id: 6, value: "KL", description: "KL pod" },
+    { id: 7, value: "JKL", description: "JKL pod" },
+    //{ id: 5, value: "K/L", description: "K or L pod (because of the call types they have in common)" },
+    { id: 8, value: "Unknown", description: "unable to identify or attribute sound to a definitive pod" },
 ];
 
 const signal_type_options = [
@@ -46,8 +50,9 @@ const signal_type_options = [
 ];
 
 const call_type_options = [
-    { id: 1, value: "S01/S02", description: "S01 or S02 call (attribution uncertain)" },
-    { id: 2, value: "Unknown", description: "unable to identify or attribute sound to a definitive call type" },
+    { id: 1, value: "S01", description: "S01 call (attribution uncertain)" },
+    { id: 2, value: "S02", description: "S02 call (attribution uncertain)" },
+    { id: 3, value: "Unknown", description: "unable to identify or attribute sound to a definitive call type" },
 ];
 
 const confidence_options = [
