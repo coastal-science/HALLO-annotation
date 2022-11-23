@@ -421,7 +421,9 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                     variant='outlined'
                     name='comments'
                     value={comments || ""}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      handleChange(e, e.target.value, "create-option", "comments")
+                    }
                     fullWidth
                   />
                 ) : (
