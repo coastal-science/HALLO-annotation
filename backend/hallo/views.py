@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from ketos.audio.spectrogram import MagSpectrogram, MelSpectrogram, PowerSpectrogram, CQTSpectrogram
 from librosa import load as load_wav
+from scipy.signal import butter, sosfilt
 from soundfile import write as write_audio
 import matplotlib.pyplot as plt
 from segment.models import Segment
@@ -32,6 +33,30 @@ def amplify(signal, factor, log=False):
         amp_signal = signal * factor
         
     return amp_signal
+
+
+def low_pass_filter(sig, rate, order=10, freq=400):
+    """ Apply a low pass butter filter to the input signal.
+
+        Args:
+            sig: 1D numpy array (floats or ints)
+                The audio signal(time domain) to be filtered
+            rate: int
+                The sampling rate of the signal
+            order: int
+
+            freq:int
+                The frequency used for the filter. 
+
+        Return:
+            filtered_signal: 1D numpy array
+                The signal with frequencies above 'freq' filtered out. (same dimensions as the input 'sig')
+            
+    """
+    butter_filter = butter(N=order, fs=rate, Wn=freq,btype="lowpass",output="sos")
+    filtered_signal = sosfilt(butter_filter,sig)
+
+    return filtered_signal
 
 
 def process_segment_image(audio_file, start, end, spec_config, spec_output, spec_height=1, spec_dpi=400, vmin=0, vmax=1, cmap="viridis"):
