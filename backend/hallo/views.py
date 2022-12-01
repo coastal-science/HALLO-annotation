@@ -59,6 +59,32 @@ def low_pass_filter(sig, rate, order=10, freq=400):
     return filtered_signal
 
 
+def high_pass_filter(sig, rate, order=10, freq=400):
+    """ Apply a high pass butter filter to the input signal.
+
+        Args:
+            sig: 1D numpy array (floats or ints)
+                The audio signal(time domain) to be filtered
+            rate: int
+                The sampling rate of the signal
+            order: int
+
+            freq:int
+                The frequency used for the filter. 
+
+        Return:
+            filtered_signal: 1D numpy array
+                The signal with frequencies below 'freq' filtered out. (same dimensions as the input 'sig')
+            
+    """
+    butter_filter = butter(N=order, fs=rate, Wn=freq,btype="highpass",output="sos")
+    filtered_signal = sosfilt(butter_filter,sig)
+
+    return filtered_signal
+
+
+
+
 def process_segment_image(audio_file, start, end, spec_config, spec_output, spec_height=1, spec_dpi=400, vmin=0, vmax=1, cmap="viridis"):
 
     duration = end - start
