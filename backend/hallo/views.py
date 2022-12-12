@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
+from ketos.audio.waveform import Waveform
 from ketos.audio.spectrogram import MagSpectrogram, MelSpectrogram, PowerSpectrogram, CQTSpectrogram
 from librosa import load as load_wav
 from scipy.signal import butter, sosfilt
@@ -91,8 +92,10 @@ def process_segment_image(audio_file, start, end, spec_config, spec_output, spec
     # Spectrogram computation
     spec_type = spec_config['type']
     spec_config['duration'] = duration
-    spec = spec_dict[spec_type].from_wav(
-        audio_file, offset=start, **spec_config)
+    wav = Waveform.from_wav(audio_file, offset=start, rate=spec_config['rate'], window=spec_config['window'], step=['step'])
+    
+    spec = spec_dict[spec_type].from_waveform(
+        wav, **spec_config)
 
     # save spectrogram figure
     fig = plt.figure(figsize=(duration / 10, spec_height), frameon=False)
