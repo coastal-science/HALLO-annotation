@@ -86,13 +86,16 @@ def high_pass_filter(sig, rate, order=10, freq=400):
 
 
 
-def process_segment_image(audio_file, start, end, spec_config, spec_output, spec_height=1, spec_dpi=400, vmin=0, vmax=1, cmap="viridis"):
+def process_segment_image(audio_file, start, end, spec_config, spec_output, amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0, spec_height=1, spec_dpi=400, vmin=0, vmax=1, cmap="viridis"):
+
+    audio = create_audio_array(audio_file, start, end, audio_clip_rate=spec_config['rate'], amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0)                  
+    wav = Waveform(data=audio, offset=start, rate=spec_config['rate'], window=spec_config['window'], step=['step'])
 
     duration = end - start
     # Spectrogram computation
     spec_type = spec_config['type']
     spec_config['duration'] = duration
-    wav = Waveform.from_wav(audio_file, offset=start, rate=spec_config['rate'], window=spec_config['window'], step=['step'])
+    
     
     spec = spec_dict[spec_type].from_waveform(
         wav, **spec_config)
