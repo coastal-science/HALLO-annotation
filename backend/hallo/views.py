@@ -107,7 +107,21 @@ def process_segment_image(audio_file, start, end, spec_config, spec_output, spec
     plt.savefig(spec_output, dpi=spec_dpi, pad_inches=0, bbox_inches='tight')
 
 
-#TODO: this function is a good place to add some error handling: what happens if the audio file can't be read? Or if the channel specified doesn't exist? Or if the the high pass frequency is too high?
+def create_audio_array(audio_file, start, end, audio_clip_rate=22050, amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0):
+    duration = end - start
+    audio, rate = load_wav(audio_file, sr=audio_clip_rate,
+                        offset=start, duration=duration, mono=False)
+    audio = audio[channel]
+    if low_pass_freq:
+        audio = low_pass_filter(audio, rate=rate, freq=low_pass_freq)
+    if high_pass_freq:
+        audio = high_pass_filter(audio, rate=rate, freq=high_pass_freq)
+    audio = adjust_array(audio)                    
+    audio = amplify(audio, amplification_factor, amplification_log)                    
+
+    return audio
+
+
 def process_segment_audio(audio_file, start, end, audio_clip_output, audio_clip_rate=22050, amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0):
     
     duration = end - start
