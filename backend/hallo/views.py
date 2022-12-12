@@ -124,16 +124,7 @@ def create_audio_array(audio_file, start, end, audio_clip_rate=22050, amplificat
 
 def process_segment_audio(audio_file, start, end, audio_clip_output, audio_clip_rate=22050, amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0):
     
-    duration = end - start
-    audio, rate = load_wav(audio_file, sr=audio_clip_rate,
-                        offset=start, duration=duration, mono=False)
-    audio = audio[channel]
-    if low_pass_freq:
-        audio = low_pass_filter(audio, rate=rate, freq=low_pass_freq)
-    if high_pass_freq:
-        audio = high_pass_filter(audio, rate=rate, freq=high_pass_freq)
-    audio = adjust_array(audio)                    
-    audio = amplify(audio, amplification_factor, amplification_log)                    
+    audio = create_audio_array(audio_file, start, end, audio_clip_rate=22050, amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0)                  
     write_audio(file=audio_clip_output, data=audio,
                 samplerate=audio_clip_rate, format='FLAC', subtype='PCM_24')
 
