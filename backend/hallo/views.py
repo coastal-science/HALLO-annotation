@@ -88,14 +88,12 @@ def high_pass_filter(sig, rate, order=10, freq=400):
 
 def process_segment_image(audio_file, start, end, spec_config, spec_output, amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0, spec_height=1, spec_dpi=400, vmin=0, vmax=1, cmap="viridis"):
 
-    audio = create_audio_array(audio_file, start, end, audio_clip_rate=spec_config['rate'], amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0)                  
+    audio = create_audio_array(audio_file, start, end, audio_clip_rate=spec_config['rate'], amplification_factor=amplification_factor, amplification_log=amplification_log, low_pass_freq=low_pass_freq, high_pass_freq=high_pass_freq, channel=channel)                  
     wav = Waveform(data=audio, offset=start, rate=spec_config['rate'], window=spec_config['window'], step=['step'])
 
     duration = end - start
     # Spectrogram computation
     spec_type = spec_config['type']
-    spec_config['duration'] = duration
-    
     
     spec = spec_dict[spec_type].from_waveform(
         wav, **spec_config)
@@ -105,29 +103,35 @@ def process_segment_image(audio_file, start, end, spec_config, spec_output, ampl
     ax = plt.Axes(fig, [0., 0., 1., 1.])
     ax.set_axis_off()
     fig.add_axes(ax)
-    ax.imshow(adjust_array(spec.data.T), origin='lower', vmin=vmin, vmax=vmax, cmap=cmap)
-
+    img_data = spec.data
+    img_data = adjust_range(img_data)
+    ax.imshow(img_data.T, origin='lower', vmin=vmin, vmax=vmax, cmap=cmap)
+    
     plt.savefig(spec_output, dpi=spec_dpi, pad_inches=0, bbox_inches='tight')
+    plt.close(fig)
 
 
 def create_audio_array(audio_file, start, end, audio_clip_rate=22050, amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0):
     duration = end - start
-    audio, rate = load_wav(audio_file, sr=audio_clip_rate,
-                        offset=start, duration=duration, mono=False)
-    audio = audio[channel]
+    audio_obj = Waveform.from_wav(audio_file, rate=audio_clip_rate, channel=channel, offset=start, duration=duration)                    
+    
+    audio_array = audio_obj.data
+    rate = audio_obj.rate
+    
     if low_pass_freq:
-        audio = low_pass_filter(audio, rate=rate, freq=low_pass_freq)
+        audio_array = low_pass_filter(audio_array, rate=rate, freq=low_pass_freq)
     if high_pass_freq:
-        audio = high_pass_filter(audio, rate=rate, freq=high_pass_freq)
-    audio = adjust_array(audio)                    
-    audio = amplify(audio, amplification_factor, amplification_log)                    
+        audio_array = high_pass_filter(audio_array, rate=rate, freq=high_pass_freq)
+    
+    audio_array = adjust_range(audio_array)                    
+    audio_array = amplify(audio_array, amplification_factor, amplification_log)                    
 
-    return audio
+    return audio_array
 
 
 def process_segment_audio(audio_file, start, end, audio_clip_output, audio_clip_rate=22050, amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0):
     
-    audio = create_audio_array(audio_file, start, end, audio_clip_rate=22050, amplification_factor=1.0, amplification_log=False, low_pass_freq=None, high_pass_freq=None, channel=0)                  
+    audio = create_audio_array(audio_file, start, end, audio_clip_rate=audio_clip_rate, amplification_factor=amplification_factor, amplification_log=amplification_log, low_pass_freq=low_pass_freq, high_pass_freq=high_pass_freq, channel=channel)                  
     write_audio(file=audio_clip_output, data=audio,
                 samplerate=audio_clip_rate, format='FLAC', subtype='PCM_24')
 
