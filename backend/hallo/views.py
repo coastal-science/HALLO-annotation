@@ -22,8 +22,8 @@ spec_dict = {"MagSpectrogram": MagSpectrogram,
              "CQTSpectrogram": CQTSpectrogram}
 
 
-def adjust_range(array, min=0, max=1):
-    adjusted_array = (array - array.min()) / (array.max() - array.min())
+def adjust_range(array, min_value=0, max_value=1):
+    adjusted_array = min_value + (array - array.min()) * (max_value - min_value) / (array.max() - array.min())
 
     return adjusted_array
 
