@@ -44,6 +44,9 @@ import FileDownloading from "./FileDownloading";
 import axiosWithAuth from "../../utils/axiosWithAuth";
 import fileDownload from "js-file-download";
 import AutoGenerate from "../Segment/AutoGenerate";
+import { fetchBatchesByIds } from "../../reducers/batchSlice";
+import { fetchSegmentsByCreater } from "../../reducers/segmentSlice";
+import { fetchAnnotationsByBatches } from "../../reducers/annotationSlice";
 
 const filtersInit = {
   filename: "",
@@ -62,7 +65,7 @@ const FilterRenderer = ({ isCellSelected, column, children }) => {
   const { ref, tabIndex } = useFocusRef(isCellSelected);
   return (
     <Box mt={1}>
-      <Typography variant="subtitle2" style={{ fontWeight: 700 }}>
+      <Typography variant='subtitle2' style={{ fontWeight: 700 }}>
         {column.name}
       </Typography>
       {filters.enabled && <Box>{children({ ref, tabIndex, filters })}</Box>}
@@ -84,15 +87,18 @@ const FilesGrid = () => {
   const [progress, setProgress] = useState(null);
   const [scanConfirmation, setScanConfirmation] = useState(false);
   const [verifyConfirmation, setVerifyConfirmation] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
   const [openAutoGenerate, setOpenAutoGenerate] = useState({
     autoGenerate: false,
   });
 
   const dispatch = useDispatch();
 
+  const { id } = useSelector((state) => state.user);
   const { files, fileIds, scanning, loading } = useSelector(
     (state) => state.file
   );
+  const { batchIds } = useSelector((state) => state.batch);
 
   const client = useRef(null);
 
@@ -140,7 +146,13 @@ const FilesGrid = () => {
   const handleDeleteFiles = () => {
     const ids = [...selectedRows].filter((id) => files[id].deleted);
     if (ids.length !== 0) {
-      dispatch(deleteFiles({ ids })).then(() => dispatch(fetchFiles()));
+      dispatch(deleteFiles({ ids })).then(async () => {
+        await dispatch(fetchFiles());
+        await dispatch(fetchBatchesByIds(batchIds));
+        await dispatch(fetchSegmentsByCreater(id));
+        await dispatch(fetchAnnotationsByBatches(batchIds));
+        setDeleteConfirmation(false);
+      });
     } else {
       dispatch(
         openAlert({
@@ -178,14 +190,6 @@ const FilesGrid = () => {
   const handleDownload = (e, file) => {
     setOpenConfirmation(true);
     setFile(file);
-  };
-
-  const handleScanConfirmation = (e) => {
-    setScanConfirmation(true);
-  };
-
-  const handleVerifyConfirmation = (e) => {
-    setVerifyConfirmation(true);
   };
 
   const toggleFilters = () => {
@@ -284,15 +288,15 @@ const FilesGrid = () => {
         width: 100,
         formatter({ row }) {
           return row.deleted ? (
-            <Chip color="secondary" label="Yes" />
+            <Chip color='secondary' label='Yes' />
           ) : (
-            <Chip label="No" disabled />
+            <Chip label='No' disabled />
           );
         },
         headerRenderer: (params) => (
           <FilterRenderer {...params}>
             {({ filters, ...rest }) => (
-              <FormControl variant="outlined" {...rest}>
+              <FormControl variant='outlined' {...rest}>
                 <Select
                   value={filters.deleted}
                   onChange={(e) =>
@@ -317,7 +321,7 @@ const FilesGrid = () => {
         width: 200,
         formatter({ row }) {
           return (
-            <Moment date={row.datetime} format="YYYY/MM/DD-HH:MM:SS"></Moment>
+            <Moment date={row.datetime} format='YYYY/MM/DD-HH:MM:SS'></Moment>
           );
         },
       },
@@ -410,16 +414,16 @@ const FilesGrid = () => {
   );
 
   return (
-    <Page title="Files">
+    <Page title='Files'>
       <Grid container spacing={2}>
-        <Grid item container xs={12} spacing={0} wrap="nowrap">
-          <Grid item container spacing={1} wrap="nowrap">
+        <Grid item container xs={12} spacing={0} wrap='nowrap'>
+          <Grid item container spacing={1} wrap='nowrap'>
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 startIcon={<SyncIcon />}
-                onClick={handleScanConfirmation}
+                onClick={() => setScanConfirmation(true)}
                 disabled={disabled}
               >
                 Scan
@@ -427,10 +431,10 @@ const FilesGrid = () => {
             </Grid>
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 startIcon={<PlaylistAddCheckOutlined />}
-                onClick={handleVerifyConfirmation}
+                onClick={() => setVerifyConfirmation(true)}
                 disabled={disabled}
               >
                 Verify
@@ -438,10 +442,10 @@ const FilesGrid = () => {
             </Grid>
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 startIcon={<DeleteForeverOutlinedIcon />}
-                onClick={handleDeleteFiles}
+                onClick={() => setDeleteConfirmation(true)}
               >
                 Delete
               </Button>
@@ -449,8 +453,8 @@ const FilesGrid = () => {
             {
               <Grid item>
                 <Button
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   startIcon={<AutorenewOutlinedIcon />}
                   disabled={[...selectedRows].length === 0 ? true : false}
                   onClick={(e) => handleOpenAutoGenerate(e, "autoGenerate")}
@@ -460,11 +464,11 @@ const FilesGrid = () => {
               </Grid>
             }
           </Grid>
-          <Grid item container spacing={1} justify="center" xs={5}>
+          <Grid item container spacing={1} justify='center' xs={5}>
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 onClick={toggleFilters}
               >
                 Toggle Filter
@@ -472,15 +476,15 @@ const FilesGrid = () => {
             </Grid>
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 onClick={clearFilters}
               >
                 Clear Filter
               </Button>
             </Grid>
           </Grid>
-          <Grid item container justify="flex-end" xs={1}>
+          <Grid item container justify='flex-end' xs={1}>
             <Grid item>
               <ExportButton
                 onExport={() => exportToCsv(gridElement, "files.csv")}
@@ -513,10 +517,10 @@ const FilesGrid = () => {
             you want to proceed.
           </DialogContentText>
           <DialogActions>
-            <Button onClick={() => setOpenConfirmation(false)} color="primary">
+            <Button onClick={() => setOpenConfirmation(false)} color='primary'>
               Cancel
             </Button>
-            <Button onClick={handleOK} color="primary" autoFocus>
+            <Button onClick={handleOK} color='primary' autoFocus>
               Ok
             </Button>
           </DialogActions>
@@ -531,10 +535,10 @@ const FilesGrid = () => {
             there are new files are added. To continue, click OK to proceed.
           </DialogContentText>
           <DialogActions>
-            <Button onClick={() => setScanConfirmation(false)} color="primary">
+            <Button onClick={() => setScanConfirmation(false)} color='primary'>
               Cancel
             </Button>
-            <Button onClick={handleRescan} color="primary" autoFocus>
+            <Button onClick={handleRescan} color='primary' autoFocus>
               Ok
             </Button>
           </DialogActions>
@@ -552,11 +556,31 @@ const FilesGrid = () => {
           <DialogActions>
             <Button
               onClick={() => setVerifyConfirmation(false)}
-              color="primary"
+              color='primary'
             >
               Cancel
             </Button>
-            <Button onClick={handleVerify} color="primary" autoFocus>
+            <Button onClick={handleVerify} color='primary' autoFocus>
+              Ok
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={deleteConfirmation}>
+        <DialogTitle>Delete confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            The file records will be removed from database.The RAW data would not be deleted.To continue, click
+            OK to proceed.
+          </DialogContentText>
+          <DialogActions>
+            <Button
+              onClick={() => setDeleteConfirmation(false)}
+              color='primary'
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteFiles} color='primary' autoFocus>
               Ok
             </Button>
           </DialogActions>

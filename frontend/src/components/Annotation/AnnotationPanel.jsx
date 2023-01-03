@@ -232,7 +232,6 @@ const AnnotationPanel = () => {
   }, [tab, progressMapLoading]);
 
   useEffect(() => {
-    console.log(latestTab)
     if(latestTab) setTab(latestTab)
   },[latestTab])
 

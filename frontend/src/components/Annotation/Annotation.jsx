@@ -8,7 +8,12 @@ import {
   TextField,
   CardHeader,
   Avatar,
+  Select,
+  Input,
+  MenuItem,
   IconButton,
+  Checkbox,
+  ListItemText,
 } from "@material-ui/core";
 import EditOutlinedIcon from "@material-ui/icons/EditOutlined";
 import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
@@ -31,6 +36,18 @@ import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import convert from "convert-units";
 import Moment from "react-moment";
+import Autocomplete, {
+  createFilterOptions,
+} from "@material-ui/lab/Autocomplete";
+import {
+  SIS_options,
+  kw_ecotype_options,
+  pod_options,
+  call_type_options,
+  confidence_options,
+} from "./annotationFields";
+
+const filter = createFilterOptions();
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -60,12 +77,23 @@ const formInit = {
   comments: "",
   created_at: "",
 };
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 const Annotation = ({ annotation, newBatch, editable }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState(formInit);
   const [formDataCopy, setFormDataCopy] = useState(null);
+  const [species, setSpecies] = useState([]);
 
   const { selectedRegion, currentRegions, annotationHistory } = useSelector(
     (state) => state.annotation
@@ -90,16 +118,63 @@ const Annotation = ({ annotation, newBatch, editable }) => {
     created_at,
   } = formData;
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e, formValue, reason, field) => {
+    if (reason === "select-option") {
+      const { value } = formValue;
+      setFormData({
+        ...formData,
+        [field]: value,
+      });
+    }
+
+    if (reason === "create-option") {
+      setFormData({
+        ...formData,
+        [field]: formValue,
+      });
+    }
+    if (reason === "clear") {
+      setFormData({
+        ...formData,
+        [field]: "",
+      });
+    }
   };
+
+  const handleFilterOptions = (options, params) => {
+    const filtered = filter(options, params);
+
+    if (params.inputValue !== "") {
+      filtered.push({
+        inputValue: params.inputValue,
+        value: `Press Enter to add "${params.inputValue}"`,
+      });
+    }
+
+    return filtered;
+  };
+
+  const handleGetOptionLabel = (option) => {
+    // Value selected with enter, right from the input
+    if (typeof option === "string") {
+      return option;
+    }
+    // Add "xxx" option created dynamically
+    if (option.inputValue) {
+      return option.inputValue;
+    }
+    // Regular option
+    return option.value;
+  };
+
+  const handleRenderInput = (params) => (
+    <TextField variant='outlined' {...params} />
+  );
 
   const handleSubmit = () => {
     const annotationData = {
       ...formData,
+      sound_id_species: species.join("/"),
       start: (formData.start * 1).toFixed(3),
       end: (formData.end * 1).toFixed(3),
       freq_min: (formData.freq_min * 1).toFixed(3),
@@ -122,6 +197,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
   const handleSaveChange = () => {
     const updatedFromdata = {
       ...formData,
+      sound_id_species: species.join("/"),
       start: (formData.start * 1).toFixed(3),
       end: (formData.end * 1).toFixed(3),
       freq_min: (formData.freq_min * 1).toFixed(3),
@@ -149,11 +225,19 @@ const Annotation = ({ annotation, newBatch, editable }) => {
       confidence_level: "",
       comments: "",
     });
+    setSpecies([]);
   };
 
   useEffect(() => {
     setFormData(annotation);
+    if (annotation.sound_id_species)
+      setSpecies(annotation.sound_id_species.split("/"));
+    else setSpecies([]);
   }, [annotation]);
+
+  const handleSpeciesSelect = (e) => {
+    setSpecies(e.target.value);
+  };
 
   useEffect(() => {
     const { id, segment, batch } = annotation;
@@ -256,12 +340,22 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item xs={3}>
                 <Typography variant='subtitle1'>SIS:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
-                    name='sound_id_species'
-                    value={sound_id_species}
-                    onChange={handleChange}
-                  />
+                  <Select
+                    multiple
+                    value={species}
+                    onChange={handleSpeciesSelect}
+                    input={<Input />}
+                    renderValue={(selected) => selected.join("/")}
+                    MenuProps={MenuProps}
+                    fullWidth
+                  >
+                    {SIS_options.map((item) => (
+                      <MenuItem key={item.id} value={item.value}>
+                        <Checkbox checked={species.indexOf(item.value) > -1} />
+                        <ListItemText primary={item.value} />
+                      </MenuItem>
+                    ))}
+                  </Select>
                 ) : (
                   <Typography>{sound_id_species}</Typography>
                 )}
@@ -269,11 +363,18 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item xs={3} container direction='column'>
                 <Typography variant='subtitle1'>KW ecotype:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
-                    name='kw_ecotype'
-                    value={kw_ecotype}
-                    onChange={handleChange}
+                  <Autocomplete
+                    freeSolo
+                    handleHomeEndKeys
+                    options={kw_ecotype_options}
+                    onChange={(e, value, reason) =>
+                      handleChange(e, value, reason, "kw_ecotype")
+                    }
+                    value={kw_ecotype || ""}
+                    filterOptions={handleFilterOptions}
+                    getOptionLabel={handleGetOptionLabel}
+                    renderOption={(option) => option.value}
+                    renderInput={handleRenderInput}
                   />
                 ) : (
                   <Typography>{kw_ecotype}</Typography>
@@ -282,11 +383,18 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item xs={3} container direction='column'>
                 <Typography variant='subtitle1'>Call Type:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
-                    name='call_type'
-                    value={call_type}
-                    onChange={handleChange}
+                  <Autocomplete
+                    freeSolo
+                    handleHomeEndKeys
+                    options={call_type_options}
+                    onChange={(e, value, reason) =>
+                      handleChange(e, value, reason, "call_type")
+                    }
+                    value={call_type || ""}
+                    filterOptions={handleFilterOptions}
+                    getOptionLabel={handleGetOptionLabel}
+                    renderOption={(option) => option.value}
+                    renderInput={handleRenderInput}
                   />
                 ) : (
                   <Typography>{call_type}</Typography>
@@ -295,11 +403,18 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item container xs={3} direction='column'>
                 <Typography variant='subtitle1'>Pod:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
-                    name='pod'
-                    value={pod}
-                    onChange={handleChange}
+                  <Autocomplete
+                    freeSolo
+                    handleHomeEndKeys
+                    options={pod_options}
+                    onChange={(e, value, reason) =>
+                      handleChange(e, value, reason, "pod")
+                    }
+                    value={pod || ""}
+                    filterOptions={handleFilterOptions}
+                    getOptionLabel={handleGetOptionLabel}
+                    renderOption={(option) => option.value}
+                    renderInput={handleRenderInput}
                   />
                 ) : (
                   <Typography>{pod}</Typography>
@@ -310,12 +425,18 @@ const Annotation = ({ annotation, newBatch, editable }) => {
               <Grid item xs={4}>
                 <Typography variant='subtitle1'>Confidence level:</Typography>
                 {editable || newBatch ? (
-                  <TextField
-                    variant='outlined'
-                    value={confidence_level}
-                    name='confidence_level'
-                    onChange={handleChange}
-                    fullWidth
+                  <Autocomplete
+                    freeSolo
+                    handleHomeEndKeys
+                    options={confidence_options}
+                    onChange={(e, value, reason) =>
+                      handleChange(e, value, reason, "confidence_level")
+                    }
+                    value={confidence_level || ""}
+                    filterOptions={handleFilterOptions}
+                    getOptionLabel={handleGetOptionLabel}
+                    renderOption={(option) => option.value}
+                    renderInput={handleRenderInput}
                   />
                 ) : (
                   <Typography>{confidence_level}</Typography>
@@ -328,8 +449,15 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                   <TextField
                     variant='outlined'
                     name='comments'
-                    value={comments}
-                    onChange={handleChange}
+                    value={comments || ""}
+                    onChange={(e) =>
+                      handleChange(
+                        e,
+                        e.target.value,
+                        "create-option",
+                        "comments"
+                      )
+                    }
                     fullWidth
                   />
                 ) : (
@@ -390,7 +518,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                       startIcon={<ClearIcon />}
                       onClick={handleClearHistory}
                     >
-                      Clear Form
+                      Clear History
                     </Button>
                   )}
                 </Grid>

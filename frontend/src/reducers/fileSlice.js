@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axiosWithAuth from '../utils/axiosWithAuth';
 import { normalize, schema } from 'normalizr';
+import { queryFormater } from '../utils/segmentUtils';
 
 const initialState = {
     files: {},
@@ -50,10 +51,7 @@ export const scanFiles = createAsyncThunk(
 export const deleteFiles = createAsyncThunk(
     'file/deleteFiles',
     async ({ ids }) => {
-        const request = ids.map(id => {
-            return axiosWithAuth.delete(`/file/${id}/`);
-        });
-        await Promise.all(request);
+        queryFormater(ids).forEach(sub => axiosWithAuth.delete(`/file/delete/?ids=${sub.join(",")}`));
     }
 );
 
