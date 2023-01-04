@@ -42,6 +42,12 @@ class Batch(models.Model):
     rate = models.IntegerField(default=24000)
     freq_min = models.IntegerField(default=0)
     freq_max = models.IntegerField(default=10000)
+
+    low_pass_freq = models.IntegerField(default=0)
+    high_pass_freq = models.IntegerField(default=0)
+    vmin = models.DecimalField(max_digits=3, decimal_places=2, default=0)
+    vmax = models.DecimalField(max_digits=3, decimal_places=2, default=1)
+    amplification = models.DecimalField(max_digits=3, decimal_places=2, default=1)
     
     allow_change_settings = models.BooleanField(default=False)
 
