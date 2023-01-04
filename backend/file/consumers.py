@@ -40,6 +40,7 @@ class FileConsumer(WebsocketConsumer):
                             "filesize": file_object.filesize,
                             "datetime": file_object.datetime,
                             "duration": math.ceil(metadata.duration * 1000) / 1000,
+                            "channels": metadata.channels,
                         }
 
                         file_instance = File.objects.filter(
@@ -54,6 +55,7 @@ class FileConsumer(WebsocketConsumer):
                                 filesize=file_item['filesize'],
                                 datetime=file_item['datetime'],
                                 duration=file_item['duration'],
+                                channels=file_item['channels']
                             )
                             file_instance.save()
 

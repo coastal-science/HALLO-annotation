@@ -12,6 +12,7 @@ class File(models.Model):
         max_length=250, verbose_name=_("File Path"))
     filesize = models.IntegerField(verbose_name=_("File Size"))
     duration = models.DecimalField(max_digits=10, decimal_places=3)
+    channels = models.IntegerField(default=0)
     is_included = models.BooleanField(default=False)
     deleted = models.BooleanField(default=False)
     datetime = models.DateTimeField(verbose_name=_("File Datetime"))

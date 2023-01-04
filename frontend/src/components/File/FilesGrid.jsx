@@ -283,6 +283,11 @@ const FilesGrid = () => {
         width: 150,
       },
       {
+        key: "channels",
+        name: "Channels",
+        width: 150,
+      },
+      {
         key: "deleted",
         name: "Deleted",
         width: 100,

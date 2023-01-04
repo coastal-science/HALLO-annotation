@@ -7,15 +7,4 @@ class FileSerializer(serializers.ModelSerializer):
     class Meta:
         ordering = ['id']
         model = File
-        fields = (
-            'id',
-            'filename',
-            'dirname',
-            'path',
-            'filesize',
-            'datetime',
-            'duration',
-            'is_included',
-            'deleted',
-            'created_at',
-        )
+        fields = '__all__'
