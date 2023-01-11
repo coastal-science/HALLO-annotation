@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from batch.models import Batch, BatchSegmentImage
+from batch.models import Batch, BatchSegmentImage, BatchSegmentAudio
 from users.serializers import UserSerializer
 
 
@@ -26,6 +26,7 @@ class BatchSerializer(serializers.ModelSerializer):
             'low_pass_freq',
             'high_pass_freq',
             'amplification',
+            'channel',
             'allow_change_settings',
             'model_developer',
             'created_at',
@@ -44,4 +45,15 @@ class BatchImageSerializer(serializers.ModelSerializer):
             'segment',
             'batch',
             'image',
+        )
+
+class BatchAudioSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = BatchSegmentAudio
+        fields = (
+            'id',
+            'segment',
+            'batch',
+            'audio',
         )

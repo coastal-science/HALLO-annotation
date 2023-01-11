@@ -48,6 +48,7 @@ class Batch(models.Model):
     vmin = models.DecimalField(max_digits=3, decimal_places=2, default=0)
     vmax = models.DecimalField(max_digits=3, decimal_places=2, default=1)
     amplification = models.DecimalField(max_digits=3, decimal_places=2, default=1)
+    channel = models.IntegerField(default=0)
     
     allow_change_settings = models.BooleanField(default=False)
 
@@ -81,5 +82,23 @@ def post_save_image(sender, instance, *args, **kwargs):
 
     try:
         instance.image.delete(save=False)
+    except:
+        pass
+
+
+class BatchSegmentAudio(models.Model):
+
+    batch = models.ForeignKey(Batch, on_delete=models.CASCADE)
+    segment = models.ForeignKey(Segment, on_delete=models.CASCADE)
+    audio = models.FileField(upload_to='audio_clips', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    objects = models.Manager()
+
+@receiver(post_delete, sender=BatchSegmentAudio)
+def post_save_image(sender, instance, *args, **kwargs):
+
+    try:
+        instance.audio.delete(save=False)
     except:
         pass

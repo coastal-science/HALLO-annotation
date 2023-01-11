@@ -1,6 +1,6 @@
 from rest_framework import generics
-from batch.models import Batch, BatchSegmentImage
-from .serializers import BatchSerializer, BatchImageSerializer
+from batch.models import Batch, BatchSegmentImage, BatchSegmentAudio
+from .serializers import BatchSerializer, BatchImageSerializer, BatchAudioSerializer
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -31,3 +31,17 @@ class ImageDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = BatchSegmentImage.objects.all()
     serializer_class = BatchImageSerializer
+
+
+class AudioList(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = BatchSegmentAudio.objects.all()
+    serializer_class = BatchAudioSerializer
+    filterset_fields = ['id', 'batch', 'segment']
+
+
+class AudioDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = BatchSegmentAudio.objects.all()
+    serializer_class = BatchAudioSerializer
+
