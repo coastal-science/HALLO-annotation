@@ -15,7 +15,11 @@ import Progress from "./Progress";
 import BatchSettings from "./BatchSettings";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentBatch } from "../../reducers/batchSlice";
-import { cleanProgressMap, clearRegion, resetLatestTab } from "../../reducers/annotationSlice";
+import {
+  cleanProgressMap,
+  clearRegion,
+  resetLatestTab,
+} from "../../reducers/annotationSlice";
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -56,45 +60,45 @@ const Batch = ({ batch, highlight, handleDelete }) => {
         style={{ backgroundColor: highlight ? grey[300] : grey[100] }}
       >
         <CardContent>
-          <Typography align="center" variant="subtitle1" gutterBottom>
+          <Typography align='center' variant='subtitle1' gutterBottom>
             {batch_name}
           </Typography>
-
           <Divider />
-          <Box mt={1.5} display="flex" flexDirection="column" height={300}>
+          <Box mt={1.5} display='flex' flexDirection='column' height={300}>
             {loading ? <CircularProgress /> : <Progress batchId={id} />}
             <Divider />
-            <Box mt={1.5} textAlign="center">
-              <Box mb={1.5}>
+            <Box mt={1.5} textAlign='center'>
+              <Box mb={1}>
                 <Button
-                  variant="contained"
-                  color="primary"
+                  variant='contained'
+                  color='primary'
                   onClick={handleClickOpen}
-                  data-cy="button-batch_settings"
+                  data-cy='button-batch_settings'
                 >
                   Settings
                 </Button>
               </Box>
-              {isPowerUser ? (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleDelete({ id, batchname: batch_name })}
-                  data-cy="button-batch_delete"
-                  disabled={!!!highlight}
-                >
-                  Delete
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={(e) => handleClick(e, id)}
-                  disabled={batch.segments.length === 0}
-                >
-                  resume annotations
-                </Button>
+              {isPowerUser && (
+                <Box mb={1}>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    onClick={() => handleDelete({ id, batchname: batch_name })}
+                    data-cy='button-batch_delete'
+                    disabled={!!!highlight}
+                  >
+                    Delete
+                  </Button>
+                </Box>
               )}
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={(e) => handleClick(e, id)}
+                disabled={batch.segments.length === 0}
+              >
+                resume annotations
+              </Button>
             </Box>
           </Box>
         </CardContent>

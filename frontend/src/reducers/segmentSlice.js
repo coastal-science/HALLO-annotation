@@ -38,8 +38,6 @@ export const fetchSegmentsByCreater = createAsyncThunk(
     }
 );
 
-
-
 export const addSegments = createAsyncThunk(
     'segment/addSegments',
     async ({ durations }) => {
@@ -74,18 +72,6 @@ export const addSegmentsToBatches = createAsyncThunk(
             return axiosWithAuth.patch(`/batch/${batchId}/`, { segments: [...new Set([...currentSegments, ...checkedSegmentIds])] });
         });
         await Promise.all(requests);
-    }
-);
-
-export const fetchAudio = createAsyncThunk(
-    'segment/fetchAudio',
-    async (settings) => {
-        const { data } = await axiosWithAuth({
-            method: "get",
-            url: "/hallo/audio/",
-            params: settings,
-        });
-        return data;
     }
 );
 
@@ -131,10 +117,6 @@ export const segmentSlice = createSlice({
             state.loading = false;
             state.checked = [];
         },
-        [fetchAudio.fulfilled]: (state, action) => {
-            const segment = action.payload;
-            state.segments[segment.id] = { ...segment, audio: backendURL + segment.audio };
-        }
     }
 });
 

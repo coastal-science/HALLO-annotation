@@ -122,7 +122,7 @@ export const userSlice = createSlice({
             state.loading = false;
         },
         [setCurrentBatch]: (state) => {
-            state.tab = 1;
+            state.tab = state.isPowerUser ? 4 : 1;
         }
 
     }

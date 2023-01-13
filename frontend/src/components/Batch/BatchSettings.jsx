@@ -10,6 +10,9 @@ import {
   Paper,
   TextField,
   Typography,
+  Slider,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { useEffect, useState, useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
@@ -52,7 +55,22 @@ export const formInit = {
   rate: 24000,
   freq_min: 0,
   freq_max: 10000,
+  vmin: 0.1,
+  vmax: 1.0,
+  low_pass_freq: 0,
+  high_pass_freq: 0,
+  amplification: 1.0,
+  channel: 0,
 };
+
+export const colorMapOptions = [
+  "viridis",
+  "plasma",
+  "inferno",
+  "magma",
+  "cividis",
+  "gray",
+];
 
 const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
   const classes = useStyles();
@@ -92,12 +110,20 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
       : [];
   }, [batchId, batches, files, segments]);
 
-  const handleChange = (e) => {
-    const updatedValue = {
-      ...form,
-      [e.target.name]: e.target.value,
-    };
-    setForm(updatedValue);
+  const handleChange = (e, value, name) => {
+    if (value) {
+      const updatedValue = {
+        ...form,
+        [name]: value,
+      };
+      setForm(updatedValue);
+    } else {
+      const updatedValue = {
+        ...form,
+        [e.target.name]: e.target.value,
+      };
+      setForm(updatedValue);
+    }
   };
 
   const handleCheckbox = () => {
@@ -145,6 +171,11 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
         axiosWithAuth.get(`/batch/image/?batch=${batchId}`).then((res) => {
           res.data.forEach((item) => {
             axiosWithAuth.delete(`/batch/image/${item.id}`);
+          });
+        });
+        axiosWithAuth.get(`/batch/audio/?batch=${batchId}`).then((res) => {
+          res.data.forEach((item) => {
+            axiosWithAuth.delete(`/batch/audio/${item.id}`);
           });
         });
       })
@@ -195,7 +226,7 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
   return (
     <Modal
       onClose={onClose}
-      aria-labelledby="batch-settings-dialog"
+      aria-labelledby='batch-settings-dialog'
       open={open}
     >
       <Paper className={classes.modal}>
@@ -203,16 +234,16 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
           <Box
             width={1000}
             height={500}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
             className={classes.modal}
           >
             <CircularProgress />
           </Box>
         ) : (
           <Box width={1000} p={5}>
-            <Grid item container spacing={2} direction="column">
+            <Grid item container spacing={2} direction='column'>
               <Grid item container xs={12}>
                 <Grid item xs={2}>
                   <Typography>Batch Name:</Typography>
@@ -220,14 +251,14 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
                 <Grid item>
                   {allowEdit ? (
                     <TextField
-                      name="batch_name"
+                      name='batch_name'
                       value={form.batch_name}
-                      variant="outlined"
+                      variant='outlined'
                       onChange={handleChange}
-                      data-cy="input-batch_name"
+                      data-cy='input-batch_name'
                     />
                   ) : (
-                    <Typography variant="subtitle1">
+                    <Typography variant='subtitle1'>
                       {form.batch_name}
                     </Typography>
                   )}
@@ -241,14 +272,14 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
                   {allowEdit ? (
                     <TextField
                       fullWidth
-                      name="description"
-                      variant="outlined"
+                      name='description'
+                      variant='outlined'
                       value={form.description}
                       onChange={handleChange}
-                      data-cy="input-batch_description"
+                      data-cy='input-batch_description'
                     />
                   ) : (
-                    <Typography variant="subtitle1">
+                    <Typography variant='subtitle1'>
                       {form.description}
                     </Typography>
                   )}
@@ -257,70 +288,70 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
               <Grid item xs={12}>
                 <Divider />
               </Grid>
-              <Grid item container xs={12} spacing={4}>
+              <Grid item container xs={12} spacing={2}>
                 <Grid
                   item
                   container
-                  xs={6}
-                  direction="column"
-                  justify="flex-start"
+                  xs={3}
+                  direction='column'
+                  justify='flex-start'
                   spacing={1}
                 >
-                  <Grid item container alignItems="center">
+                  <Grid item container alignItems='center'>
                     <Grid item xs={6}>
                       <Typography>Window length(s):</Typography>
                     </Grid>
                     <Grid item xs={6}>
                       {allowEdit ? (
                         <TextField
-                          name="window_length"
+                          name='window_length'
                           value={form.window_length}
                           onChange={handleChange}
-                          variant="outlined"
-                          type="number"
-                          data-cy="input-batch_window_length"
+                          variant='outlined'
+                          type='number'
+                          data-cy='input-batch_window_length'
                         />
                       ) : (
-                        <Typography variant="subtitle1">
+                        <Typography variant='subtitle1'>
                           {form.window_length}
                         </Typography>
                       )}
                     </Grid>
                   </Grid>
-                  <Grid item container alignItems="center">
+                  <Grid item container alignItems='center'>
                     <Grid item xs={6}>
                       <Typography>Step size(s):</Typography>
                     </Grid>
                     <Grid item xs={6}>
                       {allowEdit ? (
                         <TextField
-                          variant="outlined"
-                          name="step_size"
+                          variant='outlined'
+                          name='step_size'
                           value={form.step_size}
                           onChange={handleChange}
-                          type="number"
-                          data-cy="input-batch_step_size"
+                          type='number'
+                          data-cy='input-batch_step_size'
                         />
                       ) : (
-                        <Typography variant="subtitle1">
+                        <Typography variant='subtitle1'>
                           {form.step_size}
                         </Typography>
                       )}
                     </Grid>
                   </Grid>
-                  <Grid item container alignItems="center">
+                  <Grid item container alignItems='center'>
                     {isPowerUser && (
                       <Grid item xs={12}>
                         <FormControlLabel
                           control={
                             <Checkbox
-                              color="primary"
-                              name="allow_change_settings"
+                              color='primary'
+                              name='allow_change_settings'
                               checked={form.allow_change_settings}
                               onClick={handleCheckbox}
                             />
                           }
-                          label="Allow bioacoustician to change spectrogram settings"
+                          label='Allow Change'
                         />
                       </Grid>
                     )}
@@ -330,66 +361,237 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
                 <Grid
                   item
                   container
-                  xs={6}
-                  direction="column"
+                  xs={3}
+                  direction='column'
                   spacing={1}
-                  justify="flex-end"
+                  justify='flex-end'
                 >
-                  <Grid item container alignItems="center">
+                  <Grid item container alignItems='center'>
                     <Grid item xs={6}>
                       <Typography>Frequency min:</Typography>
                     </Grid>
                     <Grid item xs={6}>
                       {allowEdit ? (
                         <TextField
-                          name="freq_min"
+                          name='freq_min'
                           value={form.freq_min}
                           onChange={handleChange}
-                          variant="outlined"
-                          type="number"
+                          variant='outlined'
+                          type='number'
                         />
                       ) : (
-                        <Typography variant="subtitle1">
+                        <Typography variant='subtitle1'>
                           {form.freq_min}
                         </Typography>
                       )}
                     </Grid>
                   </Grid>
-                  <Grid item container alignItems="center">
+                  <Grid item container alignItems='center'>
                     <Grid item xs={6}>
                       <Typography>Frequency max:</Typography>
                     </Grid>
                     <Grid item xs={6}>
                       {allowEdit ? (
                         <TextField
-                          name="freq_max"
+                          name='freq_max'
                           value={form.freq_max}
                           onChange={handleChange}
-                          variant="outlined"
-                          type="number"
+                          variant='outlined'
+                          type='number'
                         />
                       ) : (
-                        <Typography variant="subtitle1">
+                        <Typography variant='subtitle1'>
                           {form.freq_max}
                         </Typography>
                       )}
                     </Grid>
                   </Grid>
-                  <Grid item container alignItems="center">
+                  <Grid item container alignItems='center'>
                     <Grid item xs={6}>
                       <Typography>Rate:</Typography>
                     </Grid>
                     <Grid item xs={6}>
                       {allowEdit ? (
                         <TextField
-                          name="rate"
+                          name='rate'
                           value={form.rate}
                           onChange={handleChange}
-                          variant="outlined"
-                          type="number"
+                          variant='outlined'
+                          type='number'
                         />
                       ) : (
-                        <Typography variant="subtitle1">{form.rate}</Typography>
+                        <Typography variant='subtitle1'>{form.rate}</Typography>
+                      )}
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid
+                  item
+                  container
+                  xs={3}
+                  direction='column'
+                  spacing={1}
+                  justify='flex-end'
+                >
+                  <Grid item container alignItems='center'>
+                    <Grid item xs={6}>
+                      <Typography>vmin:</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      {allowEdit ? (
+                        <Slider
+                          value={form.vmin * 1}
+                          onChange={(e, v) => handleChange(e, v, "vmin")}
+                          step={0.01}
+                          marks
+                          min={0.0}
+                          max={1.0}
+                          valueLabelDisplay='auto'
+                        />
+                      ) : (
+                        <Typography variant='subtitle1'>{form.vmin}</Typography>
+                      )}
+                    </Grid>
+                  </Grid>
+                  <Grid item container alignItems='center'>
+                    <Grid item xs={6}>
+                      <Typography>vmax:</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      {allowEdit ? (
+                        <Slider
+                          value={form.vmax * 1}
+                          onChange={(e, v) => handleChange(e, v, "vmax")}
+                          step={0.01}
+                          marks
+                          min={0.0}
+                          max={1.0}
+                          valueLabelDisplay='auto'
+                        />
+                      ) : (
+                        <Typography variant='subtitle1'>{form.vmax}</Typography>
+                      )}
+                    </Grid>
+                  </Grid>
+                  <Grid item container alignItems='center'>
+                    <Grid item xs={6}>
+                      <Typography>Amplification:</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      {allowEdit ? (
+                        <Slider
+                          value={form.amplification * 1}
+                          onChange={(e, v) =>
+                            handleChange(e, v, "amplification")
+                          }
+                          step={1}
+                          marks
+                          min={1}
+                          max={5}
+                          valueLabelDisplay='auto'
+                        />
+                      ) : (
+                        <Typography variant='subtitle1'>
+                          {form.amplification}
+                        </Typography>
+                      )}
+                    </Grid>
+                  </Grid>
+                  <Grid item container alignItems='center'>
+                    <Grid item xs={6}>
+                      <Typography>Channel:</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      {allowEdit ? (
+                        <TextField
+                          name='channel'
+                          value={form.channel}
+                          onChange={handleChange}
+                          variant='outlined'
+                          type='number'
+                        />
+                      ) : (
+                        <Typography variant='subtitle1'>
+                          {form.channel}
+                        </Typography>
+                      )}
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid
+                  item
+                  container
+                  xs={3}
+                  direction='column'
+                  spacing={1}
+                  justify='flex-end'
+                >
+                  <Grid item container alignItems='center'>
+                    <Grid item xs={6}>
+                      <Typography>Low Pass:</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      {allowEdit ? (
+                        <TextField
+                          name='low_pass_freq'
+                          value={form.low_pass_freq}
+                          onChange={handleChange}
+                          variant='outlined'
+                          type='number'
+                        />
+                      ) : (
+                        <Typography variant='subtitle1'>
+                          {form.low_pass_freq}
+                        </Typography>
+                      )}
+                    </Grid>
+                  </Grid>
+                  <Grid item container alignItems='center'>
+                    <Grid item xs={6}>
+                      <Typography>High Pass:</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      {allowEdit ? (
+                        <TextField
+                          name='high_pass_freq'
+                          value={form.high_pass_freq}
+                          onChange={handleChange}
+                          variant='outlined'
+                          type='number'
+                        />
+                      ) : (
+                        <Typography variant='subtitle1'>
+                          {form.high_pass_freq}
+                        </Typography>
+                      )}
+                    </Grid>
+                  </Grid>
+                  <Grid item container alignItems='center'>
+                    <Grid item xs={6}>
+                      <Typography>Color Map:</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      {allowEdit ? (
+                        <Select
+                          name='color_map'
+                          value={form.color_map}
+                          onChange={(e) => handleChange(e, null)}
+                          variant='outlined'
+                        >
+                          {colorMapOptions.map((option, index) => {
+                            return (
+                              <MenuItem key={index} value={index}>
+                                {option}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      ) : (
+                        <Typography variant='subtitle1'>
+                          {form.color_map}
+                        </Typography>
                       )}
                     </Grid>
                   </Grid>
@@ -416,23 +618,23 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
                 )}
               </Grid>
               {allowEdit ? (
-                <Grid item container xs={12} justify="center" spacing={2}>
+                <Grid item container xs={12} justify='center' spacing={2}>
                   <Grid item xs={2}>
                     {newBatch ? (
                       <Button
                         fullWidth
-                        variant="contained"
-                        color="primary"
+                        variant='contained'
+                        color='primary'
                         onClick={handleSubmit}
-                        data-cy="button-submit"
+                        data-cy='button-submit'
                       >
                         Submit
                       </Button>
                     ) : (
                       <Button
                         fullWidth
-                        variant="contained"
-                        color="primary"
+                        variant='contained'
+                        color='primary'
                         onClick={handleSave}
                       >
                         Save
@@ -442,24 +644,24 @@ const BatchSettings = ({ onClose, open, batchId, newBatch }) => {
                   <Grid item xs={2}>
                     <Button
                       fullWidth
-                      variant="contained"
-                      color="primary"
+                      variant='contained'
+                      color='primary'
                       onClick={() => onClose()}
-                      data-cy="button-batch_cancel"
+                      data-cy='button-batch_cancel'
                     >
                       Cancel
                     </Button>
                   </Grid>
                 </Grid>
               ) : (
-                <Grid item container xs={12} justify="center" spacing={2}>
+                <Grid item container xs={12} justify='center' spacing={2}>
                   <Grid item xs={2}>
                     <Button
                       fullWidth
-                      variant="contained"
-                      color="primary"
+                      variant='contained'
+                      color='primary'
                       onClick={() => onClose()}
-                      data-cy="button-batch_ok"
+                      data-cy='button-batch_ok'
                     >
                       OK
                     </Button>

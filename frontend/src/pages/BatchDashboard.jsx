@@ -145,16 +145,16 @@ const BatchDashboard = () => {
 
   return (
     <Box bgcolor={grey[500]} p={2}>
-      <Box width="100%" minHeight="91vh">
-        <AppBar position="static" className={classes.appBar} elevation={0}>
+      <Box width='100%' minHeight='91vh'>
+        <AppBar position='static' className={classes.appBar} elevation={0}>
           <Tabs
             value={tab}
             onChange={handleChange}
-            aria-label="batch dashboard tabs"
+            aria-label='batch dashboard tabs'
             indicatorColor={"primary"}
             className={classes.tabs}
           >
-            <Tab className={classes.tab} label="batches" {...a11yProps(0)} />
+            <Tab className={classes.tab} label='batches' {...a11yProps(0)} />
 
             <Tab
               className={classes.tab}
@@ -163,16 +163,23 @@ const BatchDashboard = () => {
             />
 
             {isPowerUser && (
-              <Tab className={classes.tab} label="segments" {...a11yProps(2)} />
+              <Tab className={classes.tab} label='segments' {...a11yProps(2)} />
             )}
             {isPowerUser && (
               <Tab
                 className={classes.tab}
-                label="annotations"
+                label='annotations'
                 {...a11yProps(3)}
               />
             )}
-            <Tab className={classes.tab} label="tutorial" {...a11yProps(4)} />
+            {isPowerUser && (
+              <Tab
+                className={classes.tab}
+                label='Annotation panel'
+                {...a11yProps(4)}
+              />
+            )}
+            <Tab className={classes.tab} label='tutorial' {...a11yProps(5)} />
           </Tabs>
         </AppBar>
         <TabPanel value={tab} index={0}>
@@ -189,6 +196,11 @@ const BatchDashboard = () => {
         </TabPanel>
         {isPowerUser && (
           <TabPanel value={tab} index={4}>
+            <AnnotationPanel />
+          </TabPanel>
+        )}
+        {isPowerUser && (
+          <TabPanel value={tab} index={5}>
             <Tutorial />
           </TabPanel>
         )}
@@ -200,7 +212,7 @@ const BatchDashboard = () => {
             Fetching data from the server...
           </DialogContentText>
           <DialogContentText>{info}</DialogContentText>
-          <LinearProgress color="primary" />
+          <LinearProgress color='primary' />
         </DialogContent>
       </Dialog>
     </Box>

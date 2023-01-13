@@ -170,7 +170,7 @@ def process_segment_audio(
                 samplerate=audio_clip_rate, format='FLAC', subtype='PCM_24')
 
 
-@api_view()
+@api_view(['POST'])
 @parser_classes([JSONParser])
 # @permission_classes([IsAuthenticated])
 def image_view(request, format=None):
@@ -180,14 +180,14 @@ def image_view(request, format=None):
     spec_config = {
         "type": specs['type'],
         "rate": specs['rate'],
-        "window": specs['window'],
-        "step": specs['step'],
+        "window": float(specs['window']),
+        "step": float(specs['step']),
         "freq_min": specs['freq_min'],
         "freq_max": specs['freq_max']
     }
     audio_file = specs['audio_file']
-    start = specs['start']
-    end = specs['end']
+    start = float(specs['start'])
+    end = float(specs['end'])
     filename = specs['filename']
     segment_id = specs['segment_id']
     batch_id = specs['batch_id']
@@ -195,12 +195,12 @@ def image_view(request, format=None):
     image_url = f'spectrogram/{filename}_batch_{batch_id}_segment_{segment_id}.png'
 
     # extra parameters
-    amplification_factor = specs['amplification']
+    amplification_factor = float(specs['amplification'])
     low_pass_freq = None if specs['low_pass_freq'] == 0 else specs['low_pass_freq']
     high_pass_freq = None if specs['high_pass_freq'] == 0 else specs['high_pass_freq']
-    channel = specs['channel']
-    vmin = specs['vmin']
-    vmax = specs['vmax']
+    channel = int(specs['channel'])
+    vmin = float(specs['vmin'])
+    vmax = float(specs['vmax'])
     cmap = specs['color_map']
 
     process_segment_image(
@@ -212,6 +212,7 @@ def image_view(request, format=None):
         amplification_factor=amplification_factor,
         low_pass_freq=low_pass_freq,
         high_pass_freq=high_pass_freq,
+        channel=channel,
         vmin=vmin,
         vmax=vmax,
         cmap=cmap)
@@ -239,16 +240,16 @@ def image_view(request, format=None):
     return Response(serialized.data)
 
 
-@api_view()
+@api_view(['POST'])
 @parser_classes([JSONParser])
 # @permission_classes([IsAuthenticated])
 def audio_view(request, format=None):
 
     specs = request.data
-
+    print(specs)
     audio_file = specs['audio_file']
-    start = specs['start']
-    end = specs['end']
+    start = float(specs['start'])
+    end = float(specs['end'])
     filename = specs['filename']
     segment_id = specs['segment_id']
     batch_id = specs['batch_id']
@@ -256,10 +257,10 @@ def audio_view(request, format=None):
     audio_clip_output = f'/backend/media/audio_clips/{filename}_batch_{batch_id}_segment_{segment_id}.flac'
 
     # extra parameters
-    amplification_factor = specs['amplification']
+    amplification_factor = float(specs['amplification'])
     low_pass_freq = None if specs['low_pass_freq'] == 0 else specs['low_pass_freq']
     high_pass_freq = None if specs['high_pass_freq'] == 0 else specs['high_pass_freq']
-    channel = specs['channel']
+    channel = int(specs['channel'])
 
     process_segment_audio(
         audio_file=audio_file,

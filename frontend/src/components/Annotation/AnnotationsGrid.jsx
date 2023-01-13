@@ -48,7 +48,7 @@ const FilterRenderer = ({ isCellSelected, column, children }) => {
   const { ref, tabIndex } = useFocusRef(isCellSelected);
   return (
     <Box mt={1}>
-      <Typography variant="subtitle2" style={{ fontWeight: 700 }}>
+      <Typography variant='subtitle2' style={{ fontWeight: 700 }}>
         {column.name}
       </Typography>
       {filters.enabled && <Box>{children({ ref, tabIndex, filters })}</Box>}
@@ -61,7 +61,11 @@ const AnnotationsGrid = () => {
     (state) => state.annotation
   );
   const { files } = useSelector((state) => state.file);
-  const { annotators } = useSelector((state) => state.user);
+  const {
+    annotators,
+    id: user_id,
+    username,
+  } = useSelector((state) => state.user);
   const { segments } = useSelector((state) => state.segment);
   const { batches } = useSelector((state) => state.batch);
   const [filters, setFilters] = useState(filtersInit);
@@ -133,7 +137,10 @@ const AnnotationsGrid = () => {
           const { batch, annotator, segment, ...rest } = annotation;
           const filename = files[segments[segment].file].filename;
           const batchname = batches[batch].batch_name;
-          const annotatorName = annotators[annotator].user_name;
+          const annotatorName =
+            annotator === user_id * 1
+              ? username
+              : annotators[annotator]?.user_name;
           return {
             filename,
             batchname,
@@ -295,7 +302,7 @@ const AnnotationsGrid = () => {
         name: "Batch",
 
         formatter({ row }) {
-          return <Chip color="primary" label={row.batchname} />;
+          return <Chip color='primary' label={row.batchname} />;
         },
         headerRenderer: (params) => (
           <FilterRenderer {...params}>
@@ -354,7 +361,7 @@ const AnnotationsGrid = () => {
         width: 200,
         formatter({ row }) {
           return (
-            <Moment date={row.created_at} format="YYYY/MM/DD-HH:MM:SS"></Moment>
+            <Moment date={row.created_at} format='YYYY/MM/DD-HH:MM:SS'></Moment>
           );
         },
       },
@@ -385,14 +392,14 @@ const AnnotationsGrid = () => {
   );
 
   return (
-    <Page title="Annotations">
+    <Page title='Annotations'>
       <Grid container spacing={2}>
-        <Grid item container xs={12} wrap="nowrap">
-          <Grid item container spacing={1} wrap="nowrap">
+        <Grid item container xs={12} wrap='nowrap'>
+          <Grid item container spacing={1} wrap='nowrap'>
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 startIcon={<CloudUploadOutlinedIcon />}
                 onClick={(e) => handleOpen(e, "import")}
               >
@@ -401,8 +408,8 @@ const AnnotationsGrid = () => {
             </Grid>
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 startIcon={<DeleteForeverOutlinedIcon />}
                 onClick={handleDeleteConfirmation}
               >
@@ -414,14 +421,14 @@ const AnnotationsGrid = () => {
             item
             container
             spacing={1}
-            wrap="nowrap"
-            justify="center"
+            wrap='nowrap'
+            justify='center'
             xs={5}
           >
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 onClick={toggleFilters}
               >
                 Toggle Filter
@@ -429,8 +436,8 @@ const AnnotationsGrid = () => {
             </Grid>
             <Grid item>
               <Button
-                variant="contained"
-                color="primary"
+                variant='contained'
+                color='primary'
                 onClick={clearFilters}
               >
                 Clear Filter
@@ -441,8 +448,8 @@ const AnnotationsGrid = () => {
             item
             container
             spacing={1}
-            wrap="nowrap"
-            justify="flex-end"
+            wrap='nowrap'
+            justify='flex-end'
             xs={1}
           >
             <Grid item>
@@ -472,11 +479,11 @@ const AnnotationsGrid = () => {
           <DialogActions>
             <Button
               onClick={() => setDeleteConfirmation(false)}
-              color="primary"
+              color='primary'
             >
               Cancel
             </Button>
-            <Button onClick={handleDeleteAnnotations} color="primary" autoFocus>
+            <Button onClick={handleDeleteAnnotations} color='primary' autoFocus>
               Ok
             </Button>
           </DialogActions>

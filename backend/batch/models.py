@@ -17,7 +17,12 @@ class Batch(models.Model):
     )
 
     COLOR_MAP = (
-        (0, _('Magma')),
+        (0, _('viridis')),
+        (1, _('plasma')),
+        (2, _('inferno')),
+        (3, _('magma')),
+        (4, _('cividis')),
+        (5, _('gray')),
     )
 
     batch_name = models.CharField(max_length=250, verbose_name=_("Batch Name"), unique=True)

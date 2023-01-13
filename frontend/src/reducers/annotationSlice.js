@@ -224,6 +224,8 @@ export const annotationSlice = createSlice({
         [saveAnnotation.fulfilled]: (state, action) => {
             state.currentAnnotations[action.payload.id] = action.payload;
             state.currentAnnotationIds.push(action.payload.id);
+            state.annotations[action.payload.id] = action.payload;
+            state.annotationIds.push(action.payload.id);
             state.annotation = null;
             state.region = null;
             state.annotationHistory = action.payload;
@@ -231,6 +233,7 @@ export const annotationSlice = createSlice({
         [updateAnnotation.fulfilled]: (state, action) => {
             const updatedAnnotation = action.payload;
             state.currentAnnotations[updatedAnnotation.id] = updatedAnnotation;
+            state.annotations[updatedAnnotation.id] = updatedAnnotation;
         },
         [deleteAnnotation.pending]: (state) => {
             state.pending = true;

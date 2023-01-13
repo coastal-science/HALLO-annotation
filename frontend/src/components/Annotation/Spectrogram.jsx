@@ -6,7 +6,6 @@ import TimeAxis from "./TimeAxis";
 import Region from "./Region";
 import axiosWithAuth from "../../utils/axiosWithAuth";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAudio } from "../../reducers/segmentSlice";
 import {
   cancelEditAnnotation,
   convertAnnotationsToRegions,
@@ -87,11 +86,7 @@ const Spectrogram = ({
     if (data.length !== 0) {
       setImage(data[0].image);
     } else {
-      const response = await axiosWithAuth({
-        method: "get",
-        url: "/hallo/image/",
-        params: imageSettings,
-      });
+      const response = await axiosWithAuth.post("/hallo/image/", imageSettings);
       const { data } = await axiosWithAuth.get(
         `/batch/image/?id=${response.data.id}`
       );
@@ -101,39 +96,47 @@ const Spectrogram = ({
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (!segments[segmentId].audio || audioError) {
-      dispatch(fetchAudio(audioSettings))
-        .unwrap()
-        .then((segment) => {
-          axiosWithAuth.get(`/segment/?id=${segment.id}`).then((res) => {
-            setAudio(res.data[0].audio);
-            setAudioError(false);
-          });
-        })
-        .catch((error) => console.error(error));
+  const fetchAudio = async () => {
+    const { data } = await axiosWithAuth.get(
+      `/batch/audio/?batch=${currentBatch}&segment=${segmentId}`
+    );
+    if (data.length !== 0) {
+      setAudio(data[0].audio);
+    } else {
+      const response = await axiosWithAuth.post("/hallo/audio/", audioSettings);
+      const { data } = await axiosWithAuth.get(
+        `/batch/audio/?id=${response.data.id}`
+      );
+      setAudio(data[0].audio);
     }
-    // eslint-disable-next-line
-  }, [audioError]);
+  };
 
-  useEffect(() => {
-    fetchImage();
-    // eslint-disable-next-line
-  }, []);
 
-  const handleErrorImage = async (e) => {
+  const handleErrorImage = async () => {
     setError(true);
-    const response = await axiosWithAuth({
-      method: "get",
-      url: "/hallo/image/",
-      params: imageSettings,
-    });
+    const response = await axiosWithAuth.post("/hallo/image/", imageSettings);
     const { data } = await axiosWithAuth.get(
       `/batch/image/?id=${response.data.id}`
     );
+
     setImage(data[0].image);
     setError(false);
   };
+
+  const handleAudioError = async () => {
+      const response = await axiosWithAuth.post("/hallo/audio/", audioSettings);
+      const { data } = await axiosWithAuth.get(
+        `/batch/audio/?id=${response.data.id}`
+      );
+      setAudio(data[0].audio);
+      setAudioError(false)
+  }
+
+    useEffect(() => {
+      fetchImage();
+      fetchAudio();
+      // eslint-disable-next-line
+    }, []);
 
   useEffect(() => {
     if (imageStatus === "failed") {
@@ -141,6 +144,12 @@ const Spectrogram = ({
     }
     // eslint-disable-next-line
   }, [imageStatus]);
+
+  useEffect(() => {
+    if (audioError) {
+      handleAudioError();
+    }
+  }, [audioError])
 
   const handleMouseDown = (e) => {
     const target = e.target;

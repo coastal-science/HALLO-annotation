@@ -1,4 +1,5 @@
 import { yellow } from "@material-ui/core/colors";
+import { colorMapOptions } from "../components/Batch/BatchSettings";
 
 export const getRelativePointerPosition = (node) => {
     // the function will return pointer position relative to the passed node
@@ -27,15 +28,18 @@ export const getImageAudioSettings = (filename, batch, segment, currentBatch, fi
         spectrogram_type,
         window_length,
         step_size,
+        vmin,
+        vmax,
+        low_pass_freq,
+        high_pass_freq,
+        amplification,
+        color_map,
+        channel,
     } = batch;
 
     const { id, start, end } = segment;
 
     const audio_file = filePath;
-    const spec_output = `/backend/media/spectrogram/${filename}_batch_${currentBatch}_segment_${id}.png`;
-    const audio_clip_output = `/backend/media/audio_clips/${filename}_segment_${id}.flac`;
-    const image_url = `spectrogram/${filename}_batch_${currentBatch}_segment_${id}.png`;
-    const audio_url = `audio_clips/${filename}_segment_${id}.flac`;
 
     const imageSettings = {
         type: spectrogramMap.get(spectrogram_type),
@@ -45,21 +49,31 @@ export const getImageAudioSettings = (filename, batch, segment, currentBatch, fi
         freq_min,
         freq_max,
         audio_file,
-        spec_output,
         start,
         end,
         segment_id: id,
         batch_id: currentBatch,
-        image_url,
+        vmin,
+        vmax,
+        low_pass_freq,
+        high_pass_freq,
+        amplification,
+        color_map: colorMapOptions[color_map],
+        filename,
+        channel,
     };
 
     const audioSettings = {
         audio_file,
         start,
         end,
-        audio_clip_output,
         segment_id: id,
-        audio_url,
+        batch_id: currentBatch,
+        low_pass_freq,
+        high_pass_freq,
+        amplification,
+        filename,
+        channel,
     };
 
     return [imageSettings, audioSettings];
