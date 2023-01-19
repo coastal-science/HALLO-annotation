@@ -29,3 +29,9 @@ class Annotation(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     objects = models.Manager()
+
+class Annotation_field(models.Model):
+
+    title = models.CharField(max_length=128, blank=True)
+    options = models.JSONField()
+    created_at = models.DateTimeField(default=timezone.now)

@@ -1,10 +1,9 @@
 from rest_framework import serializers
-from .models import Annotation
-
+from .models import Annotation, Annotation_field
 
 
 class AnnotationSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         ordering = ['created_at']
         model = Annotation
@@ -26,3 +25,10 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'annotator',
             'created_at',
         )
+
+
+class AnnotationFieldSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Annotation_field
+        fields = "__all__"
