@@ -73,6 +73,7 @@ services:
       - REACT_APP_BACKEND=${REACT_APP_BACKEND}
       - REACT_APP_WSS=${REACT_APP_WSS}
     command: npm start
+    restart: unless-stopped
     depends_on:
       - backend
     links:
