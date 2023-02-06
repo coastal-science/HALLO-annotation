@@ -1,0 +1,17 @@
+FROM node:16
+WORKDIR /frontend
+
+# ENV PATH /frontend/node_modules/.bin:$PATH
+
+COPY package.json .
+COPY package-lock.json .
+RUN npm ci
+RUN npm install -g react-scripts
+
+ENV REACT_APP_BASE_URL=https://hallo.maipl-dev.com
+ENV REACT_APP_BACKEND=https://api.maipl-dev.com
+ENV REACT_APP_WSS=wss://api.maipl-dev.com/ws/file/scan/
+
+COPY . .
+
+EXPOSE 3000

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosWithAuth, { backendURL } from '.././utils/axiosWithAuth';
+import axiosWithAuth from '.././utils/axiosWithAuth';
 import { normalize, schema } from 'normalizr';
 import { queryFormater } from '../utils/segmentUtils';
 

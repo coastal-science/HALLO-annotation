@@ -39,13 +39,6 @@ import Moment from "react-moment";
 import Autocomplete, {
   createFilterOptions,
 } from "@material-ui/lab/Autocomplete";
-import {
-  SIS_options,
-  kw_ecotype_options,
-  pod_options,
-  call_type_options,
-  confidence_options,
-} from "./annotationFields";
 
 const filter = createFilterOptions();
 
@@ -95,9 +88,20 @@ const Annotation = ({ annotation, newBatch, editable }) => {
   const [formDataCopy, setFormDataCopy] = useState(null);
   const [species, setSpecies] = useState([]);
 
-  const { selectedRegion, currentRegions, annotationHistory } = useSelector(
-    (state) => state.annotation
-  );
+  const {
+    selectedRegion,
+    currentRegions,
+    annotationHistory,
+    annotationFieldOptions,
+  } = useSelector((state) => state.annotation);
+
+  const {
+    SIS_options,
+    kw_ecotype_options,
+    pod_options,
+    call_type_options,
+    confidence_options,
+  } = annotationFieldOptions;
 
   const { segments } = useSelector((state) => state.segment);
   const { batches } = useSelector((state) => state.batch);
@@ -156,6 +160,7 @@ const Annotation = ({ annotation, newBatch, editable }) => {
 
   const handleGetOptionLabel = (option) => {
     // Value selected with enter, right from the input
+
     if (typeof option === "string") {
       return option;
     }
@@ -349,8 +354,8 @@ const Annotation = ({ annotation, newBatch, editable }) => {
                     MenuProps={MenuProps}
                     fullWidth
                   >
-                    {SIS_options.map((item) => (
-                      <MenuItem key={item.id} value={item.value}>
+                    {SIS_options.map((item, index) => (
+                      <MenuItem key={index} value={item.value}>
                         <Checkbox checked={species.indexOf(item.value) > -1} />
                         <ListItemText primary={item.value} />
                       </MenuItem>

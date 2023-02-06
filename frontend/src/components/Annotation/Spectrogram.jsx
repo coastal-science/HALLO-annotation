@@ -111,7 +111,6 @@ const Spectrogram = ({
     }
   };
 
-
   const handleErrorImage = async () => {
     setError(true);
     const response = await axiosWithAuth.post("/hallo/image/", imageSettings);
@@ -124,19 +123,19 @@ const Spectrogram = ({
   };
 
   const handleAudioError = async () => {
-      const response = await axiosWithAuth.post("/hallo/audio/", audioSettings);
-      const { data } = await axiosWithAuth.get(
-        `/batch/audio/?id=${response.data.id}`
-      );
-      setAudio(data[0].audio);
-      setAudioError(false)
-  }
+    const response = await axiosWithAuth.post("/hallo/audio/", audioSettings);
+    const { data } = await axiosWithAuth.get(
+      `/batch/audio/?id=${response.data.id}`
+    );
+    setAudio(data[0].audio);
+    setAudioError(false);
+  };
 
-    useEffect(() => {
-      fetchImage();
-      fetchAudio();
-      // eslint-disable-next-line
-    }, []);
+  useEffect(() => {
+    fetchImage();
+    fetchAudio();
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     if (imageStatus === "failed") {
@@ -149,7 +148,8 @@ const Spectrogram = ({
     if (audioError) {
       handleAudioError();
     }
-  }, [audioError])
+    // eslint-disable-next-line
+  }, [audioError]);
 
   const handleMouseDown = (e) => {
     const target = e.target;

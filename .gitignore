@@ -68,6 +68,7 @@ typings/
 .env
 .env.dev
 .env.sfu
+.env.meridian
 
 # next.js build output
 .next

@@ -25,6 +25,21 @@ const initialState = {
     latestTab: null,
     selectedRegion: null,
     pending: false,
+    annotationFieldOptions: {
+        SIS_options: [],
+        kw_ecotype_options: [],
+        pod_options: [],
+        signal_type_options: [{ value: "PC", description: "Pulsed call" },
+        { value: "W", description: "Whistle" },
+        { value: "CK", description: "(Echolocation) click" },
+        { value: "Unknown", description: "unable to identify or attribute sound to a definitive signal type" },],
+        call_type_options: [],
+        confidence_options: [
+            { value: "High" },
+            { value: "Medium" },
+            { value: "Low" },
+        ]
+    },
 };
 
 const annotationEntity = new schema.Entity('annotations');
@@ -127,6 +142,14 @@ export const addBatchAnnotations = createAsyncThunk(
     `annotation/addBatchAnnotations`,
     async (annotations) => {
         const { data } = await axiosWithAuth.post(`/annotation/create/`, annotations);
+        return data;
+    }
+);
+
+export const getAnnotationFieldOptions = createAsyncThunk(
+    `annotation/getAnnotationFieldOptions`,
+    async () => {
+        const { data } = await axiosWithAuth.get(`/annotation/fields/`);
         return data;
     }
 );
@@ -280,6 +303,11 @@ export const annotationSlice = createSlice({
             const { id, segment, is_completed, is_marked } = action.payload;
             state.progressMap[segment] = { is_completed, is_marked, progressId: id };
         },
+        [getAnnotationFieldOptions.fulfilled]: (state, action) => {
+            action.payload.forEach(options => {
+                state.annotationFieldOptions = {...state.annotationFieldOptions, [options.title]: options.options }
+            })
+        }
     }
 });
 

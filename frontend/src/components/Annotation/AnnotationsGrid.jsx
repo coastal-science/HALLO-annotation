@@ -149,7 +149,7 @@ const AnnotationsGrid = () => {
           };
         })
       : [];
-  }, [annotationIds, annotations, annotators, batches, files, segments]);
+  }, [annotationIds, annotations, annotators, batches, files, segments, user_id, username]);
 
   const filteredRows = useMemo(() => {
     return rows.filter((row) => {

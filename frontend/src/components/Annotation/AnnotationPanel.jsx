@@ -28,6 +28,7 @@ import {
   addProgress,
   clearRegion,
   fetchBatchProgress,
+  getAnnotationFieldOptions,
   markAsMarked,
   markAsNotCompleted,
   setProgressLoading,
@@ -232,8 +233,13 @@ const AnnotationPanel = () => {
   }, [tab, progressMapLoading]);
 
   useEffect(() => {
-    if(latestTab) setTab(latestTab)
-  },[latestTab])
+    if (latestTab) setTab(latestTab);
+  }, [latestTab]);
+
+  useEffect(() => {
+    dispatch(getAnnotationFieldOptions());
+    // eslint-disable-next-line
+  }, []);
 
   return !!currentBatch ? (
     <Grid container spacing={1} wrap='nowrap'>
@@ -318,7 +324,6 @@ const AnnotationPanel = () => {
                       zoomLevel={zoomLevel}
                       audioError={audioError}
                       setAudioError={setAudioError}
-              
                     />
                   </ErrorBoundary>
                 </TabPanel>
@@ -447,12 +452,7 @@ const AnnotationPanel = () => {
             );
           })
         )}
-        {annotation && (
-          <Annotation
-            annotation={annotation}
-            newBatch={true}
-          />
-        )}
+        {annotation && <Annotation annotation={annotation} newBatch={true} />}
       </Grid>
     </Grid>
   ) : (
