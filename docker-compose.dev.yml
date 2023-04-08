@@ -34,6 +34,7 @@ services:
   # Django backend server
   backend:
     build: ./backend
+    platform: linux/amd64
     restart: unless-stopped
     volumes:
       - ./backend:/backend
